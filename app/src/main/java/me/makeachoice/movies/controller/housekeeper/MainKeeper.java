@@ -155,7 +155,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
     private void createMovieSelectAdapter(){
         //TODO - initialize and send ListAdapter to MyMaid
         mMovieSelectAdapter = initializeAdapter(mBoss.getModel());
-        //mMovieSelectMaid.setListAdapter(mMovieSelectAdapter);
+        mMovieSelectMaid.setListAdapter(mMovieSelectAdapter);
     }
 
 /**
@@ -189,7 +189,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * @return ListAdapter - will return a reference to the ListAdapter to be consumed.
  */
     public ListAdapter initializeAdapter(MovieModel model){
-
+        Log.d("Movies", "MainKeeper.initializeAdapter");
         //ListAdapter variable to be return
         ListAdapter adapter;
 
@@ -465,27 +465,27 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         Fragment fragment;
 
         //check fragment type being requested
-        if(fragmentType == LAYOUT_GRID_SIMPLE){
+        if(fragmentType == SELECT_TYPE_GRID){
             Log.d("Movies", "     simple grid fragment");
-            //TODO - create Fragment with GridView, class extends Fragment
+            //create Fragment with GridView, class extends Fragment
             fragment = new SimpleGridFragment();
 
-            //TODO - set layout id to use to inflate fragment
+            //set layout id to use to inflate fragment
             ((SimpleGridFragment)fragment).setLayout(LAYOUT_GRID_SIMPLE);
 
-            //TODO - set gridView id to be used in fragment
+            //set gridView id to be used in fragment
             ((SimpleGridFragment)fragment).setGridViewId(GRID_CHILD_GRID_VIEW);
 
-            //TODO - setMaid name to fragment
+            //setMaid name to fragment
             ((SimpleGridFragment)fragment).setServiceName(NAME_MOVIE_SELECT_MAID);
 
         }
         else{
-            //TODO - handle other fragment type
+            Log.d("Movies", "     empty fragment");
+            //handle other fragment type
             fragment = new Fragment();
         }
 
-        //TODO - return fragment
         return fragment;
     }
 

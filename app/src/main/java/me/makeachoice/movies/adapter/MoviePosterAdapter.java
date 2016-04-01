@@ -1,6 +1,7 @@
 package me.makeachoice.movies.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -143,15 +144,15 @@ private ArrayList<MovieItem> mItems;
     }
 
     private void updatePosterView(MovieItem item, View convertView){
-
+        Log.d("Movies", "MoviePosterAdapter.updatePosterView");
         //get child view using ViewHolder class
-        ImageView imgIcon = ViewHolder.get(convertView, mPosterViewId);
-        if(imgIcon == null){
-            imgIcon = (ImageView) convertView.findViewById(mPosterViewId);
+        ImageView imgPoster = ViewHolder.get(convertView, mPosterViewId);
+        if(imgPoster == null){
+            imgPoster = (ImageView) convertView.findViewById(mPosterViewId);
         }
 
         //update child view data - title
-        imgIcon.setImageResource(item.getPoster());
+        imgPoster.setImageResource(item.getPoster());
     }
 /**************************************************************************************************/
 
