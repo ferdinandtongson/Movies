@@ -10,9 +10,8 @@ import me.makeachoice.movies.R;
  * MovieButler handles the creation of the AppDemo model, taking resources from a flat file,
  * database or webservice and converting it into a model for consumption by the controller
  */
-public class MovieButler {
+public class MovieButler extends MyButler{
 
-    Context mActivityContext;
     public MovieButler(Context ctx){
         Log.d("SimpleListFragment", "MovieButler");
         mActivityContext = ctx;
