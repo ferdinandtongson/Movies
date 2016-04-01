@@ -1,7 +1,7 @@
 package me.makeachoice.movies.adapter.item;
 
 /**
- * MovieItem extends MyBaseItem base class is used by a BaseAdapter to populate a GridView. This
+ * MovieItem extends MyItem base class is used by a BaseAdapter to populate a GridView. This
  * class is associated with item_movie.xml layout resource file.
  *
  * In your Presenter, adding data to your adapter before calling setListAdapter():
@@ -16,7 +16,7 @@ package me.makeachoice.movies.adapter.item;
  *
  *
  */
-public class MovieItem extends MyBaseItem {
+public class MovieItem extends MyItem {
     //mPosterId - holds the poster id image value
     protected int mPosterId;
 
