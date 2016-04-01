@@ -1,11 +1,11 @@
 package me.makeachoice.movies.controller.maid;
 
-import me.makeachoice.movies.controller.housekeeper.HouseKeeper;
+import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 
 /**
  * Maid abstract class - used to directly communicate with Fragments and with the managing
- * HouseKeeper class
+ * MyHouseKeeper class
  */
 public abstract class Maid {
-    HouseKeeper mHouseKeeper;
+    MyHouseKeeper mHouseKeeper;
 }

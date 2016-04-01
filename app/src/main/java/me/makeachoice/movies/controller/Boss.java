@@ -6,7 +6,7 @@ import android.content.Context;
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
-import me.makeachoice.movies.controller.housekeeper.HouseKeeper;
+import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.maid.Maid;
 import me.makeachoice.movies.model.MovieModel;
 
@@ -44,8 +44,8 @@ public class Boss extends Application{
     }
 
 
-    private HashMap<String, HouseKeeper> mHouseKeeperRegistry = new HashMap<>();
-    public void registerHouseKeeper(String key, HouseKeeper keeper) {
+    private HashMap<String, MyHouseKeeper> mHouseKeeperRegistry = new HashMap<>();
+    public void registerHouseKeeper(String key, MyHouseKeeper keeper) {
         mHouseKeeperRegistry.put(key, keeper);
     }
 

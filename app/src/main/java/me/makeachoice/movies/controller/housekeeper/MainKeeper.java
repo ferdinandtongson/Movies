@@ -23,7 +23,7 @@ import me.makeachoice.movies.model.MovieModel;
 import me.makeachoice.movies.controller.Boss;
 
 /**
- * MainKeeper is the HouseKeeper class for MainActivity. It's primary responsibility is to
+ * MainKeeper is the MyHouseKeeper class for MainActivity. It's primary responsibility is to
  * initializes and takes care of the MainActivity resource details.
  *
  * //TODO - need to dynamically set the Menus in the ActionBar, now currently hardcoded in xml file
@@ -33,7 +33,7 @@ import me.makeachoice.movies.controller.Boss;
  *
  * Finally, it directly communicates with the Boss to get all the necessary data for the Views.
  */
-public class MainKeeper extends HouseKeeper implements MainActivity.Bridge{
+public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
 /**
  * MainKeeper will be able to display the following fragments:
  *      AppList
@@ -42,7 +42,7 @@ public class MainKeeper extends HouseKeeper implements MainActivity.Bridge{
  *      AppGridInfo
  *      AppInfo
  *
- * Variables from HouseKeeper:
+ * Variables from MyHouseKeeper:
  *      Boss mBoss
  *
  * Implements Boss.xxxBridge Methods:
@@ -64,7 +64,7 @@ public class MainKeeper extends HouseKeeper implements MainActivity.Bridge{
  *
  */
 /**************************************************************************************************/
-    //NAME - unique name of the HouseKeeper
+    //NAME - unique name of the MyHouseKeeper
     public final static String NAME = "MainKeeper";
 
     //mMovieSelectFrag - application movie select fragment, where user can select movie to look at
@@ -103,11 +103,11 @@ public class MainKeeper extends HouseKeeper implements MainActivity.Bridge{
 /**
  * MovieSelectMaid is in charge of taking care of displaying thumbnail icon images of movies in a
  * grid fragment. It will maintain all events or requests called by the fragment and will push
- * these events or requests up to the HouseKeeper if the Maid cannot handle it.
+ * these events or requests up to the MyHouseKeeper if the Maid cannot handle it.
  *
  * MovieInfoMaid is in charge of displaying information about a particular movie selected by the
  * user. It will maintain all events or requests called by the fragment and will push these events
- * or requests up to the HouseKeeper if the Maid cannot handle it.
+ * or requests up to the MyHouseKeeper if the Maid cannot handle it.
  */
 /**************************************************************************************************/
     //TODO - mMovieSelectMaid - maid in charge of the grid fragment displaying a selection of movies

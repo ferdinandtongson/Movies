@@ -16,7 +16,7 @@ import me.makeachoice.movies.controller.housekeeper.MainKeeper;
  */
 public class MainActivity extends AppCompatActivity {
 
-    //HouseKeeper class that handles the initialization of the MainActivity and Fragments as well
+    //MyHouseKeeper class that handles the initialization of the MainActivity and Fragments as well
     //as the communication between UI and the Boss
     private MainKeeper mHouseKeeper;
 
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 /**************************************************************************************************/
 /**
  * void onCreate() is called when the Activity is first being created or during a configuration
- * change (i.e. orientation change). Creates Boss and HouseKeeper class, inflates the Activity
+ * change (i.e. orientation change). Creates Boss and MyHouseKeeper class, inflates the Activity
  * layout and the toolbar and floating action button (if any).
  *
  * If onCreate is being called because of a configuration change, savedInstanceState will not be
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         //register Activity context with Boss
         mBoss.setActivityContext(this);
 
-        //start HouseKeeper for this Activity
+        //start MyHouseKeeper for this Activity
         mHouseKeeper = new MainKeeper(mBoss, this, getSupportFragmentManager());
 
         //Note setContent must happen before toolbar
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        //HouseKeeper handles menu item click event
+        //MyHouseKeeper handles menu item click event
         mHouseKeeper.onOptionsItemSelected(item);
 
 
