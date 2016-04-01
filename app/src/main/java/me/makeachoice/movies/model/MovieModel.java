@@ -58,7 +58,7 @@ public class MovieModel {
         return mList.get(index);
     }
 
-    public void addApp(String title, String plot, int posterId, String rating, String releaseDate){
+    public void addMovie(String title, String plot, int posterId, String rating, String releaseDate){
         mList.add(new MovieDetail(title, plot, posterId, rating, releaseDate));
     }
 
