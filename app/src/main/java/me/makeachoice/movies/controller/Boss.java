@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
-import me.makeachoice.movies.controller.maid.Maid;
+import me.makeachoice.movies.controller.maid.MyMaid;
 import me.makeachoice.movies.model.MovieModel;
 
 /**
@@ -34,12 +34,12 @@ public class Boss extends Application{
 
 /**************************************************************************************************/
 
-    private HashMap<String, Maid> mMaidRegistry = new HashMap<>();
-    public void registerMaid(String key, Maid maid){
+    private HashMap<String, MyMaid> mMaidRegistry = new HashMap<>();
+    public void registerMaid(String key, MyMaid maid){
         mMaidRegistry.put(key, maid);
     }
 
-    public Maid getMaid(String key){
+    public MyMaid getMaid(String key){
         return mMaidRegistry.get(key);
     }
 

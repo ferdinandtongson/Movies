@@ -8,7 +8,7 @@ import java.util.HashMap;
 import me.makeachoice.movies.controller.Boss;
 
 /**
- * MyHouseKeeper abstract class - used to directly communicate with Activities and Maid classes that
+ * MyHouseKeeper abstract class - used to directly communicate with Activities and MyMaid classes that
  * maintain Fragment classes and the Boss
  *
  */

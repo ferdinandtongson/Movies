@@ -15,7 +15,7 @@ public abstract class MyFragment extends Fragment implements MyFragmentInterface
     abstract public void setLayout(int id);
     abstract public void setServiceName(String name);
 
-    //Upkeeping Maid class must implement this interface
+    //Upkeeping MyMaid class must implement this interface
     public interface Bridge{
 
         void onItemClick(int position);

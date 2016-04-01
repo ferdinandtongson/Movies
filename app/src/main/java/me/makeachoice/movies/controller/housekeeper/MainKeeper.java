@@ -28,7 +28,7 @@ import me.makeachoice.movies.controller.Boss;
  *
  * //TODO - need to dynamically set the Menus in the ActionBar, now currently hardcoded in xml file
  *
- * It also handles the loading and unloading of Fragments and manages the Maid classes responsible
+ * It also handles the loading and unloading of Fragments and manages the MyMaid classes responsible
  * for the upkeep of the Fragments and the communication between the Maids, Activity and Boss.
  *
  * Finally, it directly communicates with the Boss to get all the necessary data for the Views.
@@ -103,11 +103,11 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
 /**
  * MovieSelectMaid is in charge of taking care of displaying thumbnail icon images of movies in a
  * grid fragment. It will maintain all events or requests called by the fragment and will push
- * these events or requests up to the MyHouseKeeper if the Maid cannot handle it.
+ * these events or requests up to the MyHouseKeeper if the MyMaid cannot handle it.
  *
  * MovieInfoMaid is in charge of displaying information about a particular movie selected by the
  * user. It will maintain all events or requests called by the fragment and will push these events
- * or requests up to the MyHouseKeeper if the Maid cannot handle it.
+ * or requests up to the MyHouseKeeper if the MyMaid cannot handle it.
  */
 /**************************************************************************************************/
     //TODO - mMovieSelectMaid - maid in charge of the grid fragment displaying a selection of movies
@@ -133,15 +133,15 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
  *      MovieInfoMaid
  */
     private void initHouseKeeping(){
-        //initialize Maid in charge of the movie selection fragment (grid fragment)
+        //initialize MyMaid in charge of the movie selection fragment (grid fragment)
         //initMovieSelectMaid();
 
-        //initialize Maid in charge of displaying info about a movie (fragment)
+        //initialize MyMaid in charge of displaying info about a movie (fragment)
         initMovieInfoMaid();
     }
 
 /**
- * void initMovieSelectMaid() - initialize MovieSelectMaid and register Maid to Boss
+ * void initMovieSelectMaid() - initialize MovieSelectMaid and register MyMaid to Boss
  */
     private void initMovieSelectMaid(){
         //TODO - initialize and register MovieSelectMaid
@@ -150,13 +150,13 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
     }
 
     private void createMovieSelectAdapter(){
-        //TODO - initialize and send ListAdapter to Maid
+        //TODO - initialize and send ListAdapter to MyMaid
         mMovieSelectAdapter = initializeAdapter(mBoss.getModel());
         //mMovieSelectMaid.setListAdapter(mMovieSelectAdapter);
     }
 
 /**
- * void intitAppInfoMaid() - initialize AppInfoMaid and register Maid to Boss
+ * void intitAppInfoMaid() - initialize AppInfoMaid and register MyMaid to Boss
  */
     private void initMovieInfoMaid(){
         //TODO - initialize and register MovieInfoMaid

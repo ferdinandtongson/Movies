@@ -20,7 +20,7 @@ public abstract class MyListFragment extends ListFragment implements MyFragmentI
     abstract public void setLayout(int id);
     abstract public void setServiceName(String name);
 
-    //Upkeeping Maid class must implement this interface
+    //Upkeeping MyMaid class must implement this interface
     public interface Bridge{
         void onItemClick(ListView l, View v, int position, long id);
         ListAdapter getListAdapter();

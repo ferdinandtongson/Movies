@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton mFloatButton;
 
     public interface Bridge{
-        //Interface are methods the Maid has to implement but it is a one-way
+        //Interface are methods the MyMaid has to implement but it is a one-way
         //communication.
         int getActivityLayoutId();
         int getFragmentContainerId();
