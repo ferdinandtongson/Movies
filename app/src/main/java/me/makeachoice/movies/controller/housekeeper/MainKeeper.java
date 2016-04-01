@@ -19,6 +19,8 @@ import me.makeachoice.movies.MainActivity;
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.adapter.MoviePosterAdapter;
 import me.makeachoice.movies.adapter.item.MovieItem;
+import me.makeachoice.movies.controller.maid.MovieSelectMaid;
+import me.makeachoice.movies.fragment.SimpleGridFragment;
 import me.makeachoice.movies.model.MovieModel;
 import me.makeachoice.movies.controller.Boss;
 
@@ -33,7 +35,8 @@ import me.makeachoice.movies.controller.Boss;
  *
  * Finally, it directly communicates with the Boss to get all the necessary data for the Views.
  */
-public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
+public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
+        MovieSelectMaid.Bridge{
 /**
  * MainKeeper will be able to display the following fragments:
  *      AppList
@@ -111,11 +114,11 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
  */
 /**************************************************************************************************/
     //TODO - mMovieSelectMaid - maid in charge of the grid fragment displaying a selection of movies
-    //private MovieSelectMaid mMovieSelectMaid;
+    private MovieSelectMaid mMovieSelectMaid;
     //TODO - mMovieInfoMaid - maid in charge of the fragment displaying info about a particular movie
     //private MovieInfoMaid mMovieInfoMaid
 
-    //NAME_APP_SELECT_MAID - name registered to the Boss for AppSelectMaid
+    //NAME_APP_SELECT_MAID - name registered to the Boss for MovieSelectMaid
     private final static String NAME_MOVIE_SELECT_MAID = "MovieSelectMaid";
     //NAME_APP_INFO_MAID - name registered to the Boss for AppInfoMaid
     private final static String NAME_MOVIE_INFO_MAID = "MovieInfoMaid";
@@ -134,19 +137,19 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
  */
     private void initHouseKeeping(){
         //initialize MyMaid in charge of the movie selection fragment (grid fragment)
-        //initMovieSelectMaid();
+        initMovieSelectMaid();
 
         //initialize MyMaid in charge of displaying info about a movie (fragment)
-        initMovieInfoMaid();
+        //initMovieInfoMaid();
     }
 
 /**
  * void initMovieSelectMaid() - initialize MovieSelectMaid and register MyMaid to Boss
  */
     private void initMovieSelectMaid(){
-        //TODO - initialize and register MovieSelectMaid
-        //mMovieSelectMaid = new MovieSelectMaid(this);
-        //mBoss.registerMaid(NAME_MOVIE_SELECT_MAID, mMovieSelectMaid);
+        //initialize and register MovieSelectMaid
+        mMovieSelectMaid = new MovieSelectMaid(this);
+        mBoss.registerMaid(NAME_MOVIE_SELECT_MAID, mMovieSelectMaid);
     }
 
     private void createMovieSelectAdapter(){
@@ -346,7 +349,8 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
  * @param fragmentType - variation of the fragment type to display
  */
     public void setFragmentType(String key, int fragmentType){
-        Log.d("Simple", "MainKeeper.setFragmentType: " + fragmentType);
+        Log.d("Movies", "MainKeeper.setFragmentType: " + fragmentType);
+        Log.d("Movies", "     key: " + key);
         //put fragment type and the variation of that time to a hashmap
         mMapFragmentType.put(key, fragmentType);
     }
@@ -366,12 +370,13 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
  */
     public void prepareFragment(Boolean shouldAdd){
         //TODO - MovieSelect Fragment is hard-coded in this method
-        Log.d("Simple", "Keeper.createFragment");
+        Log.d("Movies", "MainKeeper.prepareFragment");
         //create the ListAdapter to be displayed by the MovieSelect Fragment
         createMovieSelectAdapter();
 
+        Log.d("Movies", "     completed MovieSelectAdapter");
         //initialize the MovieSelectFragment
-        mMovieSelectFrag = initFragment(mMapFragmentType.get(SELECT_TYPE_GRID));
+        mMovieSelectFrag = initFragment(mMapFragmentType.get(FRAG_MOVIE_SELECT));
 
         //check if Fragment needs to be added to the Fragment manager
         if(shouldAdd){
@@ -456,21 +461,23 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
  * @return Fragment - returns an initialized and ready fragment
  */
     private Fragment initFragment(int fragmentType){
+        Log.d("Movies", "MainKeeper.initFragment: " + fragmentType);
         Fragment fragment;
 
         //check fragment type being requested
         if(fragmentType == LAYOUT_GRID_SIMPLE){
+            Log.d("Movies", "     simple grid fragment");
             //TODO - create Fragment with GridView, class extends Fragment
-            //fragment = new SimpleGridFragment();
+            fragment = new SimpleGridFragment();
 
             //TODO - set layout id to use to inflate fragment
-            //((SimpleGridFragment)fragment).setLayout(LAYOUT_GRID_SIMPLE);
+            ((SimpleGridFragment)fragment).setLayout(LAYOUT_GRID_SIMPLE);
 
             //TODO - set gridView id to be used in fragment
-            //((SimpleGridFragment)fragment).setGridViewId(GRID_CHILD_GRID_VIEW);
+            ((SimpleGridFragment)fragment).setGridViewId(GRID_CHILD_GRID_VIEW);
 
             //TODO - setMaid name to fragment
-            //((SimpleGridFragment)fragment).setServiceName(NAME_APP_SELECT_MAID);
+            ((SimpleGridFragment)fragment).setServiceName(NAME_MOVIE_SELECT_MAID);
 
         }
         else{
@@ -479,7 +486,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge{
         }
 
         //TODO - return fragment
-        return null;
+        return fragment;
     }
 
 /**

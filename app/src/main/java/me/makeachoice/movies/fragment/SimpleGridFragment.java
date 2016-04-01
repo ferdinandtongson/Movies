@@ -69,7 +69,7 @@ public class SimpleGridFragment extends MyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("SimpleListFragment", "SimpleGridFragment.onCreateView");
+        Log.d("Movies", "SimpleGridFragment.onCreateView");
 
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
@@ -104,7 +104,7 @@ public class SimpleGridFragment extends MyFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("SimpleListFragment", "SimpleGridFragment.onActivityCreated");
+        Log.d("Movies", "SimpleGridFragment.onActivityCreated");
 
         //create the list by setting the list adapter
         GridView gridView = (GridView)mView.findViewById(mGridViewId);
@@ -119,7 +119,7 @@ public class SimpleGridFragment extends MyFragment {
  */
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
-        Log.d("SimpleListFragment", "SimpleGridFragment.onSaveInstanceState");
+        Log.d("Movies", "SimpleGridFragment.onSaveInstanceState");
         saveState.putInt(KEY_LAYOUT, mLayoutId);
         saveState.putString(KEY_SERVICE_NAME, mServiceName);
         saveState.putInt(KEY_GRIDVIEW_ID, mGridViewId);
@@ -133,8 +133,6 @@ public class SimpleGridFragment extends MyFragment {
     @Override
     public void onDetach(){
         super.onDetach();
-        Log.d("SimpleListFragment", "SimpleGridFragment.onDetach");
-        mBridge = null;
     }
 
 /**************************************************************************************************/
