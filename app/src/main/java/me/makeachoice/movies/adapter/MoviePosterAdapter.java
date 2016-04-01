@@ -16,17 +16,17 @@ import me.makeachoice.movies.adapter.util.ViewHolder;
 * MoviePosterAdapter extends BaseAdapter class and is used as a List Adapter for the Android
 * GridView widget.
 *
-* Variables from MyBaseAdapter:
+* Variables from MyAdapter:
 *      Context mContext
 *      Inflater mInflator
 *      View.OnClickListener mOnClickListener
 *
-* Methods from MyBaseAdapter
+* Methods from MyAdapter
 *       void updateView(int, view)
 *      setOnClickListener(Listener)
 *
 */
-public class MoviePosterAdapter extends MyBaseAdapter {
+public class MoviePosterAdapter extends MyAdapter {
 /**************************************************************************************************/
 //Default layout has been modifed from TitleSimpleAdapter to use item_titleicon instead
 protected int DEFAULT_LAYOUT_ID = R.layout.item_movie;

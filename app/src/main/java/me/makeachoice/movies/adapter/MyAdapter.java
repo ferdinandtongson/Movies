@@ -6,9 +6,9 @@ import android.view.View;
 import android.widget.BaseAdapter;
 
 /**
- * MyBaseAdapter - abstract class to act as my Base class for all my custom Adapters
+ * MyAdapter - abstract class to act as my Base class for all my custom Adapters
  */
-public abstract class MyBaseAdapter extends BaseAdapter{
+public abstract class MyAdapter extends BaseAdapter{
     Context mContext;
     LayoutInflater mInflater;
 
