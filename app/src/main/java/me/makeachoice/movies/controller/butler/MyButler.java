@@ -11,4 +11,8 @@ import me.makeachoice.movies.controller.Boss;
 public class MyButler {
     Boss mBoss;
     Context mActivityContext;
+
+    public Context getActivityContext(){
+        return mActivityContext;
+    }
 }
