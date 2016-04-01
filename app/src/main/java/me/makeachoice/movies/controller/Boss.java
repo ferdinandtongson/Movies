@@ -34,9 +34,6 @@ public class Boss extends Application{
 
 /**************************************************************************************************/
 
-
-
-
     private HashMap<String, Maid> mMaidRegistry = new HashMap<>();
     public void registerMaid(String key, Maid maid){
         mMaidRegistry.put(key, maid);
