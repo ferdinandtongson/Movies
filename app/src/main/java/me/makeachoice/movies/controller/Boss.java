@@ -8,7 +8,7 @@ import java.util.HashMap;
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
-import me.makeachoice.movies.model.MovieModel;
+import me.makeachoice.movies.model.json.MovieJSON;
 
 /**
  * Boss is the "boss", main controller of the app and interfaces with the View and Model. Boss
@@ -26,7 +26,7 @@ public class Boss extends Application{
         mButler.establishHttpConnection();
     }
 
-    public MovieModel getModel(){
+    public MovieJSON getModel(){
         return mButler.getModel();
     }
 
