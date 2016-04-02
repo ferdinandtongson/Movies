@@ -28,16 +28,16 @@ public class MovieJSON {
         private String mReleaseDate;
         private String mOriginalLanguage;
 
-        private String mPopularity;
-        private String mVoteCount;
-        private String mVoteAverage;
+        private Float mPopularity;
+        private Integer mVoteCount;
+        private Float mVoteAverage;
 
-        private String mGenreId;
+        private Integer[] mGenreIds;
         private Boolean mAdult;
 
         private String mPosterPath;
         private String mBackdropPath;
-        private String mVideo;
+        private Boolean mVideo;
 
         public MovieDetail(){}
 
@@ -48,16 +48,16 @@ public class MovieJSON {
         public String getReleaseDate(){return mReleaseDate;}
         public String getOriginalLanguage(){return mOriginalLanguage;}
 
-        public String getPopularity(){return mPopularity;}
-        public String getVoteCount(){return mVoteCount;}
-        public String getVoteAverage(){return mVoteAverage;}
+        public Float getPopularity(){return mPopularity;}
+        public Integer getVoteCount(){return mVoteCount;}
+        public Float getVoteAverage(){return mVoteAverage;}
 
-        public String getGenreId(){return mGenreId;}
+        public Integer[] getGenreIds(){return mGenreIds;}
         public Boolean getAdult(){return mAdult;}
 
         public String getPosterPath(){return mPosterPath;}
         public String getBackdropPath(){return mBackdropPath;}
-        public String getVideo(){return mVideo;}
+        public Boolean getVideo(){return mVideo;}
 
 
         public void setOriginalTitle(String title){mOriginalTitle = title;}
@@ -67,16 +67,16 @@ public class MovieJSON {
         public void setReleaseDate(String date){mReleaseDate = date;}
         public void setOriginalLanguage(String language){mOriginalLanguage = language;}
 
-        public void setPopularity(String popularity){mPopularity = popularity;}
-        public void setVoteCount(String count){mVoteCount = count;}
-        public void setVoteAverage(String average){mVoteAverage = average;}
+        public void setPopularity(Float popularity){mPopularity = popularity;}
+        public void setVoteCount(Integer count){mVoteCount = count;}
+        public void setVoteAverage(Float average){mVoteAverage = average;}
 
-        public void setGenreId(String id){mGenreId = id;}
+        public void setGenreId(Integer[] ids){mGenreIds = ids;}
         public void setAdult(Boolean isAdult){mAdult = isAdult;}
 
         public void setPosterPath(String path){mPosterPath = path;}
         public void setBackdropPath(String path){mBackdropPath = path;}
-        public void setVideo(String path){mVideo = path;}
+        public void setVideo(Boolean hasVideo){mVideo = hasVideo;}
 
     }
 
