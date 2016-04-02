@@ -20,6 +20,12 @@ import me.makeachoice.movies.controller.butler.MyButler;
  * array. So we can call doInBackground("x1", "x2", "x3") and process the variables by using
  * params[0], params[1] and params[2].
  *
+ * For access to Network information or using the internet, we need to modify the AndroidManifest
+ * file to contain permissions, this is placed outside of <application></application>:
+ *      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+ *      <uses-permission android:name="android.permission.INTERNET" />
+
+ *
  */
 public abstract class MyWorker extends AsyncTask<String, Integer, Boolean> {
 
