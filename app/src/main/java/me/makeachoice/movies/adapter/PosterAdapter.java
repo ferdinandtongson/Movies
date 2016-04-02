@@ -34,9 +34,9 @@ public class PosterAdapter extends MyAdapter {
     //Default layout has been modifed from TitleSimpleAdapter to use item_titleicon instead
     protected int DEFAULT_LAYOUT_ID = R.layout.item_poster;
     //Default ImageView id found in the default layout
-    protected int DEFAULT_POSTER_VIEW_ID = R.id.item_poster;
+    protected int DEFAULT_POSTER_VIEW_ID = R.id.img_poster;
     //Defaul TextView id found in the default layout
-    protected int DEFAULT_TITLE_VIEW_ID = R.id.item_title;
+    protected int DEFAULT_TITLE_VIEW_ID = R.id.txt_title;
 
     //mItemLayoutId - id of the layout to be inflated
     protected int mItemLayoutId;
