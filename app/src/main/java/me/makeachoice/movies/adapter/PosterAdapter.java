@@ -15,7 +15,7 @@ import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.adapter.util.ViewHolder;
 
 /**
-* MoviePosterAdapter extends BaseAdapter class and is used as a List Adapter to display an image
+* PosterAdapter extends BaseAdapter class and is used as a List Adapter to display an image
 * (movie poster) and a title text (movie title)
 *
 * Variables from MyAdapter:
@@ -28,7 +28,7 @@ import me.makeachoice.movies.adapter.util.ViewHolder;
 *      setOnClickListener(Listener)
 *
 */
-public class MoviePosterAdapter extends MyAdapter {
+public class PosterAdapter extends MyAdapter {
 
 /**************************************************************************************************/
     //Default layout has been modifed from TitleSimpleAdapter to use item_titleicon instead
@@ -56,11 +56,11 @@ public class MoviePosterAdapter extends MyAdapter {
 
 /**************************************************************************************************/
 /**
- * MoviePosterAdapter - constructor, uses default values for Layout, ImageView
+ * PosterAdapter - constructor, uses default values for Layout, ImageView
  * @param c - activity context
  * @param items - array list of PosterItem objects; data used to populate view objects
  */
-    public MoviePosterAdapter(Context c, ArrayList<PosterItem> items) {
+    public PosterAdapter(Context c, ArrayList<PosterItem> items) {
         //initialize class variables
         mContext = c;
         mInflater = LayoutInflater.from(c);
@@ -73,12 +73,12 @@ public class MoviePosterAdapter extends MyAdapter {
     }
 
     /**
-     * MoviePosterAdapter - constructor, accept Keeper values for Layout and ImageView (for Poster)
+     * PosterAdapter - constructor, accept Keeper values for Layout and ImageView (for Poster)
      * @param c - activity context
      * @param items - array list of PosterItem objects; data used to populate view objects
      * @param ids - an int array holding layout and child id values
      */
-    public MoviePosterAdapter(Context c, ArrayList<PosterItem> items, int[] ids){
+    public PosterAdapter(Context c, ArrayList<PosterItem> items, int[] ids){
         //initialize class variable
         mContext = c;
         mInflater = LayoutInflater.from(c);
@@ -159,7 +159,7 @@ public class MoviePosterAdapter extends MyAdapter {
     }
 
     private void updatePosterView(PosterItem item, View convertView){
-        Log.d("Movies", "MoviePosterAdapter.updatePosterView");
+        Log.d("Movies", "PosterAdapter.updatePosterView");
         //get child view using ViewHolder class
         ImageView imgPoster = ViewHolder.get(convertView, mPosterViewId);
         if(imgPoster == null){
