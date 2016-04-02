@@ -6,6 +6,7 @@ import android.util.Log;
 import me.makeachoice.movies.controller.worker.MovieWorker;
 import me.makeachoice.movies.model.MovieModel;
 import me.makeachoice.movies.R;
+import me.makeachoice.movies.model.json.MovieJSON;
 
 /**
  * MovieButler handles the creation of the AppDemo model, taking resources from a flat file,
@@ -16,7 +17,7 @@ public class MovieButler extends MyButler{
     public MovieButler(Context ctx){
         Log.d("Movies", "MovieButler: " + ctx.toString());
         mActivityContext = ctx;
-        createModel();
+        //createModel();
 
     }
 
@@ -42,10 +43,11 @@ public class MovieButler extends MyButler{
 
     public void workComplete(Boolean result) {
         Log.d("Movies", "MovieButler.movieWorkerDone: " + result);
+        mMovieModel = mMovieWorker.getMovies();
     }
 
-    MovieModel mMovieModel;
-    private void createModel(){
+    MovieJSON mMovieModel;
+    /*private void createModel(){
         //this is where the threads, database or resource access is called to create the model
         Log.d("Movies", "MovieButler.createModel()");
         mMovieModel = new MovieModel();
@@ -56,11 +58,11 @@ public class MovieButler extends MyButler{
         mMovieModel.addMovie("Title1", "Plot1", R.drawable.sample_1, "Rating1", "Date1");
         mMovieModel.addMovie("Title1", "Plot1", R.drawable.sample_1, "Rating1", "Date1");
         mMovieModel.addMovie("Title1", "Plot1", R.drawable.sample_1, "Rating1", "Date1");
-    }
+    }*/
 
 
 
-    public MovieModel getModel( ){
+    public MovieJSON getModel( ){
         return mMovieModel;
     }
 
