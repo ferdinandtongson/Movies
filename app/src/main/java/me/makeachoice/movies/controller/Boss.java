@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
-import me.makeachoice.movies.controller.maid.MyMaid;
+import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.model.MovieModel;
 
 /**

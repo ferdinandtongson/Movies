@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.maid;
+package me.makeachoice.movies.controller.housekeeper.maid;
 
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 

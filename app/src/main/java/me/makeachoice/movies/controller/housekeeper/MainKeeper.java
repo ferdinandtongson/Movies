@@ -19,7 +19,7 @@ import me.makeachoice.movies.MainActivity;
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.adapter.MoviePosterAdapter;
 import me.makeachoice.movies.adapter.item.MovieItem;
-import me.makeachoice.movies.controller.maid.MovieSelectMaid;
+import me.makeachoice.movies.controller.housekeeper.maid.MovieSelectMaid;
 import me.makeachoice.movies.fragment.SimpleGridFragment;
 import me.makeachoice.movies.model.MovieModel;
 import me.makeachoice.movies.controller.Boss;
@@ -96,7 +96,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         mFragmentManager = manager;
 
         mBoss.registerHouseKeeper(NAME, this);
-        //TODO - need to be able to save user default fragment select type
         mMapFragmentType = new HashMap<>();
 
         initHouseKeeping();
@@ -173,7 +172,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * the following resource ids:
  *      LAYOUT_ITEM_MOVIE_
  *      ITEM_MOVIE_CHILD_POSTER_VIEW
- *
  */
 /**************************************************************************************************/
     //LAYOUT_ITEM_MOVIE - item layout id used by MoviePosterAdapter
