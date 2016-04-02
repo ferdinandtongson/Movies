@@ -11,11 +11,11 @@ import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.model.json.MovieJSON;
 
 /**
- * MovieSelectStaff purpose to create the MoviePoster Adapter and prepare it  for consumption
+ * PosterStaffs' purpose is to create the PosterAdapter and prepare it  for consumption
  */
-public class MovieSelectStaff {
+public class PosterStaff {
 
-    public MovieSelectStaff(){  }
+    public PosterStaff(){  }
 
 /**************************************************************************************************/
 /**
