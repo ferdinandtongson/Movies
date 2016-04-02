@@ -12,17 +12,16 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.makeachoice.movies.MainActivity;
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.adapter.MoviePosterAdapter;
-import me.makeachoice.movies.adapter.item.MovieItem;
-import me.makeachoice.movies.controller.housekeeper.maid.MovieSelectMaid;
+import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
+import me.makeachoice.movies.controller.housekeeper.staff.PosterStaff;
 import me.makeachoice.movies.fragment.SimpleGridFragment;
 import me.makeachoice.movies.model.MovieModel;
 import me.makeachoice.movies.controller.Boss;
+import me.makeachoice.movies.model.json.MovieJSON;
 
 /**
  * MainKeeper is the MyHouseKeeper class for MainActivity. It's primary responsibility is to
@@ -36,7 +35,7 @@ import me.makeachoice.movies.controller.Boss;
  * Finally, it directly communicates with the Boss to get all the necessary data for the Views.
  */
 public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
-        MovieSelectMaid.Bridge{
+        PosterMaid.Bridge{
 /**
  * MainKeeper will be able to display the following fragments:
  *      AppList
@@ -103,7 +102,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
 /**************************************************************************************************/
 /**
- * MovieSelectMaid is in charge of taking care of displaying thumbnail icon images of movies in a
+ * PosterMaid is in charge of taking care of displaying thumbnail icon images of movies in a
  * grid fragment. It will maintain all events or requests called by the fragment and will push
  * these events or requests up to the MyHouseKeeper if the MyMaid cannot handle it.
  *
@@ -112,18 +111,17 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * or requests up to the MyHouseKeeper if the MyMaid cannot handle it.
  */
 /**************************************************************************************************/
-    //TODO - mMovieSelectMaid - maid in charge of the grid fragment displaying a selection of movies
-    private MovieSelectMaid mMovieSelectMaid;
+
     //TODO - mMovieInfoMaid - maid in charge of the fragment displaying info about a particular movie
     //private MovieInfoMaid mMovieInfoMaid
 
-    //NAME_APP_SELECT_MAID - name registered to the Boss for MovieSelectMaid
-    private final static String NAME_MOVIE_SELECT_MAID = "MovieSelectMaid";
+    //NAME_APP_SELECT_MAID - name registered to the Boss for PosterMaid
+    private final static String NAME_POSTER_MAID = "PosterMaid";
     //NAME_APP_INFO_MAID - name registered to the Boss for AppInfoMaid
     private final static String NAME_MOVIE_INFO_MAID = "MovieInfoMaid";
 
     //mMovieSelectAdapter - list adapter of of movie thumbnail icons
-    ListAdapter mMovieSelectAdapter;
+    ListAdapter mPosterAdapter;
 
 /**************************************************************************************************/
 /**
@@ -131,119 +129,59 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * will be added to MainKeepers' Activity.
  *
  * HouseKeeping:
- *      MovieSelectMaid
+ *      PosterMaid
  *      MovieInfoMaid
  */
     private void initHouseKeeping(){
-        //initialize MyMaid in charge of the movie selection fragment (grid fragment)
-        initMovieSelectMaid();
+        //initialize Maid and Staff in charge of the poster fragment (grid fragment)
+        initPosterMaid();
 
         //initialize MyMaid in charge of displaying info about a movie (fragment)
         //initMovieInfoMaid();
     }
+/**************************************************************************************************/
 
-/**
- * void initMovieSelectMaid() - initialize MovieSelectMaid and register MyMaid to Boss
- */
-    private void initMovieSelectMaid(){
-        //initialize and register MovieSelectMaid
-        mMovieSelectMaid = new MovieSelectMaid(this);
-        mBoss.registerMaid(NAME_MOVIE_SELECT_MAID, mMovieSelectMaid);
-    }
-
-    private void createMovieSelectAdapter(){
-        //TODO - initialize and send ListAdapter to MyMaid
-        mMovieSelectAdapter = initializeAdapter(mBoss.getModel());
-        mMovieSelectMaid.setListAdapter(mMovieSelectAdapter);
-    }
-
-/**
- * void intitAppInfoMaid() - initialize AppInfoMaid and register MyMaid to Boss
- */
-    private void initMovieInfoMaid(){
-        //TODO - initialize and register MovieInfoMaid
-        //mMovieInfoMaid = new MovieInfoMaid(this);
-        //mBoss.registerMaid(NAME_MOVIE_INFO_MAID, mMovieInfoMaid);
-    }
+    //mPosterMaid - maid in charge of the poster fragment
+    private PosterMaid mPosterMaid;
+    //mPosterStaff - needed by PosterMaid, handles creating the PosterAdapter
+    private PosterStaff mPosterStaff;
 
 /**************************************************************************************************/
 /**
- * MoviePosterAdapter - ListAdapter which displays a list of movies posters. MovieListAdapter uses
- * the following resource ids:
- *      LAYOUT_ITEM_MOVIE_
- *      ITEM_MOVIE_CHILD_POSTER_VIEW
+ * void initPosterMaid() - initialize PosterMaid and Staff needed by PosterMaid and register
+ * Maid to Boss.
+ *
+ * Staff:
+ *      PosterStaff
+ *
+ * Implements PosterMaid.Bridge methods:
+ *      ListAdapter requestPosterAdapter();
+ *      void onItemClick(ListView l, View v, int position, long id);
  */
-/**************************************************************************************************/
-    //LAYOUT_ITEM_MOVIE - item layout id used by MoviePosterAdapter
-    private final static int LAYOUT_ITEM_MOVIE = R.layout.item_movie;
+    private void initPosterMaid(){
+        //initialize and register PosterMaid
+        mPosterMaid = new PosterMaid(this);
+        mBoss.registerMaid(NAME_POSTER_MAID, mPosterMaid);
 
-    //Child View ids from Item Layouts above
-    private final static int ITEM_MOVIE_CHILD_POSTER_VIEW = R.id.item_poster;
-
-/**************************************************************************************************/
-/**
- * ListAdapter initializeAdapter() initializes the ListAdapter(s) that can be used by the
- * MovieSelect fragment.
- * @return ListAdapter - will return a reference to the ListAdapter to be consumed.
- */
-    public ListAdapter initializeAdapter(MovieModel model){
-        Log.d("Movies", "MainKeeper.initializeAdapter");
-        //ListAdapter variable to be return
-        ListAdapter adapter;
-
-        //GridView fragment, initialize an Icon type adapter using the data model for the apps
-        adapter = initMoviePosterAdapter(model, LAYOUT_ITEM_MOVIE, ITEM_MOVIE_CHILD_POSTER_VIEW);
-
-        return adapter;
+        mPosterStaff = new PosterStaff();
     }
 
 /**
- * ListAdapter initMoviePosterAdapter(model, int, int) - initialize the Movie Poster adapter that
- * will be used by the GridView fragment. Uses MovieModel.
- * @param model - data model for the movies
- * @return ListAdapter - will return a reference to the MoviePoster adapter create with the model
- */
-    private ListAdapter initMoviePosterAdapter(MovieModel model, int layoutId, int posterViewId){
-        //create an ArrayList to hold the list items to be consumed by the ListAdapter
-        ArrayList<MovieItem> itemList = new ArrayList<>();
-
-        //number of Movie data models
-        int count = model.getMovieCount();
-
-        //loop through the data models
-        for(int i = 0; i < count; i++){
-            //add items to ArrayList<T>
-            MovieItem item = new MovieItem(model.getMovie(i).getPoster());
-
-            //add item into array list
-            itemList.add(item);
-        }
-
-        //instantiate MoviePosterAdapter with layout id found in res/layout and the child
-        MoviePosterAdapter adapter = new MoviePosterAdapter(mActivityContext, itemList,
-                layoutId, posterViewId);
-        //TODO - setOnClickListener
-        //adapter.setOnClickListener(mAppListOnClickListener);
-
-        return adapter;
-    }
-
-/**
- * ListAdapter getListAdapter() - returns a reference of the ListAdapter used by the MovieSelect
+ * ListAdapter requestPosterAdapter() - returns a reference of the ListAdapter used by the Poster
  * Fragment
- * @return ListAdapter - adapter consumed by MovieSelect Fragment
+ * @return ListAdapter - PosterAdapter
  */
-    public ListAdapter getListAdapter(){
+    public ListAdapter requestPosterAdapter(){
         //check if ListAdapter for MovieSelect Fragment is null
-        if(mMovieSelectAdapter == null){
+        if(mPosterAdapter == null){
             //initialize adapter for MovieSelect Fragment
-            mMovieSelectAdapter = initializeAdapter(mBoss.getModel());
+            mPosterAdapter = mPosterStaff.initPosterAdapter(mActivityContext, mBoss.getModel());
         }
 
-        //return MovieSelect Fragment
-        return mMovieSelectAdapter;
+        //return PosterAdapter for consumption
+        return mPosterAdapter;
     }
-
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
@@ -369,8 +307,9 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
     public void prepareFragment(Boolean shouldAdd){
         //TODO - MovieSelect Fragment is hard-coded in this method
         Log.d("Movies", "MainKeeper.prepareFragment");
-        //create the ListAdapter to be displayed by the MovieSelect Fragment
-        createMovieSelectAdapter();
+        //create PosterAdapter and send it to the Maid managing Poster fragment
+        mPosterAdapter = mPosterStaff.initPosterAdapter(mActivityContext, mBoss.getModel());
+        mPosterMaid.setListAdapter(mPosterAdapter);
 
         Log.d("Movies", "     completed MovieSelectAdapter");
         //initialize the MovieSelectFragment
@@ -475,7 +414,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
             ((SimpleGridFragment)fragment).setGridViewId(GRID_CHILD_GRID_VIEW);
 
             //setMaid name to fragment
-            ((SimpleGridFragment)fragment).setServiceName(NAME_MOVIE_SELECT_MAID);
+            ((SimpleGridFragment)fragment).setServiceName(NAME_POSTER_MAID);
 
         }
         else{
@@ -530,7 +469,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
      * @param position - list position of item clicked
      */
     public void onItemClick(ListView l, View v, int position, long id){
-        MovieModel model = mBoss.getModel();
+        MovieJSON model = mBoss.getModel();
         String msg = model.getMovie(position).getTitle();
 
         //display in long period of time
