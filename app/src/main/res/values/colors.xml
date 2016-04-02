@@ -3,4 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="powderBlueish">#90C3D4</color>
+    <color name="powderPurpleish">#C390D4</color>
+    <color name="powderGreenish">#A1D490</color>
+    <color name="powderBrownish">#D4A190</color>
+    <color name="powderOrangeish">#FF6103</color>
+
 </resources>
