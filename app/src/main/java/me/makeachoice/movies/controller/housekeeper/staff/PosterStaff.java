@@ -40,7 +40,7 @@ public class PosterStaff {
  * @param model - data model for the movies
  * @return ListAdapter - will return a reference to the Poster adapter create with the model
  */
-    private ListAdapter initPosterAdapter(Context ctx, MovieJSON model){
+    public ListAdapter initPosterAdapter(Context ctx, MovieJSON model){
 
         //create an ArrayList to hold the list items to be consumed by the ListAdapter
         ArrayList<PosterItem> itemList = prepareListOfItems(model);
