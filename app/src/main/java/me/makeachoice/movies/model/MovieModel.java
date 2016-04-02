@@ -72,26 +72,26 @@ public class MovieModel {
         mList.add(index, detail);
     }
 
-    public void updateApp(int index, MovieDetail detail){
+    public void updateMovie(int index, MovieDetail detail){
         //this replaces the old app at the index with an updated version
         mList.set(index, detail);
     }
 
-    public void removeApp(MovieDetail detail){
+    public void removeMovie(MovieDetail detail){
         //removes app object from list
         mList.remove(detail);
     }
 
-    public void removeApp(int index){
+    public void removeMovie(int index){
         //removes app object from list using the index value
         mList.remove(index);
     }
 
-    public boolean checkForApp(MovieDetail detail){
+    public boolean checkForMovie(MovieDetail detail){
         return mList.contains(detail);
     }
 
-    public int getAppCount(){
+    public int getMovieCount(){
         return mList.size();
     }
 }
