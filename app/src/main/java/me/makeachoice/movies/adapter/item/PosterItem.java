@@ -1,10 +1,10 @@
 package me.makeachoice.movies.adapter.item;
 
 /**
- * MoviePosterItem extends MyItem base class and will be used by a BaseAdapter. This class is
+ * PosterItem extends MyItem base class and will be used by a BaseAdapter. This class is
  * associated with item_poster.xml layout resource file.
  *
- * MoviePosterItem will contain the title and source image of the poster
+ * PosterItem will contain the title and source image of the poster
  *
  * In your Presenter, adding data to your adapter before calling setListAdapter():
  *      ArrayList<T> rowItems = new ArrayList<>();
@@ -18,7 +18,7 @@ package me.makeachoice.movies.adapter.item;
  *
  *
  */
-public class MoviePosterItem extends MyItem {
+public class PosterItem extends MyItem {
 
 /**************************************************************************************************/
 
@@ -29,16 +29,16 @@ public class MoviePosterItem extends MyItem {
 
 /**************************************************************************************************/
 /**
- * MoviePosterItem - empty constructor
+ * PosterItem - empty constructor
  */
-    public MoviePosterItem(){}
+    public PosterItem(){}
 
     /**
-     * MoviePosterItem(String, int) - constructor
+     * PosterItem(String, int) - constructor
      * @param title - title of poster
      * @param id - source image id of poster
      */
-    public MoviePosterItem(String title, int id){
+    public PosterItem(String title, int id){
         //title of poster
         mTitle = title;
         //source image id of poster
