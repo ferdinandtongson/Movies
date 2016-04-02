@@ -8,13 +8,13 @@ import android.widget.ListView;
 import me.makeachoice.movies.fragment.SimpleGridFragment;
 
 /**
- * MovieSelectMaid initializes and takes care of communicating with the Fragment that hold the
- * list of Movies the user can select from.
+ * PosterMaid initializes and takes care of communicating with the Fragment that hold the
+ * list of poster Movies the user can select from.
  *
  * Its main purpose is to handle events and request from the Fragment and if the Maid cannot handle
  * a request or an event, it will pass it onto the HouseKeeper.
  *
- * The MovieSelectMaid is only aware of the Fragment and the views at the fragment level. It is NOT
+ * The PosterMaid is only aware of the Fragment and the views at the fragment level. It is NOT
  * aware of the view above it (the Activity containing the Fragment) or below it (the View Items in
  * a ListView or GridView, for example).
  *
@@ -27,12 +27,12 @@ import me.makeachoice.movies.fragment.SimpleGridFragment;
  *      void setListAdapter(ListAdapter) - receives the ListAdapter from Boss to be displayed
  *      void onItemClick(...) - list item click event
  */
-public class MovieSelectMaid extends MyMaid implements SimpleGridFragment.Bridge{
+public class PosterMaid extends MyMaid implements SimpleGridFragment.Bridge{
 
     private ListAdapter mListAdapter;
 
     private Bridge mBridge;
-    public MovieSelectMaid(Bridge bridge){
+    public PosterMaid(Bridge bridge){
         mBridge = bridge;
 
     }
