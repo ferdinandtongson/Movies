@@ -23,6 +23,7 @@ public class Boss extends Application{
     public void setActivityContext(Context ctx){
         mActivityContext = ctx;
         mButler = new MovieButler(mActivityContext);
+        mButler.establishHttpConnection();
     }
 
     public MovieModel getModel(){
