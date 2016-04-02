@@ -35,4 +35,8 @@ public class HttpWorker  extends MyWorker{
         }
 
     }
+
+    protected Object doInBackground(Object[] params){
+        return null;
+    }
 }
