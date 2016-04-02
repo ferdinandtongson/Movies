@@ -32,7 +32,7 @@ public class MovieJSON {
         private String mVoteCount;
         private String mVoteAverage;
 
-        private int[] mGenreIds;
+        private String mGenreId;
         private Boolean mAdult;
 
         private String mPosterPath;
@@ -52,7 +52,7 @@ public class MovieJSON {
         public String getVoteCount(){return mVoteCount;}
         public String getVoteAverage(){return mVoteAverage;}
 
-        public int[] getGenreIds(){return mGenreIds;}
+        public String getGenreId(){return mGenreId;}
         public Boolean getAdult(){return mAdult;}
 
         public String getPosterPath(){return mPosterPath;}
@@ -71,7 +71,7 @@ public class MovieJSON {
         public void setVoteCount(String count){mVoteCount = count;}
         public void setVoteAverage(String average){mVoteAverage = average;}
 
-        public void setGenreIds(int[] ids){mGenreIds = ids;}
+        public void setGenreId(String id){mGenreId = id;}
         public void setAdult(Boolean isAdult){mAdult = isAdult;}
 
         public void setPosterPath(String path){mPosterPath = path;}
