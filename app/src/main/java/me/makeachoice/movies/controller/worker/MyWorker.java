@@ -33,7 +33,7 @@ public abstract class MyWorker extends AsyncTask<String, Integer, Boolean> {
     MyButler mButler;
 
     //abstract method from AsyncTask, see notes above about AsyncTask<Params, Progress, Result>
-    //doInBackground - runs in background thread
+    //doInBackground - runs in background thread; called after MyWorker.execute(...)
     protected abstract Boolean doInBackground(String... params);
     //onProgressUpdate - runs in UI thread
     protected abstract void onProgressUpdate(Integer... values);
