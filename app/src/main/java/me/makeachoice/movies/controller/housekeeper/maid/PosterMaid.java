@@ -39,7 +39,7 @@ public class PosterMaid extends MyMaid implements SimpleGridFragment.Bridge{
 
     public interface Bridge{
         //Interface methods needed to be implemented by the instantiating class
-        ListAdapter getListAdapter();
+        ListAdapter requestPosterAdapter();
         void onItemClick(ListView l, View v, int position, long id);
     }
 
@@ -62,7 +62,7 @@ public class PosterMaid extends MyMaid implements SimpleGridFragment.Bridge{
         //checks if ListAdapter is null
         if(mListAdapter == null){
             //if null, request ListAdapter from Boss
-            mListAdapter = mBridge.getListAdapter();
+            mListAdapter = mBridge.requestPosterAdapter();
         }
 
         //return list adapter to calling fragment
