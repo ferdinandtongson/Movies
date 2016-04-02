@@ -28,9 +28,9 @@ public class MovieJSON {
         private String mReleaseDate;
         private String mOriginalLanguage;
 
-        private Float mPopularity;
-        private Integer mVoteCount;
-        private Float mVoteAverage;
+        private Double mPopularity;
+        private Double mVoteCount;
+        private Double mVoteAverage;
 
         private Integer[] mGenreIds;
         private Boolean mAdult;
@@ -48,9 +48,9 @@ public class MovieJSON {
         public String getReleaseDate(){return mReleaseDate;}
         public String getOriginalLanguage(){return mOriginalLanguage;}
 
-        public Float getPopularity(){return mPopularity;}
-        public Integer getVoteCount(){return mVoteCount;}
-        public Float getVoteAverage(){return mVoteAverage;}
+        public Double getPopularity(){return mPopularity;}
+        public Double getVoteCount(){return mVoteCount;}
+        public Double getVoteAverage(){return mVoteAverage;}
 
         public Integer[] getGenreIds(){return mGenreIds;}
         public Boolean getAdult(){return mAdult;}
@@ -67,9 +67,9 @@ public class MovieJSON {
         public void setReleaseDate(String date){mReleaseDate = date;}
         public void setOriginalLanguage(String language){mOriginalLanguage = language;}
 
-        public void setPopularity(Float popularity){mPopularity = popularity;}
-        public void setVoteCount(Integer count){mVoteCount = count;}
-        public void setVoteAverage(Float average){mVoteAverage = average;}
+        public void setPopularity(Double popularity){mPopularity = popularity;}
+        public void setVoteCount(Double count){mVoteCount = count;}
+        public void setVoteAverage(Double average){mVoteAverage = average;}
 
         public void setGenreId(Integer[] ids){mGenreIds = ids;}
         public void setAdult(Boolean isAdult){mAdult = isAdult;}
