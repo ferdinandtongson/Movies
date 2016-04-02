@@ -12,7 +12,6 @@ import me.makeachoice.movies.controller.Boss;
 
 
 /**************************************************************************************************/
-
 /**
  * SimpleGridFragment is a Fragment with only a GridView as a child
  */
