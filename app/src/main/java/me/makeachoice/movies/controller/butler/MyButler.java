@@ -15,4 +15,6 @@ public abstract class MyButler {
     public Context getActivityContext(){
         return mActivityContext;
     }
+
+    abstract public void workComplete(Boolean result);
 }
