@@ -210,7 +210,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         ArrayList<MovieItem> itemList = new ArrayList<>();
 
         //number of Movie data models
-        int count = model.getAppCount();
+        int count = model.getMovieCount();
 
         //loop through the data models
         for(int i = 0; i < count; i++){
