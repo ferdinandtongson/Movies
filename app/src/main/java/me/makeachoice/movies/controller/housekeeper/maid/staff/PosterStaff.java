@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.staff;
+package me.makeachoice.movies.controller.housekeeper.maid.staff;
 
 import android.content.Context;
 import android.widget.ListAdapter;
