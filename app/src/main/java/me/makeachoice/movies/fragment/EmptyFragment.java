@@ -108,8 +108,9 @@ public class EmptyFragment extends MyFragment {
         }
 
         //create and return fragment layout view from file found in res/layout/xxx.xml,
-        // use R.layout.xxx (mLayoutId)
-        mLayout = inflater.inflate(mLayoutId, container, false);
+        if(mLayout == null){
+            mLayout = inflater.inflate(mLayoutId, container, false);
+        }
         return mLayout;
     }
 
