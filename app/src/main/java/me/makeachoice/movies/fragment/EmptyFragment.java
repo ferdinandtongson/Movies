@@ -64,17 +64,12 @@ public class EmptyFragment extends MyFragment {
  * onAttach(...) called once the fragment is associated with its activity. Fragments are usually
  * created in the Activities onCreate( ) method.
  *
- * This is where you can check if the container activity has implemented a bridge interface. If
- * not, it throws an exception. The bridge interface acts as a bridge to communicate with the
- * implementing activity.
- *
  * @param context - activity context
  */
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-
-
+        //empty
     }
 
 /** onCreateView(...) is called when it's time for the fragment to draw its UI for the first
@@ -167,7 +162,8 @@ public class EmptyFragment extends MyFragment {
  * Implemented abstract methods from MyFragment:
  *      void setLayout(int)
  *      void setServiceName(String)
-  */
+ */
+/**************************************************************************************************/
 /**
  * void setLayout(int) allows the layout id for the fragment to be dynamically added
  * @param id  - resource layout id
