@@ -73,6 +73,8 @@ public class MovieWorker extends MyWorker{
         public final String SORT_TITLE_DESC = "original_title.desc";
         public final String SORT_RATE_ASC = "vote_average.asc";
         public final String SORT_RATE_DESC = "vote_average.desc";
+    public final String TMDB_VOTE_COUNT_GTE = "&vote_count.gte=";
+        public final String VOTE_COUNT_DEFAULT = "100";
 
     private final String TMBD_URL_POSTER = "https://image.tmdb.org/t/p/w500/";
 
