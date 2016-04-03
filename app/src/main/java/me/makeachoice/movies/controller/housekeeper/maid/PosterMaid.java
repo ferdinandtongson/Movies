@@ -88,10 +88,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge{
         return mFragment;
     }
 
-    public void clearAdapter(){
-        mListAdapter = null;
-    }
-
 /**************************************************************************************************/
 
 
