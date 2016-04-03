@@ -1,6 +1,7 @@
 package me.makeachoice.movies.fragment;
 
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.widget.ListAdapter;
 
 /**
@@ -9,6 +10,7 @@ import android.widget.ListAdapter;
 public abstract class MyFragment extends Fragment implements MyFragmentInterface{
 
     protected int mLayoutId;
+    protected View mLayout;
     protected String mServiceName;
     protected Bridge mBridge;
 
@@ -17,7 +19,6 @@ public abstract class MyFragment extends Fragment implements MyFragmentInterface
 
     //Upkeeping MyMaid class must implement this interface
     public interface Bridge{
-
         void onItemClick(int position);
         ListAdapter getListAdapter();
     }
