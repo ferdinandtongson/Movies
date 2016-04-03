@@ -33,10 +33,13 @@ public class Boss extends Application{
         }
     }
 
-    public MovieJSON getModel(){
-
-        if(mButler.getModel() == null && mButler.hasHttpConnection()){
-            mButler.requestPopularMovies();
+    private int mCurrentRequest;
+    public MovieJSON getModel(int request){
+        Log.d("Movies", "Boss.getModel");
+        if(mButler.getModel() == null || mCurrentRequest != request){
+            Log.d("Movies", "     new request: " + request);
+            mCurrentRequest = request;
+            mButler.requestMovies(request);
             return null;
         }
 
