@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import me.makeachoice.movies.fragment.SimpleGridFragment;
+import me.makeachoice.movies.fragment.PosterFragment;
 
 /**
  * PosterMaid initializes and takes care of communicating with the Fragment that hold the
@@ -21,13 +21,13 @@ import me.makeachoice.movies.fragment.SimpleGridFragment;
  * Variables from MyMaid:
  *      MyHouseKeeper mHouseKeeper
  *
- * Implements SimpleGridFragment.Bridge
+ * Implements PosterFragment.Bridge
  * //TODO - need to review implementations
  *      ListAdapter getListAdapter() - Fragments' access to the ListAdapter
  *      void setListAdapter(ListAdapter) - receives the ListAdapter from Boss to be displayed
  *      void onItemClick(...) - list item click event
  */
-public class PosterMaid extends MyMaid implements SimpleGridFragment.Bridge{
+public class PosterMaid extends MyMaid implements PosterFragment.Bridge{
 
     private ListAdapter mListAdapter;
 
