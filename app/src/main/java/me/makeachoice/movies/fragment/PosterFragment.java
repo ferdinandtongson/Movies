@@ -48,6 +48,8 @@ public class PosterFragment extends MyFragment {
     private int mGridViewId;
     //KEY_GRID_VIEW_ID - key used for bundle to save the child view id
     String KEY_GRID_VIEW_ID = "GridViewId";
+    //mGridView - gridView of fragment
+    private GridView mGridView;
 
 /**************************************************************************************************/
 
@@ -114,11 +116,14 @@ public class PosterFragment extends MyFragment {
         super.onActivityCreated(savedInstanceState);
         Log.d("Movies", "PosterFragment.onActivityCreated");
 
-        //create the child view, gridview
-        GridView gridView = (GridView)mLayout.findViewById(mGridViewId);
+        if(mGridView == null){
+            Log.d("Movies", "     gridView is null");
+            //create the child view, gridview
+            mGridView = (GridView)mLayout.findViewById(mGridViewId);
+        }
 
         //add ListAdapter to gridview
-        gridView.setAdapter(mBridge.getListAdapter());
+        mGridView.setAdapter(mBridge.getListAdapter());
     }
 
 /**
@@ -145,6 +150,7 @@ public class PosterFragment extends MyFragment {
     public void onDetach(){
         super.onDetach();
     }
+
 
 /**************************************************************************************************/
 
