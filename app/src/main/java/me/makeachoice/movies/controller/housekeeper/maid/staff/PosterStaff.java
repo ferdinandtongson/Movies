@@ -1,7 +1,7 @@
 package me.makeachoice.movies.controller.housekeeper.maid.staff;
 
 import android.content.Context;
-import android.util.Log;
+import android.view.View;
 import android.widget.ListAdapter;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class PosterStaff {
  * consumption.
  * @return ListAdapter - will return a reference to the Poster adapter create with the model
  */
-    private ListAdapter initPosterAdapter(){
+    private ListAdapter initPosterAdapter(View.OnClickListener listener){
 
         if(mPosterAdapter == null){
             //create an ArrayList to hold the list items to be consumed by the ListAdapter
@@ -70,6 +70,7 @@ public class PosterStaff {
 
             //instantiate PosterAdapter with layout id found in res/layout and the child
             mPosterAdapter = new PosterAdapter(mActivityContext, itemList, ids);
+            mPosterAdapter.setListener(listener);
         }
 
         return mPosterAdapter;
@@ -102,17 +103,11 @@ public class PosterStaff {
         return itemList;
     }
 
-    public ListAdapter getPosterAdapter(){
+    public ListAdapter getPosterAdapter(View.OnClickListener listener){
         if(mPosterAdapter == null){
-            return initPosterAdapter();
+            return initPosterAdapter(listener);
         }
 
         return mPosterAdapter;
-    }
-
-    public void refreshAdapter(MovieJSON model){
-        mPosterAdapter = null;
-        mModel = model;
-        initPosterAdapter();
     }
 }

@@ -4,10 +4,10 @@ import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -299,7 +299,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
             }
 
             //set list
-            mPosterMaid.setListAdapter(mPosterStaff.getPosterAdapter());
+            mPosterMaid.setListAdapter(mPosterStaff.getPosterAdapter(mPosterListener));
 
             //get PosterFragment
             fragment = mFragmentRegistry.get(NAME_POSTER);
@@ -323,10 +323,19 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
     public ListAdapter requestPosterAdapter(){
         //return PosterAdapter for consumption from PosterStaff
         //mPosterAdapter =
-        return mPosterStaff.getPosterAdapter();
+        return mPosterStaff.getPosterAdapter(mPosterListener);
     }
 
+    private View.OnClickListener mPosterListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            GridView gridView = (GridView)v.getParent();
 
+            int index = gridView.indexOfChild(v);
+            Log.d("Movies", "     movie: " + mBoss.getModel(mSortBy).getMovie(index).getTitle());
+
+        }
+    };
 
 /**
  * OnClickListener getFABOnClickListener() - get the OnClick Listener for the Floating Action

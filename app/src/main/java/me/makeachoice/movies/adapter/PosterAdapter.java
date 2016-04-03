@@ -97,6 +97,12 @@ public class PosterAdapter extends MyAdapter {
         mTitleViewId = ids[INDEX_TITLE_ID];
     }
 
+    View.OnClickListener mListener;
+
+    public void setListener(View.OnClickListener listener){
+        mListener = listener;
+    }
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -142,6 +148,7 @@ public class PosterAdapter extends MyAdapter {
         if (convertView == null) {
             // if not recycled, inflate layout of new view object
             convertView = mInflater.inflate(mItemLayoutId, null);
+            convertView.setOnClickListener(mListener);
         }
 
         //updateView with data
@@ -149,6 +156,7 @@ public class PosterAdapter extends MyAdapter {
 
         return convertView;
     }
+
 
 /**************************************************************************************************/
 
@@ -192,11 +200,12 @@ public class PosterAdapter extends MyAdapter {
         }
     }
 
-    /**
-     * void updateTitleView(PosterItem, View) - update textView with title of movie
-     * @param item - Poster Item object hodling movie info
-     * @param convertView - layout view holding child views
-     */
+
+        /**
+         * void updateTitleView(PosterItem, View) - update textView with title of movie
+         * @param item - Poster Item object hodling movie info
+         * @param convertView - layout view holding child views
+         */
     private void updateTitleView(PosterItem item, View convertView){
         //get child view using ViewHolder class
         TextView txtTitle = ViewHolder.get(convertView, mTitleViewId);
