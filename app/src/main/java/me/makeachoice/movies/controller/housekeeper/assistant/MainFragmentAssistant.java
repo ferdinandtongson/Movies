@@ -18,7 +18,7 @@ public class MainFragmentAssistant {
  * Variables used for initializing Fragments
  */
     //LAYOUT_POSTER_FRAGMENT - layout id used by Poster Fragment
-    private final static int LAYOUT_POSTER_FRAGMENT = R.layout.grid_fragment;
+    private final static int LAYOUT_POSTER_FRAGMENT = R.layout.poster_fragment;
     //POSTER_CHILD_GRID_VIEW - child view in poster fragment layout, gridView child
     private final static int POSTER_CHILD_GRID_VIEW = R.id.gridview;
     //mPosterFragment - fragment used to display a gridView of poster images
