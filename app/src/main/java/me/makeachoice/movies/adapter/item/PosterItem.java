@@ -1,5 +1,7 @@
 package me.makeachoice.movies.adapter.item;
 
+import android.graphics.Bitmap;
+
 /**
  * PosterItem extends MyItem base class and will be used by a BaseAdapter. This class is
  * associated with item_poster.xml layout resource file.
@@ -22,10 +24,12 @@ public class PosterItem extends MyItem {
 
 /**************************************************************************************************/
 
-    //mPosterId - holds the source image id of the poster to be displayed
-    protected int mPosterId;
     //mTitle - holds the title of the movie
     protected String mTitle;
+    //mPosterPath - holds the path to the poster image
+    protected String mPosterPath;
+    //mImage - holds the poster image
+    protected Bitmap mImage;
 
 /**************************************************************************************************/
 /**
@@ -36,33 +40,38 @@ public class PosterItem extends MyItem {
     /**
      * PosterItem(String, int) - constructor
      * @param title - title of poster
-     * @param id - source image id of poster
+     * @param path - path to image of poster
      */
-    public PosterItem(String title, int id){
+    public PosterItem(String title, String path){
         //title of poster
         mTitle = title;
-        //source image id of poster
-        mPosterId = id;
+        //path to poster image
+        mPosterPath = path;
+        //default image is null
+        mImage = null;
     }
 
 /**************************************************************************************************/
 /**
  * Getter and Setter for the image id of the movie poster thumbnail
  * String getTitle() returns title of poster
- * int getPoster() returns the poster id
+ * int getPosterPath() returns the poster id
  *
  * void setTitle(String) sets title value of poster
  * void setPoster(int) sets the int value of the poster source id
  */
     public String getTitle() { return mTitle; }
-    public int getPoster(){
-        return mPosterId;
+    public String getPosterPath(){
+        return mPosterPath;
     }
+    public Bitmap getImage(){ return mImage; }
+
 
     public void setTitle(String title) { mTitle = title; }
-    public void setPoster(int posterId){
-        mPosterId = posterId;
+    public void setPosterPath(String path){
+        mPosterPath = path;
     }
+    public void setImage(Bitmap img) { mImage = img; }
 
 /**************************************************************************************************/
 }
