@@ -190,7 +190,7 @@ public class EmptyFragment extends MyFragment {
  * void setTextViewId(int) - child view id of layout, a textview that will display a message
  * @param id - resource textview id
  */
-    public void setTexttViewId(int id){
+    public void setTextViewId(int id){
         //save textview id to an instance variable
         mTextViewId = id;
     }
