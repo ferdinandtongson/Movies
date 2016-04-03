@@ -13,10 +13,16 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
+import java.util.HashMap;
+
 import me.makeachoice.movies.MainActivity;
 import me.makeachoice.movies.R;
+import me.makeachoice.movies.adapter.PosterAdapter;
+import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.assistant.MainFragmentAssistant;
 import me.makeachoice.movies.controller.housekeeper.maid.EmptyMaid;
+import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
+import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.staff.PosterStaff;
 import me.makeachoice.movies.controller.Boss;
@@ -34,7 +40,7 @@ import me.makeachoice.movies.model.json.MovieJSON;
  * Finally, it directly communicates with the Boss to get all the necessary data for the Views.
  */
 public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
-        PosterMaid.Bridge{
+        PosterMaid.Bridge, EmptyMaid.Bridge, InfoMaid.Bridge{
 /**
  * MainKeeper will be able to display the following fragments:
  *      AppList
@@ -55,10 +61,8 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  *      int getToolbarId();
  *      int getFloatingActionButtonId();
  *
- *      int getFragmentType(String);
- *      void setFragmentType(String, int);
- *
  *      void createFragment(Boolean);
+ *      void setFragmentManager(FragmentManager manager)
  *
  *      void onOptionsItemSelected(MenuItem item);
  *      void setFABOnClickListener();
@@ -67,11 +71,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 /**************************************************************************************************/
     //NAME - unique name of the MyHouseKeeper
     public final static String NAME = "MainKeeper";
-
-    //mMovieSelectFrag - application movie select fragment, where user can select movie to look at
-    private Fragment mMovieSelectFrag;
-    //mMovieInfoFrag - application demo information fragment, where user can see info about movie
-    private Fragment mMovieInfoFrag;
 
     //mMovieSelectType - type of movie selection fragment
     public final static String FRAG_MOVIE_SELECT = "MovieSelectFragment";
@@ -86,31 +85,31 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
     public final static int INFO_TYPE_SIMPLE = 0;
 
+
 /**************************************************************************************************/
 
-    MainFragmentAssistant mFragAssistant;
-    public MainKeeper(Boss boss, Context ctx, FragmentManager manager){
+    private MainFragmentAssistant mFragAssistant;
+    private String mCurrentFragName;
+    public MainKeeper(Boss boss, Context ctx){
         Log.d("Movies", "MainKeeper constructor");
         mBoss = boss;
         mActivityContext = ctx;
-        mFragmentManager = manager;
 
         mBoss.registerHouseKeeper(NAME, this);
 
-        mHasFragment = false;
+        mCurrentFragName = NAME_POSTER;
+        mSortBy = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
 
         initHouseKeeping();
 
-        //initialize Fragments
-        initFragments();
+        mFragAssistant = new MainFragmentAssistant(LAYOUT_MAIN_CONTAINER);
+
     }
 
-    private void initFragments(){
-        mFragAssistant = new MainFragmentAssistant();
-
-        mFragAssistant.initPosterFragment(NAME_POSTER_MAID);
-        mFragAssistant.initEmptyFragment(NAME_EMPTY_MAID);
+    public void setFragmentManager(FragmentManager manager){
+        mFragmentManager = manager;
     }
+
 
 /**************************************************************************************************/
 /**
@@ -128,16 +127,22 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 /**************************************************************************************************/
 
     //NAME_POSTER_MAID - name registered to the Boss for PosterMaid
-    private final static String NAME_POSTER_MAID = "PosterMaid";
+    private final static String NAME_POSTER = "PosterName";
     //mPosterMaid - maid in charge of the PosterFragment
     private PosterMaid mPosterMaid;
     //mPosterStaff - needed by PosterMaid, handles creating the PosterAdapter
     private PosterStaff mPosterStaff;
 
     //NAME_EMPTY_MAID - name registered to the Boss for EmptyMaid
-    private final static String NAME_EMPTY_MAID = "EmptyMaid";
+    private final static String NAME_EMPTY = "EmptyName";
     //mEmptyMaid - maid in charge of the EmptyFragment
     private EmptyMaid mEmptyMaid;
+
+    //NAME_INFO_MAID - name registered to the Boss for InfoMaid
+    private final static String NAME_INFO = "InfoName";
+    //mInfoMaid - maid in charge of the InfoFragment
+    private InfoMaid mInfoMaid;
+
 /**************************************************************************************************/
 /**
  * void initHouseKeeping() - initializes the Maids that will take care of the fragments that
@@ -150,6 +155,8 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
     private void initHouseKeeping(){
         //initialize Maid and Staff in charge of the poster fragment (grid fragment)
         initPosterMaid();
+        initEmptyMaid();
+        initInfoMaid();
     }
 
 /**************************************************************************************************/
@@ -166,36 +173,30 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  */
     private void initPosterMaid(){
         //initialize and register PosterMaid
-        mPosterMaid = new PosterMaid(this);
-        mBoss.registerMaid(NAME_POSTER_MAID, mPosterMaid);
+        mPosterMaid = new PosterMaid(this, NAME_POSTER);
+        mBoss.registerMaid(NAME_POSTER, mPosterMaid);
 
-        mPosterStaff = new PosterStaff();
+    }
+
+    private void initEmptyMaid(){
+        //initialize and register EmptyMaid
+        mEmptyMaid = new EmptyMaid(this, NAME_EMPTY);
+        mBoss.registerMaid(NAME_EMPTY, mEmptyMaid);
+    }
+
+    private void initInfoMaid(){
+        //initialize and register InfoMaid
+        mInfoMaid = new InfoMaid(this, NAME_INFO);
+        mBoss.registerMaid(NAME_INFO, mInfoMaid);
+    }
+
+    private HashMap<String, Fragment> mFragmentRegistry = new HashMap<>();
+    public void registerFragment(String key, Fragment fragment){
+        mFragmentRegistry.put(key, fragment);
     }
 
 
 
-/**************************************************************************************************/
-
-
-    //mMovieSelectAdapter - list adapter of of movie thumbnail icons
-    ListAdapter mPosterAdapter;
-
-
-/**
- * ListAdapter requestPosterAdapter() - returns a reference of the ListAdapter used by the Poster
- * Fragment
- * @return ListAdapter - PosterAdapter
- */
-    public ListAdapter requestPosterAdapter(){
-        //check if ListAdapter for MovieSelect Fragment is null
-        if(mPosterAdapter == null){
-            //initialize adapter for MovieSelect Fragment
-            mPosterAdapter = mPosterStaff.initPosterAdapter(mActivityContext, mBoss.getModel());
-        }
-
-        //return PosterAdapter for consumption
-        return mPosterAdapter;
-    }
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -215,12 +216,9 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
     private int MENU_ITEM01 = R.id.action_bar_item01;
     private int MENU_ITEM02 = R.id.action_bar_item02;
 
-    //Type of sorting order used to display movies
-    private int SORT_TYPE_POPULAR = 0;
-    private int SORT_TYPE_HIGHEST_RATED = 1;
 
     //mSortType - holds sort type
-    private int mSortType;
+    private int mSortBy;
 
     //FloatingActionButton Id found in float_button.xml layout file
     private int FLOATING_ACTION_BUTTON = R.id.fab;
@@ -239,7 +237,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 /**
  * Implements MainActivity.Bridge Methods:
  *      int getActivityLayoutId();
- *      int getFragmentContainerId();
  *      int getToolbarId();
  *      int getMenuId();
  *      int getFloatingActionButtonId();
@@ -260,14 +257,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         return LAYOUT_MAIN;
     }
 
-/**
- * int getFragmentContainerId() - get fragment container id, a framelayout found inside the xml
- * layout file used by the Activity to be used as a container to load fragments
- * @return int - framelayout id,
- */
-    public int getFragmentContainerId(){
-        return LAYOUT_MAIN_CONTAINER;
-    }
 
 /**
  * int getToolbarId() - get the toolbar id, a toolbar object found inside the xml layout file used
@@ -300,42 +289,44 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  */
     public void prepareFragment(){
         //TODO - MovieSelect Fragment is hard-coded in this method
-        Log.d("Movies", "MainKeeper.prepareFragment");
+        Log.d("Movies", "MainKeeper.prepareFragment: " + mSortBy);
 
         Fragment fragment;
-        if(mBoss.getModel() != null){
-            Log.d("Movies", "     mPosterAdapter");
-            //create PosterAdapter and send it to the Maid managing Poster fragment
-            mPosterAdapter = mPosterStaff.initPosterAdapter(mActivityContext, mBoss.getModel());
-            Log.d("Movies", "     setListAdapter");
-            mPosterMaid.setListAdapter(mPosterAdapter);
-            Log.d("Movies", "     getPosterFragment");
-            fragment = mFragAssistant.getPosterFragment();
+        if(mBoss.getModel(mSortBy) != null){
+
+            if(mPosterStaff == null){
+                mPosterStaff = new PosterStaff(mActivityContext, mBoss.getModel(mSortBy));
+            }
+
+            //set list
+            mPosterMaid.setListAdapter(mPosterStaff.getPosterAdapter());
+
+            //get PosterFragment
+            fragment = mFragmentRegistry.get(NAME_POSTER);
         }
         else{
-            fragment = mFragAssistant.getEmptyFragment();
+            fragment = mFragmentRegistry.get(NAME_EMPTY);
         }
 
         Log.d("Movies", "     manager: " + mFragmentManager.toString());
         //check if Fragment needs to be added to the Fragment manager
-        if(mHasFragment){
-            Log.d("Movies", "     hasFragment - true");
-            //add fragment to manager
-            replaceFragmentInManager(fragment);
-        }
-        else{
-            Log.d("Movies", "     hasFragment - false");
-            mHasFragment = true;
-            addFragmentToManager(fragment);
-        }
+        mFragAssistant.requestFragment(mFragmentManager, fragment);
 
     }
 
-    public void setFragmentManager(FragmentManager manager){
-        mFragmentManager = manager;
+/**************************************************************************************************/
+    /**
+     * ListAdapter requestPosterAdapter() - returns a reference of the ListAdapter used by the Poster
+     * Fragment
+     * @return ListAdapter - PosterAdapter
+     */
+    public ListAdapter requestPosterAdapter(){
+        //return PosterAdapter for consumption from PosterStaff
+        //mPosterAdapter =
+        return mPosterStaff.getPosterAdapter();
     }
 
-    private boolean mHasFragment;
+
 
 /**
  * OnClickListener getFABOnClickListener() - get the OnClick Listener for the Floating Action
@@ -359,24 +350,31 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         int id = item.getItemId();
 
         //create variable to hold sort type
-        int sortType;
+        int sortBy;
 
+        Log.d("Movies", "MainKeeper.onOptionsItemSelected: ");
         //get fragment type selected
         if (id == MENU_ITEM01) {
+            Log.d("Movies", "     most popular");
             //simple fragment list display
-            sortType = SORT_TYPE_POPULAR;
+            sortBy = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
         else if (id == MENU_ITEM02) {
+            Log.d("Movies", "     highest rated");
             //fragment list display with icons
-            sortType = SORT_TYPE_HIGHEST_RATED;
+            sortBy = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
         }
         else {
-            sortType = SORT_TYPE_POPULAR;
+            Log.d("Movies", "     default value");
+            sortBy = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
 
-        if(mSortType != sortType){
-            mSortType = sortType;
-            //TODO - need to send message up to boss about new sort order
+        if(mSortBy != sortBy){
+            Log.d("Movies", "     prep for change");
+            mSortBy = sortBy;
+            mPosterMaid.clearAdapter();
+            mPosterStaff.clearAdapter();
+            prepareFragment();
         }
 
     }
@@ -395,49 +393,14 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 /**************************************************************************************************/
 
 
-/**************************************************************************************************/
-/**
- * void addFragmentToManager(Fragment) - adds fragment to FragmentManager and commit to activity
- * @param fragment - fragment object to be added
- */
-    private void addFragmentToManager(Fragment fragment){
-        //begin fragment transaction
-        FragmentTransaction ft = mFragmentManager.beginTransaction();
-        //TODO - need to add animation for Fragment transistion
-
-        //add fragment to the fragment container
-        ft.add(LAYOUT_MAIN_CONTAINER, fragment);
-
-        //commit fragment to activity
-        ft.commit();
-    }
-
-/**
- * void replaceFragmentInManager(int) - replaces a fragment object held by the FragmentManager
- * and commit to activity
- */
-    private void replaceFragmentInManager(Fragment fragment){
-        Log.d("Simple", "MainKeeper.changeFragment");
-
-        //begin fragment transaction
-        FragmentTransaction ft = mFragmentManager.beginTransaction();
-
-        //replace fragment held by the FragmentManager
-        ft.replace(LAYOUT_MAIN_CONTAINER, fragment);
-
-        //commit fragment to activity
-        ft.commit();
-    }
-
-/**************************************************************************************************/
-
 
     /**
      * void onItemClick(int) - event listener call by the fragment when an app item has been clicked
      * @param position - list position of item clicked
      */
     public void onItemClick(ListView l, View v, int position, long id){
-        MovieJSON model = mBoss.getModel();
+        Log.d("Movies", "MainKeeper.onItemClick");
+        MovieJSON model = mBoss.getModel(mSortBy);
         String msg = model.getMovie(position).getTitle();
 
         //display in long period of time
@@ -445,11 +408,11 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
     }
 
     public String getPosterMaidName(){
-        return NAME_POSTER_MAID;
+        return NAME_POSTER;
     }
 
     public String getEmptyMaidName(){
-        return NAME_EMPTY_MAID;
+        return NAME_EMPTY;
     }
 
 }
