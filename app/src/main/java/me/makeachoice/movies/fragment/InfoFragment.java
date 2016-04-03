@@ -48,9 +48,9 @@ public class InfoFragment extends MyFragment {
     private int mTextViewId;
 
     //KEY_TEXT_VIEW_ID - key used for bundle to save id of the textView child
-    String KEY_TEXT_VIEW_ID = "TextViewId";
+    //String KEY_TEXT_VIEW_ID = "TextViewId";
     //KEY_MESSAGE - key used for bundle to save message used in the textView child
-    String KEY_MESSAGE = "Message";
+    //String KEY_MESSAGE = "Message";
 
     //mMessage - message when fragment is displayed
     String mMessage;
@@ -89,9 +89,9 @@ public class InfoFragment extends MyFragment {
             //get name of servers up-keeping this fragment
             mServiceName = savedInstanceState.getString(KEY_SERVICE_NAME);
             //get id of textView containing the "Empty" message
-            mTextViewId = savedInstanceState.getInt(KEY_TEXT_VIEW_ID);
+            //mTextViewId = savedInstanceState.getInt(KEY_TEXT_VIEW_ID);
             //get message for textView child
-            mMessage = savedInstanceState.getString(KEY_MESSAGE);
+            //mMessage = savedInstanceState.getString(KEY_MESSAGE);
 
         }
 
@@ -123,9 +123,9 @@ public class InfoFragment extends MyFragment {
         Log.d("Movies", "InfoFragment.onActivityCreated");
 
         //create the textView that will display a message
-        TextView txtView = (TextView)mLayout.findViewById(mTextViewId);
+        //TextView txtView = (TextView)mLayout.findViewById(mTextViewId);
         //set textView message
-        txtView.setText(mMessage);
+        //txtView.setText(mMessage);
     }
 
 /**
@@ -140,9 +140,9 @@ public class InfoFragment extends MyFragment {
         //save name of server maintaining this fragment
         saveState.putString(KEY_SERVICE_NAME, mServiceName);
         //save id of child view (textview) that displays the message
-        saveState.putInt(KEY_TEXT_VIEW_ID, mTextViewId);
+        //saveState.putInt(KEY_TEXT_VIEW_ID, mTextViewId);
         //save message to be displayed
-        saveState.putString(KEY_MESSAGE, mMessage);
+        //saveState.putString(KEY_MESSAGE, mMessage);
     }
 
 /**
