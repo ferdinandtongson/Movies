@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,9 +35,6 @@ public class MainActivity extends AppCompatActivity {
         int getMenuId();
         int getFloatingActionButtonId();
 
-        int getFragmentType(String key);
-        void setFragmentType(String key, int fragmentType);
-
         void prepareFragment(Boolean shouldAdd);
 
         View.OnClickListener getFABOnClickListener();
@@ -63,42 +61,23 @@ public class MainActivity extends AppCompatActivity {
         //register Activity context with Boss
         mBoss.setActivityContext(this);
 
+        Log.d("Movies", "MainActivity.onCreate");
         //start MyHouseKeeper for this Activity
         mHouseKeeper = new MainKeeper(mBoss, this, getSupportFragmentManager());
 
         //Note setContent must happen before toolbar
         setContentView(mHouseKeeper.getActivityLayoutId());
 
-        // However, if we're being restored from a previous state,
-        // then we don't need to do anything and should return or else
-        // we could end up with overlapping fragments.
-        if(savedInstanceState != null){
-            //Fragment is being reconstituted, need to recreate toolbar and float button
-            mHouseKeeper.setFragmentType(MainKeeper.FRAG_MOVIE_SELECT,
-                    savedInstanceState.getInt(MainKeeper.FRAG_MOVIE_SELECT));
-
-            //Create fragment, will be automatically added to fragment manager, shouldAdd = false
-            mHouseKeeper.prepareFragment(false);
-        }
-        else{
-            mHouseKeeper.setFragmentType(MainKeeper.FRAG_MOVIE_SELECT,
-                    MainKeeper.DEFAULT_SELECT_TYPE);
-
-            //Create the fragment, need to add to fragment manager, shouldAdd = true
-            mHouseKeeper.prepareFragment(true);
-        }
+        //Create fragment, will be automatically added to fragment manager
+        mHouseKeeper.prepareFragment();
 
         //Create toolbar with creation of Activity
         initToolbar();
 
-        //Create floating action button for Activity
-        //initFloatButton();
     }
 
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
-        saveState.putInt(MainKeeper.FRAG_MOVIE_SELECT,
-                mHouseKeeper.getFragmentType(MainKeeper.FRAG_MOVIE_SELECT));
 
     }
 
