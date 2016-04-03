@@ -1,9 +1,13 @@
 package me.makeachoice.movies.controller.housekeeper.assistant;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.fragment.EmptyFragment;
+import me.makeachoice.movies.fragment.InfoFragment;
 import me.makeachoice.movies.fragment.PosterFragment;
 
 /**
@@ -11,85 +15,63 @@ import me.makeachoice.movies.fragment.PosterFragment;
  */
 public class MainFragmentAssistant {
 
-    public MainFragmentAssistant(){}
+    private int mContainerId;
+    private boolean mHasFragment;
+    private int mCurrentFragment;
 
-/**************************************************************************************************/
-/**
- * Variables used for initializing Fragments
- */
-    //LAYOUT_POSTER_FRAGMENT - layout id used by Poster Fragment
-    private final static int LAYOUT_POSTER_FRAGMENT = R.layout.poster_fragment;
-    //POSTER_CHILD_GRID_VIEW - child view in poster fragment layout, gridView child
-    private final static int POSTER_CHILD_GRID_VIEW = R.id.gridview;
-    //mPosterFragment - fragment used to display a gridView of poster images
-    private PosterFragment mPosterFragment;
+    public MainFragmentAssistant(int containerId){
+        Log.d("Movies", "MainFragmentAssistant");
+        mContainerId = containerId;
+        mHasFragment = false;
+    }
 
-    //LAYOUT_EMPTY_FRAGMENT - layout id used by Empty Fragment
-    private final static int LAYOUT_EMPTY_FRAGMENT = R.layout.empty_fragment;
-    //EMPTY_CHILD_TEXT_VIEW - child view in empty fragment layout, textView child
-    private final static int EMPTY_CHILD_TEXT_VIEW = R.id.txt_empty;
-    //mEmptyFragment - fragment used to display an "Empty" message if PosterFragment is empty
-    private EmptyFragment mEmptyFragment;
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
-/**
- * void initPosterFragment(String) - initialize PosterFragment; set layout and child view ids and
- * send the Maid name to fragment
- */
-    public void initPosterFragment(String name){
-        Log.d("Movies", "     simple grid fragment");
-        //create PosterFragment
-        mPosterFragment = new PosterFragment();
 
-        //send layout id to PosterFragment
-        mPosterFragment.setLayout(LAYOUT_POSTER_FRAGMENT);
-
-        //send child view id, gridView
-        mPosterFragment.setGridViewId(POSTER_CHILD_GRID_VIEW);
-
-        //send Maid name to fragment
-        mPosterFragment.setServiceName(name);
+    public void requestFragment(FragmentManager manager, Fragment fragment){
+        if(mHasFragment){
+            replaceFragment(manager, fragment);
+        }
+        else{
+            mHasFragment = true;
+            addFragment(manager, fragment);
+        }
     }
 
 /**
- * void initEmptyFragment(String) - initialize EmptyFragment; set layout and child view ids and send
- * the Maid name to fragment
+ * void addFragmentToManager(Fragment) - adds fragment to FragmentManager and commit to activity
+ * @param fragment - fragment object to be added
  */
-    public void initEmptyFragment(String name){
-        //create EmptyFragmentt
-        mEmptyFragment = new EmptyFragment();
+    private void addFragment(FragmentManager manager, Fragment fragment){
+        //begin fragment transaction
+        FragmentTransaction ft = manager.beginTransaction();
 
-        //send layout id to EmptyFragment
-        mEmptyFragment.setLayout(LAYOUT_EMPTY_FRAGMENT);
+        //add fragment to the fragment container
+        ft.add(mContainerId, fragment);
 
-        //send child view id, textView
-        mEmptyFragment.setTexttViewId(EMPTY_CHILD_TEXT_VIEW);
+        //commit fragment to activity
+        ft.commit();
+    }
 
-        //send Maid name to fragment
-        mEmptyFragment.setServiceName(name);
+/**
+ * void replaceFragmentInManager(int) - replaces a fragment object held by the FragmentManager
+ * and commit to activity
+ */
+    private void replaceFragment(FragmentManager manager, Fragment fragment){
 
-        mEmptyFragment.setMessage("Hey Guys!!");
+        //begin fragment transaction
+        FragmentTransaction ft = manager.beginTransaction();
+
+        //replace fragment held by the FragmentManager
+        ft.replace(mContainerId, fragment);
+
+        //commit fragment to activity
+        ft.commit();
     }
 
 /**************************************************************************************************/
 
-/**************************************************************************************************/
-/**
- * PosterFragment getPosterFragment() - getter for PosterFragment
- */
-    public PosterFragment getPosterFragment(){
-        return mPosterFragment;
-    }
-
-/**
- * EmptyFragment getEmptyFragment() - getter for EmptyFragment
- */
-    public EmptyFragment getEmptyFragment(){
-        return mEmptyFragment;
-    }
-
-/**************************************************************************************************/
 
 }
