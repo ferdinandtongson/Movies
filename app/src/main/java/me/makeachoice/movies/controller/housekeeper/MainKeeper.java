@@ -352,28 +352,22 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         //create variable to hold sort type
         int sortBy;
 
-        Log.d("Movies", "MainKeeper.onOptionsItemSelected: ");
         //get fragment type selected
         if (id == MENU_ITEM01) {
-            Log.d("Movies", "     most popular");
             //simple fragment list display
             sortBy = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
         else if (id == MENU_ITEM02) {
-            Log.d("Movies", "     highest rated");
             //fragment list display with icons
             sortBy = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
         }
         else {
-            Log.d("Movies", "     default value");
             sortBy = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
 
         if(mSortBy != sortBy){
-            Log.d("Movies", "     prep for change");
             mSortBy = sortBy;
-            mPosterMaid.clearAdapter();
-            mPosterStaff.clearAdapter();
+            mPosterStaff = null;
             prepareFragment();
         }
 
