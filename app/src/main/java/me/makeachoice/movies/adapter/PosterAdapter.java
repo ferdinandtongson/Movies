@@ -1,6 +1,9 @@
 package me.makeachoice.movies.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import me.makeachoice.movies.R;
@@ -163,11 +170,15 @@ public class PosterAdapter extends MyAdapter {
         //get child view using ViewHolder class
         ImageView imgPoster = ViewHolder.get(convertView, mPosterViewId);
         if(imgPoster == null){
-            imgPoster = (ImageView) convertView.findViewById(mPosterViewId);
+            imgPoster = (ImageView)convertView.findViewById(mPosterViewId);
         }
 
-        //update child view data - poster image
-        imgPoster.setImageResource(item.getPoster());
+        if(item.getImage() != null){
+            imgPoster.setImageBitmap(item.getImage());
+        }
+        else{
+            loadImage(item.getPosterPath(), item, imgPoster);
+        }
     }
 
     private void updateTitleView(PosterItem item, View convertView){
@@ -183,5 +194,48 @@ public class PosterAdapter extends MyAdapter {
 
 /**************************************************************************************************/
 
+    public void loadImage(String url,PosterItem item,ImageView imgPoster){
+        if(url != null && !url.equals("")){
+            new ImageLoadTask(item, imgPoster).execute(url);
+        }
+    }
+
+    private class ImageLoadTask extends AsyncTask<String, String, Bitmap>{
+
+        PosterItem mItem;
+        ImageView mImgPoster;
+        public ImageLoadTask(PosterItem item, ImageView img){
+            mItem = item;
+            mImgPoster = img;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            //does nothing
+        }
+
+        protected Bitmap doInBackground(String... params){
+            Log.d("Movies", "ImageLoadTask.doInBackground");
+            Bitmap b = null;
+            try{
+                b = BitmapFactory.decodeStream((InputStream) new URL(params[0]).getContent());
+            }
+            catch(MalformedURLException e){
+                Log.d("Movies", "     malformedURL");
+            }
+            catch(IOException e){
+                Log.d("Movies", "     IOException");
+            }
+            return b;
+        }
+
+        protected void onPostExecute(Bitmap ret){
+            if(ret != null){
+                mImgPoster.setImageBitmap(ret);
+                mItem.setImage(ret);
+            }
+        }
+
+    }
 
 }
