@@ -53,6 +53,8 @@ public class EmptyFragment extends MyFragment {
     String KEY_TEXT_VIEW_ID = "TextViewId";
     //KEY_MESSAGE - key used for bundle to save message used in the textView child
     String KEY_MESSAGE = "Message";
+    //mTxtMessage - textView displaying message
+    private TextView mTxtMessage;
 
     //mMessage - message when fragment is displayed
     String mMessage;
@@ -122,10 +124,13 @@ public class EmptyFragment extends MyFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        //create the textView that will display a message
-        TextView txtView = (TextView)mLayout.findViewById(mTextViewId);
+        if(mTxtMessage == null){
+            //create the textView that will display a message
+            mTxtMessage = (TextView)mLayout.findViewById(mTextViewId);
+        }
+
         //set textView message
-        txtView.setText(mMessage);
+        mTxtMessage.setText(mMessage);
     }
 
 /**
