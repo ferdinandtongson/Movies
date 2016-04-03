@@ -27,7 +27,7 @@ import me.makeachoice.movies.controller.Boss;
  *      void setLayout(int)
  *      void setServiceName(String)
  */
-public class SimpleGridFragment extends MyFragment {
+public class PosterFragment extends MyFragment {
 /*
     Fragment subclasses require an empty default constructor. If you don't provide one but
     specify a non-empty constructor, Lint will give you an error.
@@ -36,11 +36,11 @@ public class SimpleGridFragment extends MyFragment {
     re-creating fragments by using the empty default constructor. If it cannot find one, you
     get an exception
  */
-    public static SimpleGridFragment newInstance(){
-        return new SimpleGridFragment();
+    public static PosterFragment newInstance(){
+        return new PosterFragment();
     }
 
-    public SimpleGridFragment(){}
+    public PosterFragment(){}
 
 /**************************************************************************************************/
 
@@ -74,7 +74,7 @@ public class SimpleGridFragment extends MyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("Movies", "SimpleGridFragment.onCreateView");
+        Log.d("Movies", "PosterFragment.onCreateView");
 
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
@@ -111,7 +111,7 @@ public class SimpleGridFragment extends MyFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("Movies", "SimpleGridFragment.onActivityCreated");
+        Log.d("Movies", "PosterFragment.onActivityCreated");
 
         //create the child view, gridview
         GridView gridView = (GridView)mLayout.findViewById(mGridViewId);
@@ -159,7 +159,7 @@ public class SimpleGridFragment extends MyFragment {
  * @param id  - resource layout id
  */
     public void setLayout(int id){
-        Log.d("SimpleListFragment", "SimpleGridFragment.setLayout");
+        Log.d("SimpleListFragment", "PosterFragment.setLayout");
 
         //save layout id to an instance variable
         mLayoutId = id;
@@ -189,7 +189,7 @@ public class SimpleGridFragment extends MyFragment {
  * @param position - position of the item; position is zero based (0 - x)
  */
     public void onItemClick(int position){
-        Log.d("SimpleListFragment", "SimpleGridFragment.onListItemClick");
+        Log.d("SimpleListFragment", "PosterFragment.onListItemClick");
         //sends the click event across the bridge for the activity to handle
         mBridge.onItemClick(position);
     }
