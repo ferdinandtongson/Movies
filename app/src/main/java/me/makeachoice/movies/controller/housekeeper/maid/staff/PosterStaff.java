@@ -1,6 +1,7 @@
 package me.makeachoice.movies.controller.housekeeper.maid.staff;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ListAdapter;
 
 import java.util.ArrayList;
@@ -109,7 +110,9 @@ public class PosterStaff {
         return mPosterAdapter;
     }
 
-    public void clearAdapter(){
+    public void refreshAdapter(MovieJSON model){
         mPosterAdapter = null;
+        mModel = model;
+        initPosterAdapter();
     }
 }
