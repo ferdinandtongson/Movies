@@ -1,5 +1,6 @@
 package me.makeachoice.movies.controller.worker;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -39,9 +40,11 @@ import me.makeachoice.movies.model.json.MovieJSON;
  */
 public class MovieWorker extends MyWorker{
 
+    private ProgressDialog mDialog;
     public MovieWorker(MyButler butler){
         //Butler in charge of MovieWorker
         mButler = butler;
+        mDialog = new ProgressDialog(mButler.getActivityContext());
     }
 
 /**************************************************************************************************/
@@ -104,6 +107,13 @@ public class MovieWorker extends MyWorker{
     }
 
 /**************************************************************************************************/
+
+    @Override
+    protected void onPreExecute(){
+        mDialog.setMessage("Doing something, please wait.");
+        mDialog.show();
+    }
+
 /**
  * Boolean doInBackground(String... params) is called after the instantiated Worker class calls
  * XWorker.execute(String...). doInBackground runs on a background thread but is only meant for
@@ -115,6 +125,7 @@ public class MovieWorker extends MyWorker{
  * @return - returns boolean value to onPostExecute
  */
     protected Boolean doInBackground(String... params){
+
         //url used
         String api_call = "";
         int count = params.length;
@@ -180,7 +191,10 @@ public class MovieWorker extends MyWorker{
  */
     protected void onPostExecute(Boolean result){
         //TODO - need to confirm success of background task
-        //does nothing
+        if(mDialog.isShowing()){
+            mDialog.dismiss();
+        }
+
         mButler.workComplete(result);
     }
 
