@@ -82,7 +82,6 @@ public class EmptyFragment extends MyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("Movies", "EmptyFragment.onCreateView");
 
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
@@ -122,7 +121,6 @@ public class EmptyFragment extends MyFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("Movies", "EmptyFragment.onActivityCreated");
 
         //create the textView that will display a message
         TextView txtView = (TextView)mLayout.findViewById(mTextViewId);
