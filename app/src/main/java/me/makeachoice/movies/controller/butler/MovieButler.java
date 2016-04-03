@@ -59,7 +59,9 @@ public class MovieButler extends MyButler{
                     mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
                     mMovieWorker.TMDB_API_KEY,
                     mMovieWorker.TMDB_SORT,
-                    mMovieWorker.SORT_RATE_DESC
+                    mMovieWorker.SORT_RATE_DESC,
+                    mMovieWorker.TMDB_VOTE_COUNT_GTE,
+                    mMovieWorker.VOTE_COUNT_DEFAULT
             );
         }
         else{
