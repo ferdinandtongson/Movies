@@ -2,10 +2,12 @@ package me.makeachoice.movies.controller;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
+import me.makeachoice.movies.controller.housekeeper.MainKeeper;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.model.json.MovieJSON;
@@ -21,13 +23,30 @@ public class Boss extends Application{
 
     MovieButler mButler;
     public void setActivityContext(Context ctx){
+        Log.d("Movies", "Boss.setActivityContext");
         mActivityContext = ctx;
-        mButler = new MovieButler(mActivityContext);
-        mButler.establishHttpConnection();
+
+        if(mButler == null){
+            //TODO - need to seperate http call
+            Log.d("Movies", "     Butler null");
+            mButler = new MovieButler(mActivityContext, this);
+        }
     }
 
     public MovieJSON getModel(){
+
+        if(mButler.getModel() == null && mButler.hasHttpConnection()){
+            mButler.requestPopularMovies();
+            return null;
+        }
+
         return mButler.getModel();
+    }
+
+    public void xxxComplete(){
+        Log.d("Movies", "Boss.xxxComplete");
+        MainKeeper keeper = (MainKeeper)mHouseKeeperRegistry.get(MainKeeper.NAME);
+        keeper.prepareFragment();
     }
 
 /**************************************************************************************************/
@@ -49,5 +68,7 @@ public class Boss extends Application{
     public void registerHouseKeeper(String key, MyHouseKeeper keeper) {
         mHouseKeeperRegistry.put(key, keeper);
     }
+
+    public MyHouseKeeper getHouseKeeper(String key){ return mHouseKeeperRegistry.get(key);}
 
 }

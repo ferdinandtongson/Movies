@@ -3,6 +3,7 @@ package me.makeachoice.movies.controller.butler;
 import android.content.Context;
 import android.util.Log;
 
+import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.worker.MovieWorker;
 import me.makeachoice.movies.model.MovieModel;
 import me.makeachoice.movies.R;
@@ -14,36 +15,44 @@ import me.makeachoice.movies.model.json.MovieJSON;
  */
 public class MovieButler extends MyButler{
 
-    public MovieButler(Context ctx){
+    private Boss mBoss;
+    public MovieButler(Context ctx, Boss boss){
         Log.d("Movies", "MovieButler: " + ctx.toString());
         mActivityContext = ctx;
-        //createModel();
+        mBoss = boss;
 
     }
 
 
     MovieWorker mMovieWorker;
-    public void establishHttpConnection(){
+    public boolean hasHttpConnection(){
         Log.d("Movies", "MovieButler.establishHttpConnection");
         mMovieWorker = new MovieWorker(this);
 
         if(mMovieWorker.hasConnectivity(mActivityContext)){
             Log.d("Movies", "     connection true");
-            mMovieWorker.execute(
-                    mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
-                    mMovieWorker.TMDB_API_KEY,
-                    mMovieWorker.TMDB_SORT,
-                    mMovieWorker.SORT_POPULARITY_DESC
-            );
+            return true;
         }
         else{
             Log.d("Movies", "     no connection");
+            return false;
         }
+    }
+
+    public void requestPopularMovies(){
+        mMovieWorker.execute(
+                mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
+                mMovieWorker.TMDB_API_KEY,
+                mMovieWorker.TMDB_SORT,
+                mMovieWorker.SORT_POPULARITY_DESC
+        );
+
     }
 
     public void workComplete(Boolean result) {
         Log.d("Movies", "MovieButler.movieWorkerDone: " + result);
         mMovieModel = mMovieWorker.getMovies();
+        mBoss.xxxComplete();
     }
 
     MovieJSON mMovieModel;
