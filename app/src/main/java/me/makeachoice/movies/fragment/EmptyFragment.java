@@ -169,7 +169,7 @@ public class EmptyFragment extends MyFragment {
  * @param id  - resource layout id
  */
     public void setLayout(int id){
-        Log.d("SimpleListFragment", "SimpleGridFragment.setLayout");
+        Log.d("SimpleListFragment", "PosterFragment.setLayout");
 
         //save layout id to an instance variable
         mLayoutId = id;
@@ -193,6 +193,15 @@ public class EmptyFragment extends MyFragment {
         //save textview id to an instance variable
         mTextViewId = id;
     }
+
+/**
+ * void setMessage(String) - message to be displayed by the fragment
+ * @param message - string message
+ */
+    public void setMessage(String message){
+        mMessage = message;
+    }
+
 /**************************************************************************************************/
 
 }
