@@ -1,10 +1,12 @@
 package me.makeachoice.movies.controller.housekeeper.maid;
 
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import me.makeachoice.movies.R;
 import me.makeachoice.movies.fragment.PosterFragment;
 
 /**
@@ -20,6 +22,8 @@ import me.makeachoice.movies.fragment.PosterFragment;
  *
  * Variables from MyMaid:
  *      MyHouseKeeper mHouseKeeper
+ *      String mName
+ *      Fragment mFragment
  *
  * Implements PosterFragment.Bridge
  * //TODO - need to review implementations
@@ -30,18 +34,61 @@ import me.makeachoice.movies.fragment.PosterFragment;
 public class PosterMaid extends MyMaid implements PosterFragment.Bridge{
 
     private ListAdapter mListAdapter;
-
-    private Bridge mBridge;
-    public PosterMaid(Bridge bridge){
-        mBridge = bridge;
-
-    }
-
     public interface Bridge{
         //Interface methods needed to be implemented by the instantiating class
         ListAdapter requestPosterAdapter();
         void onItemClick(ListView l, View v, int position, long id);
+        void registerFragment(String key, Fragment fragment);
     }
+
+    private Bridge mBridge;
+    public PosterMaid(Bridge bridge, String name){
+        mBridge = bridge;
+        mName = name;
+
+        mBridge.registerFragment(name, getFragment());
+    }
+
+/**************************************************************************************************/
+/**
+ * Variables used for initializing Fragments
+ */
+/**************************************************************************************************/
+    //LAYOUT_POSTER_FRAGMENT - layout id used by Poster Fragment
+    private final static int LAYOUT_POSTER_FRAGMENT = R.layout.poster_fragment;
+    //POSTER_CHILD_GRID_VIEW - child view in poster fragment layout, gridView child
+    private final static int POSTER_CHILD_GRID_VIEW = R.id.gridview;
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * void initFragment() - initialize Fragment; set layout and child view ids and maid name
+ */
+    protected Fragment initFragment(){
+        //create PosterFragment
+        PosterFragment fragment = new PosterFragment();
+
+        //send layout id to PosterFragment
+        fragment.setLayout(LAYOUT_POSTER_FRAGMENT);
+
+        //send child view id, gridView
+        fragment.setGridViewId(POSTER_CHILD_GRID_VIEW);
+
+        //send Maid name to fragment
+        fragment.setServiceName(mName);
+
+        return fragment;
+    }
+
+    public Fragment getFragment(){
+        if(mFragment == null){
+            mFragment = initFragment();
+        }
+
+        return mFragment;
+    }
+
+/**************************************************************************************************/
 
 
 /**************************************************************************************************/
