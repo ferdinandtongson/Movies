@@ -75,7 +75,8 @@ public class PosterStaff {
         for(int i = 0; i < count; i++){
             //create poster item from model
             //TODO - hardcoded temporary poster image for testing
-            PosterItem item = new PosterItem(model.getMovie(i).getTitle(),R.drawable.sample_1);
+            PosterItem item = new PosterItem(model.getMovie(i).getTitle(),
+                    model.getMovie(i).getPosterPath());
 
             //add item into array list
             itemList.add(item);
