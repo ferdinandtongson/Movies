@@ -130,9 +130,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge{
  * @param position - list position of item clicked
  */
     public void onItemClick(ListView l, View v, int position, long id){
-        Log.d("SimpleListFragment", "Maid.onListItemClick");
-        mBridge.onItemClick(l, v, position, id);
-        //TODO - need to connect onItemClick event to Boss
+        //do not use
     }
 
 /**************************************************************************************************/
@@ -143,9 +141,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge{
      * @param position - list position of item clicked
      */
     public void onItemClick(int position){
-        Log.d("SimpleListFragment", "Maid.onListItemClick");
-
-        //TODO - need to connect onItemClick event to Boss
+        //do not use
     }
 
 
