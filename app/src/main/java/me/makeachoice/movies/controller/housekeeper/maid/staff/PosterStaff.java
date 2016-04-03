@@ -33,6 +33,9 @@ public class PosterStaff {
     private final static int ITEM_MOVIE_CHILD_POSTER_VIEW = R.id.img_poster;
     private final static int ITEM_MOVIE_CHILD_TITLE_VIEW = R.id.txt_title;
 
+    //mPosterAdapter - ListAdapter to be consumed by a PosterAdapter consumer
+    PosterAdapter mPosterAdapter;
+
 /**************************************************************************************************/
 /**
  * ListAdapter initPosterAdapter(Context, MovieJSON) - initialize the Movie Poster adapter for
@@ -42,19 +45,21 @@ public class PosterStaff {
  */
     public ListAdapter initPosterAdapter(Context ctx, MovieJSON model){
 
-        //create an ArrayList to hold the list items to be consumed by the ListAdapter
-        ArrayList<PosterItem> itemList = prepareListOfItems(model);
+        if(mPosterAdapter == null){
+            //create an ArrayList to hold the list items to be consumed by the ListAdapter
+            ArrayList<PosterItem> itemList = prepareListOfItems(model);
 
-        //create array of layout and child id values for PosterAdapter
-        int[] ids = new int[PosterAdapter.INDEX_MAX];
-        ids[PosterAdapter.INDEX_LAYOUT_ID] = LAYOUT_ITEM_POSTER;
-        ids[PosterAdapter.INDEX_POSTER_ID] = ITEM_MOVIE_CHILD_POSTER_VIEW;
-        ids[PosterAdapter.INDEX_TITLE_ID] = ITEM_MOVIE_CHILD_TITLE_VIEW;
+            //create array of layout and child id values for PosterAdapter
+            int[] ids = new int[PosterAdapter.INDEX_MAX];
+            ids[PosterAdapter.INDEX_LAYOUT_ID] = LAYOUT_ITEM_POSTER;
+            ids[PosterAdapter.INDEX_POSTER_ID] = ITEM_MOVIE_CHILD_POSTER_VIEW;
+            ids[PosterAdapter.INDEX_TITLE_ID] = ITEM_MOVIE_CHILD_TITLE_VIEW;
 
-        //instantiate PosterAdapter with layout id found in res/layout and the child
-        PosterAdapter adapter = new PosterAdapter(ctx, itemList, ids);
+            //instantiate PosterAdapter with layout id found in res/layout and the child
+            mPosterAdapter = new PosterAdapter(ctx, itemList, ids);
+        }
 
-        return adapter;
+        return mPosterAdapter;
     }
 
 /**
@@ -74,7 +79,6 @@ public class PosterStaff {
         //loop through the data models
         for(int i = 0; i < count; i++){
             //create poster item from model
-            //TODO - hardcoded temporary poster image for testing
             PosterItem item = new PosterItem(model.getMovie(i).getTitle(),
                     model.getMovie(i).getPosterPath());
 
