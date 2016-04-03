@@ -2,6 +2,7 @@ package me.makeachoice.movies;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     //MyHouseKeeper class that handles the initialization of the MainActivity and Fragments as well
     //as the communication between UI and the Boss
-    private MainKeeper mHouseKeeper;
+    private static MainKeeper mHouseKeeper;
 
     //Toolbar object used by the MainActivity
     private Toolbar mToolbar;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         int getMenuId();
         int getFloatingActionButtonId();
 
-        void prepareFragment(Boolean shouldAdd);
+        void prepareFragment();
 
         View.OnClickListener getFABOnClickListener();
         void onOptionsItemSelected(MenuItem item);
@@ -62,9 +63,17 @@ public class MainActivity extends AppCompatActivity {
         mBoss.setActivityContext(this);
 
         Log.d("Movies", "MainActivity.onCreate");
-        //start MyHouseKeeper for this Activity
-        mHouseKeeper = new MainKeeper(mBoss, this, getSupportFragmentManager());
+        if(mBoss.getHouseKeeper(MainKeeper.NAME) == null){
+            Log.d("Movies", "     start HouseKeeper");
+            //start MyHouseKeeper for this Activity
+            mHouseKeeper = new MainKeeper(mBoss, this, getSupportFragmentManager());
+        }
+        else{
+            //need to resend fragmentManager since a new manager is create at every onCreate()
+            mHouseKeeper.setFragmentManager(getSupportFragmentManager());
+        }
 
+        Log.d("Movies", "     keeper: " + mHouseKeeper);
         //Note setContent must happen before toolbar
         setContentView(mHouseKeeper.getActivityLayoutId());
 
