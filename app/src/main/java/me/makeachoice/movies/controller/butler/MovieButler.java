@@ -27,7 +27,6 @@ public class MovieButler extends MyButler{
     MovieWorker mMovieWorker;
     public boolean hasHttpConnection(){
         Log.d("Movies", "MovieButler.establishHttpConnection");
-        mMovieWorker = new MovieWorker(this);
 
         if(mMovieWorker.hasConnectivity(mActivityContext)){
             Log.d("Movies", "     connection true");
@@ -39,13 +38,38 @@ public class MovieButler extends MyButler{
         }
     }
 
-    public void requestPopularMovies(){
-        mMovieWorker.execute(
-                mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
-                mMovieWorker.TMDB_API_KEY,
-                mMovieWorker.TMDB_SORT,
-                mMovieWorker.SORT_POPULARITY_DESC
-        );
+    public static int MOVIE_REQUEST_MOST_POPULAR = 0;
+    public static int MOVIE_REQUEST_HIGHEST_RATED = 1;
+
+    public void requestMovies(int request){
+        Log.d("Movies", "MovieButler.requestMovies: " + request);
+        mMovieWorker = new MovieWorker(this);
+        if(request == MOVIE_REQUEST_MOST_POPULAR){
+            Log.d("Movies", "     most popular");
+            mMovieWorker.execute(
+                    mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
+                    mMovieWorker.TMDB_API_KEY,
+                    mMovieWorker.TMDB_SORT,
+                    mMovieWorker.SORT_POPULARITY_DESC
+            );
+        }
+        else if(request == MOVIE_REQUEST_HIGHEST_RATED){
+            Log.d("Movies", "     highest rated");
+            mMovieWorker.execute(
+                    mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
+                    mMovieWorker.TMDB_API_KEY,
+                    mMovieWorker.TMDB_SORT,
+                    mMovieWorker.SORT_RATE_DESC
+            );
+        }
+        else{
+            mMovieWorker.execute(
+                    mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
+                    mMovieWorker.TMDB_API_KEY,
+                    mMovieWorker.TMDB_SORT,
+                    mMovieWorker.SORT_POPULARITY_DESC
+            );
+        }
 
     }
 
