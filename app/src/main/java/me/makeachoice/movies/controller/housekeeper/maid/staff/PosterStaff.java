@@ -15,7 +15,20 @@ import me.makeachoice.movies.model.json.MovieJSON;
  */
 public class PosterStaff {
 
-    public PosterStaff(){  }
+    private Context mActivityContext;
+    private MovieJSON mModel;
+    public PosterStaff(Context ctx, MovieJSON model){
+        mActivityContext = ctx;
+        mModel = model;
+    }
+
+    public void setActivityContext(Context ctx){
+        mActivityContext = ctx;
+    }
+
+    public void setModel(MovieJSON model){
+        mModel = model;
+    }
 
 /**************************************************************************************************/
 /**
@@ -40,14 +53,13 @@ public class PosterStaff {
 /**
  * ListAdapter initPosterAdapter(Context, MovieJSON) - initialize the Movie Poster adapter for
  * consumption.
- * @param model - data model for the movies
  * @return ListAdapter - will return a reference to the Poster adapter create with the model
  */
-    public ListAdapter initPosterAdapter(Context ctx, MovieJSON model){
+    private ListAdapter initPosterAdapter(){
 
         if(mPosterAdapter == null){
             //create an ArrayList to hold the list items to be consumed by the ListAdapter
-            ArrayList<PosterItem> itemList = prepareListOfItems(model);
+            ArrayList<PosterItem> itemList = prepareListOfItems(mModel);
 
             //create array of layout and child id values for PosterAdapter
             int[] ids = new int[PosterAdapter.INDEX_MAX];
@@ -56,7 +68,7 @@ public class PosterStaff {
             ids[PosterAdapter.INDEX_TITLE_ID] = ITEM_MOVIE_CHILD_TITLE_VIEW;
 
             //instantiate PosterAdapter with layout id found in res/layout and the child
-            mPosterAdapter = new PosterAdapter(ctx, itemList, ids);
+            mPosterAdapter = new PosterAdapter(mActivityContext, itemList, ids);
         }
 
         return mPosterAdapter;
@@ -89,5 +101,15 @@ public class PosterStaff {
         return itemList;
     }
 
+    public ListAdapter getPosterAdapter(){
+        if(mPosterAdapter == null){
+            return initPosterAdapter();
+        }
 
+        return mPosterAdapter;
+    }
+
+    public void clearAdapter(){
+        mPosterAdapter = null;
+    }
 }
