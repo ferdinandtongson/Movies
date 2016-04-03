@@ -74,6 +74,8 @@ public class MovieWorker extends MyWorker{
         public final String SORT_RATE_ASC = "vote_average.asc";
         public final String SORT_RATE_DESC = "vote_average.desc";
 
+    private final String TMBD_URL_POSTER = "https://image.tmdb.org/t/p/w500/";
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -299,7 +301,7 @@ public class MovieWorker extends MyWorker{
             //detailObj.setGenreId(obj.getJSONArray(ITEM_GENRE_IDS));
             detailObj.setAdult(obj.getBoolean(ITEM_ADULT));
 
-            detailObj.setPosterPath(obj.getString(ITEM_POSTER_PATH));
+            detailObj.setPosterPath(TMBD_URL_POSTER + obj.getString(ITEM_POSTER_PATH));
             detailObj.setBackdropPath(obj.getString(ITEM_BACKDROP_PATH));
             detailObj.setVideo(obj.getBoolean(ITEM_VIDEO));
         }
