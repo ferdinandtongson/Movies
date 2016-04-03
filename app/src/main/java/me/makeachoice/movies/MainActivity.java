@@ -2,6 +2,7 @@ package me.makeachoice.movies;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -30,12 +31,12 @@ public class MainActivity extends AppCompatActivity {
         //Interface are methods the MyMaid has to implement but it is a one-way
         //communication.
         int getActivityLayoutId();
-        int getFragmentContainerId();
         int getToolbarId();
         int getMenuId();
         int getFloatingActionButtonId();
 
         void prepareFragment();
+        void setFragmentManager(FragmentManager manager);
 
         View.OnClickListener getFABOnClickListener();
         void onOptionsItemSelected(MenuItem item);
