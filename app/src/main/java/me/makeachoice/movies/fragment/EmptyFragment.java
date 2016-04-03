@@ -6,11 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.Boss;
 
 
@@ -24,6 +21,7 @@ import me.makeachoice.movies.controller.Boss;
  *      String KEY_SERVICE_NAME
  *
  *      int mLayoutId
+ *      View mLayout
  *      String mServiceName
  *      Bridge mBridge
  *
@@ -48,8 +46,6 @@ public class EmptyFragment extends MyFragment {
 
 /**************************************************************************************************/
 
-    //mView - view inflated from resource layout id
-    private View mView;
     //mTextViewId - child view of layout, contains "Empty" message
     private int mTextViewId;
 
@@ -118,8 +114,8 @@ public class EmptyFragment extends MyFragment {
 
         //create and return fragment layout view from file found in res/layout/xxx.xml,
         // use R.layout.xxx (mLayoutId)
-        mView = inflater.inflate(mLayoutId, container, false);
-        return mView;
+        mLayout = inflater.inflate(mLayoutId, container, false);
+        return mLayout;
     }
 
 /**
@@ -133,7 +129,7 @@ public class EmptyFragment extends MyFragment {
         Log.d("Movies", "EmptyFragment.onActivityCreated");
 
         //create the textView that will display a message
-        TextView txtView = (TextView)mView.findViewById(mTextViewId);
+        TextView txtView = (TextView)mLayout.findViewById(mTextViewId);
         //set textView message
         txtView.setText(mMessage);
     }
