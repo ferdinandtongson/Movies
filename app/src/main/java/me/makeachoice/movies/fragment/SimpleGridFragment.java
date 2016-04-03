@@ -13,7 +13,19 @@ import me.makeachoice.movies.controller.Boss;
 
 /**************************************************************************************************/
 /**
- * SimpleGridFragment is a Fragment with only a GridView as a child
+ * PosterFragment is a GridView fragment that will display a grid of posters (images)
+ *
+ * Variables from MyFragment:
+ *      String KEY_LAYOUT
+ *      String KEY_SERVICE_NAME
+ *
+ *      int mLayoutId
+ *      String mServiceName
+ *      Bridge mBridge
+ *
+ * Methods from MyFragment:
+ *      void setLayout(int)
+ *      void setServiceName(String)
  */
 public class SimpleGridFragment extends MyFragment {
 /*
@@ -32,30 +44,24 @@ public class SimpleGridFragment extends MyFragment {
 
 /**************************************************************************************************/
 
-    private View mView;
+    //mGridViewId - child view id of layout
     private int mGridViewId;
-    String KEY_GRIDVIEW_ID = "GridViewId";
+    //KEY_GRID_VIEW_ID - key used for bundle to save the child view id
+    String KEY_GRID_VIEW_ID = "GridViewId";
 
 /**************************************************************************************************/
-
 
 /**************************************************************************************************/
 /**
  * onAttach(...) called once the fragment is associated with its activity. Fragments are usually
  * created in the Activities onCreate( ) method.
  *
- * This is where you can check if the container activity has implemented a bridge interface. If
- * not, it throws an exception. The bridge interface acts as a bridge to communicate with the
- * implementing activity.
- *
- * The reference to the bridge needs to be removed when onDetach is called to prevent a leak.
  * @param context - activity context
  */
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-
-
+        //empty
     }
 
 /** onCreateView(...) is called when it's time for the fragment to draw its UI for the first
@@ -74,13 +80,16 @@ public class SimpleGridFragment extends MyFragment {
         if(savedInstanceState != null){
             //get layout id to inflate root view
             mLayoutId = savedInstanceState.getInt(KEY_LAYOUT);
+            //get name of server maintaining this fragment
             mServiceName = savedInstanceState.getString(KEY_SERVICE_NAME);
-            mGridViewId = savedInstanceState.getInt(KEY_GRIDVIEW_ID);
-
+            //get child view id (gridview)
+            mGridViewId = savedInstanceState.getInt(KEY_GRID_VIEW_ID);
         }
 
+        //get Application context, the Boss
         Boss boss = (Boss)getActivity().getApplicationContext();
         try{
+            //check if Maid is implementing interface
             mBridge = (Bridge)boss.getMaid(mServiceName);
         }catch(ClassCastException e){
             throw new ClassCastException(boss.toString() +
@@ -90,9 +99,8 @@ public class SimpleGridFragment extends MyFragment {
 
         //create and return fragment layout view from file found in res/layout/xxx.xml,
         // use R.layout.xxx (mLayoutId)
-        mView = inflater.inflate(mLayoutId, container, false);
-
-        return mView;
+        mLayout = inflater.inflate(mLayoutId, container, false);
+        return mLayout;
     }
 
 /**
@@ -105,10 +113,11 @@ public class SimpleGridFragment extends MyFragment {
         super.onActivityCreated(savedInstanceState);
         Log.d("Movies", "SimpleGridFragment.onActivityCreated");
 
-        //create the list by setting the list adapter
-        GridView gridView = (GridView)mView.findViewById(mGridViewId);
-        gridView.setAdapter(mBridge.getListAdapter());
+        //create the child view, gridview
+        GridView gridView = (GridView)mLayout.findViewById(mGridViewId);
 
+        //add ListAdapter to gridview
+        gridView.setAdapter(mBridge.getListAdapter());
     }
 
 /**
@@ -118,22 +127,32 @@ public class SimpleGridFragment extends MyFragment {
  */
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
-        Log.d("Movies", "SimpleGridFragment.onSaveInstanceState");
+        //save layout id of fragment
         saveState.putInt(KEY_LAYOUT, mLayoutId);
+        //save name of server maintaining this fragment
         saveState.putString(KEY_SERVICE_NAME, mServiceName);
-        saveState.putInt(KEY_GRIDVIEW_ID, mGridViewId);
+        //save child view id (gridView)
+        saveState.putInt(KEY_GRID_VIEW_ID, mGridViewId);
 
     }
 
 /**
  * onDetach( ) is called immediately prior to the fragment no longer being associated with its
- * activity. This is where you remove any bridge references created with the activity.
+ * activity.
  */
     @Override
     public void onDetach(){
         super.onDetach();
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Implemented abstract methods from MyFragment:
+ *      void setLayout(int)
+ *      void setServiceName(String)
+ */
 /**************************************************************************************************/
 /**
  * void setLayout(int) allows the layout id for the fragment to be dynamically added
@@ -147,25 +166,25 @@ public class SimpleGridFragment extends MyFragment {
     }
 
 /**
- * void setGridViewId(int) allows the gridview id for the fragment to be dynamically added
- * @param id - resource gridview id
- */
-    public void setGridViewId(int id){
-        Log.d("SimpleListFragment", "SimpleGridFragment.setGridViewId");
-
-        //save gridview id to an instance variable
-        mGridViewId = id;
-    }
-
-/**
  * void setServiceName(String) - sets the name of the server taking care of the fragment
  */
     public void setServiceName(String name){
         mServiceName = name;
     }
 
+/**************************************************************************************************/
 
-    /**
+/**************************************************************************************************/
+/**
+ * void setGridViewId(int) allows the gridview id for the fragment to be dynamically added
+ * @param id - resource gridview id
+ */
+    public void setGridViewId(int id){
+        //save gridview id to an instance variable
+        mGridViewId = id;
+    }
+
+/**
  * void onListItemClick(int) is called when the user clicks on a list item
  * @param position - position of the item; position is zero based (0 - x)
  */
