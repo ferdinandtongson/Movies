@@ -2,7 +2,6 @@ package me.makeachoice.movies;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -64,18 +63,15 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("Movies", "MainActivity.onCreate");
         if(mBoss.getHouseKeeper(MainKeeper.NAME) == null){
-            Log.d("Movies", "     start HouseKeeper");
             //start MyHouseKeeper for this Activity
-            mHouseKeeper = new MainKeeper(mBoss, this, getSupportFragmentManager());
-        }
-        else{
-            //need to resend fragmentManager since a new manager is create at every onCreate()
-            mHouseKeeper.setFragmentManager(getSupportFragmentManager());
+            mHouseKeeper = new MainKeeper(mBoss, this);
         }
 
-        Log.d("Movies", "     keeper: " + mHouseKeeper);
         //Note setContent must happen before toolbar
         setContentView(mHouseKeeper.getActivityLayoutId());
+
+        //send FragmentManger to HouseKeeper, a new FragmentManger is created at onCreate()
+        mHouseKeeper.setFragmentManager(getSupportFragmentManager());
 
         //Create fragment, will be automatically added to fragment manager
         mHouseKeeper.prepareFragment();
