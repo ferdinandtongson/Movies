@@ -1,5 +1,7 @@
 package me.makeachoice.movies.controller.housekeeper.maid;
 
+import android.support.v4.app.Fragment;
+
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 
 /**
@@ -8,4 +10,10 @@ import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
  */
 public abstract class MyMaid {
     MyHouseKeeper mHouseKeeper;
+    String mName;
+    Fragment mFragment;
+
+    protected abstract Fragment initFragment();
+    public abstract Fragment getFragment();
+
 }
