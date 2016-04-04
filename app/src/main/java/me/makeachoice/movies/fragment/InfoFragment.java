@@ -1,29 +1,17 @@
 package me.makeachoice.movies.fragment;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import me.makeachoice.movies.R;
-import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
 import me.makeachoice.movies.model.json.MovieJSON;
@@ -272,6 +260,7 @@ public class InfoFragment extends MyFragment {
         mTxtValues[INDEX_OVERVIEW] = values[INDEX_OVERVIEW];
     }
 
+    //TODO - review logic, look at using PosterItem instead of MovieJSON.MovieDetail, breaking MVP
     MovieJSON.MovieDetail mMovieItem;
 
 /**************************************************************************************************/
