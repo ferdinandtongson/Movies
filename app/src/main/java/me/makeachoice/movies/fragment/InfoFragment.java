@@ -1,14 +1,29 @@
 package me.makeachoice.movies.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import me.makeachoice.movies.R;
+import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
+import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
+import me.makeachoice.movies.model.json.MovieJSON;
 
 /**************************************************************************************************/
 /**
@@ -44,16 +59,34 @@ public class InfoFragment extends MyFragment {
 
 /**************************************************************************************************/
 
-    //mTextViewId - child view of layout, contains "Empty" message
-    private int mTextViewId;
+    //textView ids for layout
+    private int INDEX_TITLE = 0;
+    private int INDEX_RELEASE = 1;
+    private int INDEX_CAST = 2;
+    private int INDEX_RATING = 3;
+    private int INDEX_OVERVIEW = 4;
+    private int INDEX_MAX = 5;
 
-    //KEY_TEXT_VIEW_ID - key used for bundle to save id of the textView child
-    //String KEY_TEXT_VIEW_ID = "TextViewId";
-    //KEY_MESSAGE - key used for bundle to save message used in the textView child
-    //String KEY_MESSAGE = "Message";
+    private int[] mTxtIds = new int[INDEX_MAX];
 
-    //mMessage - message when fragment is displayed
-    String mMessage;
+    //txtView objects
+    private TextView mTxtTitle;
+    private TextView mTxtRelease;
+    private TextView mTxtCast;
+    private TextView mTxtRating;
+    private TextView mTxtOverview;
+
+    private int mImgPosterId;
+    private ImageView mImgPoster;
+
+    private int mRtbRatingId;
+    private RatingBar mRtbRating;
+
+    //Upkeeping MyMaid class must implement this interface
+    public interface Bridge extends MyFragment.Bridge{
+        String[] getTxtValues();
+    }
+
 
 /**************************************************************************************************/
 
@@ -88,10 +121,6 @@ public class InfoFragment extends MyFragment {
             mLayoutId = savedInstanceState.getInt(KEY_LAYOUT);
             //get name of servers up-keeping this fragment
             mServiceName = savedInstanceState.getString(KEY_SERVICE_NAME);
-            //get id of textView containing the "Empty" message
-            //mTextViewId = savedInstanceState.getInt(KEY_TEXT_VIEW_ID);
-            //get message for textView child
-            //mMessage = savedInstanceState.getString(KEY_MESSAGE);
 
         }
 
@@ -122,10 +151,55 @@ public class InfoFragment extends MyFragment {
         super.onActivityCreated(savedInstanceState);
         Log.d("Movies", "InfoFragment.onActivityCreated");
 
-        //create the textView that will display a message
-        //TextView txtView = (TextView)mLayout.findViewById(mTextViewId);
-        //set textView message
-        //txtView.setText(mMessage);
+        //get child view for fragment
+        if(mTxtTitle == null){
+            //get textView children
+            mTxtTitle = (TextView)mLayout.findViewById(mTxtIds[INDEX_TITLE]);
+            mTxtRelease = (TextView)mLayout.findViewById(mTxtIds[INDEX_RELEASE]);
+            mTxtCast = (TextView)mLayout.findViewById(mTxtIds[INDEX_CAST]);
+            mTxtRating = (TextView)mLayout.findViewById(mTxtIds[INDEX_RATING]);
+            mTxtOverview = (TextView)mLayout.findViewById(mTxtIds[INDEX_OVERVIEW]);
+
+            //get imageView and ratingBar child
+            mImgPoster = (ImageView)mLayout.findViewById(mImgPosterId);
+            mRtbRating = (RatingBar)mLayout.findViewById(mRtbRatingId);
+        }
+
+        mMovieItem = ((InfoMaid) mBridge).getMovie();
+        updateTextViews();
+        updatePoster();
+        updateRatingBar();
+    }
+
+    private void updateTextViews(){
+        //TODO - need to change Bridge concept for MyFragment
+        setTxtValues(((InfoMaid) mBridge).getTxtValues());
+
+        mTxtTitle.setText(mTxtValues[INDEX_TITLE]);
+        mTxtRelease.setText(mTxtValues[INDEX_RELEASE]);
+        mTxtCast.setText(mTxtValues[INDEX_CAST]);
+        mTxtRating.setText(mTxtValues[INDEX_RATING]);
+        mTxtOverview.setText(mTxtValues[INDEX_OVERVIEW]);
+    }
+
+    private void updatePoster(){
+        Log.d("Movies", "InfoFragment.updatePoster");
+        Log.d("Movies", "     img: " + mImgPoster.toString());
+        //check if bitmap image is available
+        if(mMovieItem.getPosterImage() != null){
+            //if have image, update imageView with bitmap
+            mImgPoster.setImageBitmap(mMovieItem.getPosterImage());
+        }
+        else{
+            mImgPoster.setImageDrawable(getResources().getDrawable(R.drawable.sample_0));
+            //no image, load image from internet using lazy loading
+            loadImage(mMovieItem.getPosterPath(), mMovieItem, mImgPoster);
+        }
+
+    }
+
+    private void updateRatingBar(){
+        Double rating = mMovieItem.getVoteAverage();
     }
 
 /**
@@ -139,10 +213,6 @@ public class InfoFragment extends MyFragment {
         saveState.putInt(KEY_LAYOUT, mLayoutId);
         //save name of server maintaining this fragment
         saveState.putString(KEY_SERVICE_NAME, mServiceName);
-        //save id of child view (textview) that displays the message
-        //saveState.putInt(KEY_TEXT_VIEW_ID, mTextViewId);
-        //save message to be displayed
-        //saveState.putString(KEY_MESSAGE, mMessage);
     }
 
 /**
@@ -168,8 +238,6 @@ public class InfoFragment extends MyFragment {
  * @param id  - resource layout id
  */
     public void setLayout(int id){
-        Log.d("SimpleListFragment", "InfoFragment.setLayout");
-
         //save layout id to an instance variable
         mLayoutId = id;
     }
@@ -185,22 +253,115 @@ public class InfoFragment extends MyFragment {
 
 /**************************************************************************************************/
 /**
- * void setTextViewId(int) - child view id of layout, a textview that will display a message
- * @param id - resource textview id
+ * void setTextViewId(int) - child view id of layout, a textView that will display a message
  */
-    public void setTexttViewId(int id){
-        //save textview id to an instance variable
-        mTextViewId = id;
+    public void setTxtViewIds(Integer[] ids){
+        mTxtIds[INDEX_TITLE] = ids[INDEX_TITLE];
+        mTxtIds[INDEX_RELEASE] = ids[INDEX_RELEASE];
+        mTxtIds[INDEX_CAST] = ids[INDEX_CAST];
+        mTxtIds[INDEX_RATING] = ids[INDEX_RATING];
+        mTxtIds[INDEX_OVERVIEW] = ids[INDEX_OVERVIEW];
     }
 
-/**
- * void setMessage(String) - message to be displayed by the fragment
- * @param message - string message
- */
-    public void setMessage(String message){
-        mMessage = message;
+    public void setChildIds(int imgId, int rtbId){
+        mImgPosterId = imgId;
+        mRtbRatingId = rtbId;
+    }
+
+    private String[] mTxtValues = new String[INDEX_MAX];
+    private void setTxtValues(String[] values){
+        mTxtValues[INDEX_TITLE] = values[INDEX_TITLE];
+        mTxtValues[INDEX_RELEASE] = values[INDEX_RELEASE];
+        mTxtValues[INDEX_CAST] = values[INDEX_CAST];
+        mTxtValues[INDEX_RATING] = values[INDEX_RATING];
+        mTxtValues[INDEX_OVERVIEW] = values[INDEX_OVERVIEW];
+    }
+
+    MovieJSON.MovieDetail mMovieItem;
+
+/**************************************************************************************************/
+
+    /**
+     * void loadImage(String, PosterItem, ImageView) - calls an asyncTask to load the image from
+     * the internet
+     * @param url - url of the image of the movie poster
+     * @param item - Poster Item holding movie information for the Adapter
+     * @param imgPoster - imageView used to display poster image
+     */
+    public void loadImage(String url, MovieJSON.MovieDetail item, ImageView imgPoster){
+        if(url != null && !url.equals("")){
+            new ImageLoadTask(item, imgPoster).execute(url);
+        }
     }
 
 /**************************************************************************************************/
+/**
+ * ImageLoadTask extends AsyncTask<String, String, Bitmap> - will download an image from the
+ * internet and, when the download is complete, update the imageView with the download image
+ * and save the image to PosterItem.
+ */
+/**************************************************************************************************/
+
+    private class ImageLoadTask extends AsyncTask<String, String, Bitmap> {
+
+/**************************************************************************************************/
+
+    //mItem - PosterItem object from adapter used to store image after download is complete
+    MovieJSON.MovieDetail mItem;
+    //mImgPoster - ImageView from adapter used to display image after download is complete
+    ImageView mImgPoster;
+
+/**************************************************************************************************/
+
+    /**
+     * ImageLoadTask(PosterItem, ImageView) - constructor
+     * @param item - PosterItem object used to save image after download
+     * @param img - ImageView object used to display image after download
+     */
+    public ImageLoadTask(MovieJSON.MovieDetail item, ImageView img){
+        mItem = item;
+        mImgPoster = img;
+    }
+
+        @Override
+        protected void onPreExecute(){
+            //does nothing
+        }
+
+        /**
+         * Bitmap doInBackground(String...) - downloads an image from the given url
+         * @param params - url of image
+         * @return - bitmap image of poster
+         */
+        protected Bitmap doInBackground(String... params){
+            Log.d("Movies", "ImageLoadTask.doInBackground");
+            Bitmap b = null;
+            try{
+                //download image using url
+                b = BitmapFactory.decodeStream((InputStream) new URL(params[0]).getContent());
+            }
+            catch(MalformedURLException e){
+                Log.d("Movies", "     malformedURL");
+            }
+            catch(IOException e){
+                Log.d("Movies", "     IOException");
+            }
+            return b;
+        }
+
+        /**
+         * void onPostExecute(Bitmap) - saves and displays bitmap if download was successful
+         * @param ret - bitmap of movie poster
+         */
+        protected void onPostExecute(Bitmap ret){
+            if(ret != null){
+                //display image in imageView
+                mImgPoster.setImageBitmap(ret);
+                //save image to PosterItem
+                mItem.setPosterImage(ret);
+            }
+        }
+
+    }
 
 }
