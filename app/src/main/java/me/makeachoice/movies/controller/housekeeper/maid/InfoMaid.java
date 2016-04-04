@@ -141,6 +141,8 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         return mItem;
     }
 
+//TODO - using MovieJSON.MovieDetail is breaking MVP design!!
+//TODO - String values are hardcode here - move to resource file
     private String[] mValues;
     private MovieJSON.MovieDetail mItem;
     public void setMovie(MovieJSON.MovieDetail item){
