@@ -19,6 +19,7 @@ public abstract class MyFragment extends Fragment implements MyFragmentInterface
 
     //Upkeeping MyMaid class must implement this interface
     public interface Bridge{
+        //TODO - need to change Bridge concept for Fragment classes
         void onItemClick(int position);
         ListAdapter getListAdapter();
     }
