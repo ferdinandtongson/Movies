@@ -47,21 +47,15 @@ public class MovieButler extends MyButler{
         if(request == MOVIE_REQUEST_MOST_POPULAR){
             Log.d("Movies", "     most popular");
             mMovieWorker.execute(
-                    mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
-                    mMovieWorker.TMDB_API_KEY,
-                    mMovieWorker.TMDB_SORT,
-                    mMovieWorker.SORT_POPULARITY_DESC
+                    mMovieWorker.TMDB_URL_POPULAR,
+                    mMovieWorker.TMDB_API_KEY
             );
         }
         else if(request == MOVIE_REQUEST_HIGHEST_RATED){
             Log.d("Movies", "     highest rated");
             mMovieWorker.execute(
-                    mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
-                    mMovieWorker.TMDB_API_KEY,
-                    mMovieWorker.TMDB_SORT,
-                    mMovieWorker.SORT_RATE_DESC,
-                    mMovieWorker.TMDB_VOTE_COUNT_GTE,
-                    mMovieWorker.VOTE_COUNT_DEFAULT
+                    mMovieWorker.TMDB_URL_TOP_RATED,
+                    mMovieWorker.TMDB_API_KEY
             );
         }
         else{

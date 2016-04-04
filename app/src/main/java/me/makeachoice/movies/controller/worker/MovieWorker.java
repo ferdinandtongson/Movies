@@ -76,6 +76,10 @@ public class MovieWorker extends MyWorker{
     public final String TMDB_VOTE_COUNT_GTE = "&vote_count.gte=";
         public final String VOTE_COUNT_DEFAULT = "100";
 
+
+    public final String TMDB_URL_POPULAR = "http://api.themoviedb.org/3/movie/popular?";
+    public final String TMDB_URL_TOP_RATED = "http://api.themoviedb.org/3/movie/top_rated?";
+
     private final String TMBD_URL_POSTER = "https://image.tmdb.org/t/p/w500/";
 
 /**************************************************************************************************/
