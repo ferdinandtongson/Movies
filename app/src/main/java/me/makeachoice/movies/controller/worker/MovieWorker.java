@@ -61,7 +61,7 @@ public class MovieWorker extends MyWorker{
 
     //The Movie DB API key
     //TODO - need to move API Key, create one location to hold all keys
-    public final String TMDB_API_KEY = "api_key=ec1c9e77ea098584409c2b2309c4f287";
+    public final String TMDB_API_KEY = "api_key=";
 
     //The api sort command and sort options
     public final String TMDB_SORT = "&sort_by=";
@@ -146,8 +146,6 @@ public class MovieWorker extends MyWorker{
         //result of url call
         Boolean result;
         try {
-            Log.d("Movies", "     at url");
-            Log.d("Movies", "     " + api_call);
             //create url object with string variable
             URL url = new URL(api_call);
             //open http connection
@@ -168,7 +166,6 @@ public class MovieWorker extends MyWorker{
                 builder.append(inputString);
             }
 
-            Log.d("Movies", builder.toString());
             //process JSON response
             result = processJSON(builder);
 
@@ -176,7 +173,6 @@ public class MovieWorker extends MyWorker{
             urlConnection.disconnect();
         }
         catch (IOException e) {
-            Log.d("Movies", "***** IOException *****");
             //IO exception, url call failed
             e.printStackTrace();
             return false;
@@ -242,7 +238,6 @@ public class MovieWorker extends MyWorker{
 
     MovieJSON mMovies;
     private Boolean processJSON(StringBuilder builder){
-        Log.d("Movies", "MovieWorker.processJSON");
         mMovies = new MovieJSON();
         try{
             //convert string to JSON Object
@@ -251,10 +246,8 @@ public class MovieWorker extends MyWorker{
             //skip "page" results
             //int page = topLevel.getInt("page");
 
-            Log.d("Movies", "     get json array");
             //get results from api call
             JSONArray jsonArray = topLevel.optJSONArray(SECOND_KEY);
-            Log.d("Movies", "          here");
 
             //data model for Movie results from api response
             MovieJSON.MovieDetail modelObj;
@@ -262,7 +255,6 @@ public class MovieWorker extends MyWorker{
             //get number of movies results received
             int count = jsonArray.length();
 
-            Log.d("Movies", "     count: " + count);
             //loop through movies and model data for consumption
             for(int i = 0; i < count; i++){
                 //process JSON object into MovieJSON.MovieDetail object
@@ -272,7 +264,6 @@ public class MovieWorker extends MyWorker{
                 if(modelObj != null){
                     //add model to movies
                     mMovies.addMovie(modelObj);
-                    Log.d("Movies", "     title: " + modelObj.getTitle());
                 }
 
             }
