@@ -1,5 +1,7 @@
 package me.makeachoice.movies.model.json;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 
 /**
@@ -39,6 +41,8 @@ public class MovieJSON {
         private String mBackdropPath;
         private Boolean mVideo;
 
+        private Bitmap mPosterImage;
+
         public MovieDetail(){}
 
         public String getOriginalTitle(){return mOriginalTitle;}
@@ -59,6 +63,8 @@ public class MovieJSON {
         public String getBackdropPath(){return mBackdropPath;}
         public Boolean getVideo(){return mVideo;}
 
+        public Bitmap getPosterImage(){return mPosterImage;}
+
 
         public void setOriginalTitle(String title){mOriginalTitle = title;}
         public void setTitle(String title){mTitle = title;}
@@ -78,6 +84,7 @@ public class MovieJSON {
         public void setBackdropPath(String path){mBackdropPath = path;}
         public void setVideo(Boolean hasVideo){mVideo = hasVideo;}
 
+        public void setPosterImage(Bitmap image){mPosterImage = image;}
     }
 
     public MovieJSON(){
