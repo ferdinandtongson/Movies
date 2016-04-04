@@ -58,6 +58,8 @@ public class InfoFragment extends MyFragment {
     private int INDEX_OVERVIEW = 4;
     private int INDEX_MAX = 5;
 
+    private final String KEY_TXT_IDS = "TxtIds";
+    private final String KEY_IMG_ID = "ImgId";
     private int[] mTxtIds = new int[INDEX_MAX];
 
     //txtView objects
@@ -105,7 +107,6 @@ public class InfoFragment extends MyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("Movies", "InfoFragment.onCreateView");
 
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
@@ -113,7 +114,8 @@ public class InfoFragment extends MyFragment {
             mLayoutId = savedInstanceState.getInt(KEY_LAYOUT);
             //get name of servers up-keeping this fragment
             mServiceName = savedInstanceState.getString(KEY_SERVICE_NAME);
-
+            mTxtIds = savedInstanceState.getIntArray(KEY_TXT_IDS);
+            mImgPosterId = savedInstanceState.getInt(KEY_IMG_ID);
         }
 
         //get application context, the Boss
@@ -156,7 +158,7 @@ public class InfoFragment extends MyFragment {
             mRtbRating = (RatingBar)mLayout.findViewById(mRtbRatingId);
         }
 
-        mMovieItem = ((InfoMaid) mBridge).getMovie();
+        mMovieItem = ((InfoMaid)mBridge).getMovie();
         updateTextViews();
         updatePoster();
         //updateRatingBar();
@@ -164,7 +166,7 @@ public class InfoFragment extends MyFragment {
 
     private void updateTextViews(){
         //TODO - need to change Bridge concept for MyFragment
-        setTxtValues(((InfoMaid) mBridge).getTxtValues());
+        setTxtValues(((InfoMaid)mBridge).getTxtValues());
 
         mTxtTitle.setText(mTxtValues[INDEX_TITLE]);
         mTxtRelease.setText(mTxtValues[INDEX_RELEASE]);
@@ -192,6 +194,8 @@ public class InfoFragment extends MyFragment {
         saveState.putInt(KEY_LAYOUT, mLayoutId);
         //save name of server maintaining this fragment
         saveState.putString(KEY_SERVICE_NAME, mServiceName);
+        saveState.putIntArray(KEY_TXT_IDS, mTxtIds);
+        saveState.putInt(KEY_IMG_ID, mImgPosterId);
     }
 
 /**
