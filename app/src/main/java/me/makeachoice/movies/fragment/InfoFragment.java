@@ -14,6 +14,9 @@ import android.widget.ListAdapter;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -100,8 +103,9 @@ public class InfoFragment extends MyFragment {
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        //empty
+        mContext = context;
     }
+    Context mContext;
 
 /** onCreateView(...) is called when it's time for the fragment to draw its UI for the first
  * time. To draw a UI for your fragment, you must return a View from this method that is the
@@ -186,16 +190,7 @@ public class InfoFragment extends MyFragment {
         Log.d("Movies", "InfoFragment.updatePoster");
         Log.d("Movies", "     img: " + mImgPoster.toString());
         //check if bitmap image is available
-        if(mMovieItem.getPosterImage() != null){
-            //if have image, update imageView with bitmap
-            mImgPoster.setImageBitmap(mMovieItem.getPosterImage());
-        }
-        else{
-            mImgPoster.setImageDrawable(getResources().getDrawable(R.drawable.sample_0));
-            //no image, load image from internet using lazy loading
-            loadImage(mMovieItem.getPosterPath(), mMovieItem, mImgPoster);
-        }
-
+        Picasso.with(mContext).load(mMovieItem.getPosterPath()).into(mImgPoster);
     }
 
     private void updateRatingBar(){
@@ -281,87 +276,5 @@ public class InfoFragment extends MyFragment {
 
 /**************************************************************************************************/
 
-    /**
-     * void loadImage(String, PosterItem, ImageView) - calls an asyncTask to load the image from
-     * the internet
-     * @param url - url of the image of the movie poster
-     * @param item - Poster Item holding movie information for the Adapter
-     * @param imgPoster - imageView used to display poster image
-     */
-    public void loadImage(String url, MovieJSON.MovieDetail item, ImageView imgPoster){
-        if(url != null && !url.equals("")){
-            new ImageLoadTask(item, imgPoster).execute(url);
-        }
-    }
-
-/**************************************************************************************************/
-/**
- * ImageLoadTask extends AsyncTask<String, String, Bitmap> - will download an image from the
- * internet and, when the download is complete, update the imageView with the download image
- * and save the image to PosterItem.
- */
-/**************************************************************************************************/
-
-    private class ImageLoadTask extends AsyncTask<String, String, Bitmap> {
-
-/**************************************************************************************************/
-
-    //mItem - PosterItem object from adapter used to store image after download is complete
-    MovieJSON.MovieDetail mItem;
-    //mImgPoster - ImageView from adapter used to display image after download is complete
-    ImageView mImgPoster;
-
-/**************************************************************************************************/
-
-    /**
-     * ImageLoadTask(PosterItem, ImageView) - constructor
-     * @param item - PosterItem object used to save image after download
-     * @param img - ImageView object used to display image after download
-     */
-    public ImageLoadTask(MovieJSON.MovieDetail item, ImageView img){
-        mItem = item;
-        mImgPoster = img;
-    }
-
-        @Override
-        protected void onPreExecute(){
-            //does nothing
-        }
-
-        /**
-         * Bitmap doInBackground(String...) - downloads an image from the given url
-         * @param params - url of image
-         * @return - bitmap image of poster
-         */
-        protected Bitmap doInBackground(String... params){
-            Log.d("Movies", "ImageLoadTask.doInBackground");
-            Bitmap b = null;
-            try{
-                //download image using url
-                b = BitmapFactory.decodeStream((InputStream) new URL(params[0]).getContent());
-            }
-            catch(MalformedURLException e){
-                Log.d("Movies", "     malformedURL");
-            }
-            catch(IOException e){
-                Log.d("Movies", "     IOException");
-            }
-            return b;
-        }
-
-        /**
-         * void onPostExecute(Bitmap) - saves and displays bitmap if download was successful
-         * @param ret - bitmap of movie poster
-         */
-        protected void onPostExecute(Bitmap ret){
-            if(ret != null){
-                //display image in imageView
-                mImgPoster.setImageBitmap(ret);
-                //save image to PosterItem
-                mItem.setPosterImage(ret);
-            }
-        }
-
-    }
 
 }
