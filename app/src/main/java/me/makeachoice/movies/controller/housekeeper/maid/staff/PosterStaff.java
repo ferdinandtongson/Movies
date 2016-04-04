@@ -110,4 +110,9 @@ public class PosterStaff {
 
         return mPosterAdapter;
     }
+
+    //TODO - this is a current work around, need better solution
+    public PosterAdapter getRealPosterAdapter(){
+        return mPosterAdapter;
+    }
 }
