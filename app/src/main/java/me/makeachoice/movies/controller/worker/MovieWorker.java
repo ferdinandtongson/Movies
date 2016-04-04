@@ -293,7 +293,7 @@ public class MovieWorker extends MyWorker{
         detailObj = new MovieJSON().new MovieDetail();
 
         try{
-            detailObj.setOriginalLanguage(obj.getString(ITEM_ORIGINAL_TITLE));
+            detailObj.setOriginalTitle(obj.getString(ITEM_ORIGINAL_TITLE));
             detailObj.setTitle(obj.getString(ITEM_TITLE));
             detailObj.setOverview(obj.getString(ITEM_OVERVIEW));
 
