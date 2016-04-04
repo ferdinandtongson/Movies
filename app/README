@@ -1,0 +1,5 @@
+README:
+
+To be able to use this application:
+    1)add <string name="api_key_tmdb">#########</string> in res/values/strings
+    2)replace ######### with api key from themoviedb.org
