@@ -13,6 +13,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -204,15 +206,7 @@ public class PosterAdapter extends MyAdapter {
         //save adapter position to Tag
         imgPoster.setTag(position);
 
-        //check if bitmap image is available
-        if(item.getImage() != null){
-            //if have image, update imageView with bitmap
-            imgPoster.setImageBitmap(item.getImage());
-        }
-        else{
-            //no image, load image from internet using lazy loading
-            loadImage(item.getPosterPath(), item, imgPoster);
-        }
+        Picasso.with(mContext).load(item.getPosterPath()).into(imgPoster);
     }
 
 
@@ -234,106 +228,5 @@ public class PosterAdapter extends MyAdapter {
     }
 
 /**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * Lazy Loading Image - Each poster in the PosterItem is being downloaded from the Internet. If the
- * image has not been downloaded yet, instead of waiting for all of the images to download and then
- * display the gridView, the gridView of movie Posters are shown with a default image and the actual
- * movie posters are downloaded one at a time. As the download is complete, the imageView is updated
- * with the poster.
- *
- * To accomplish Lazy Loading, an AsyncTask is created for every Poster item that does not have
- * an image already downloaded for it. The item and the corresponding imageView, that will be used
- * by the item to display the poster on the gridView, is passed into the AsyncTask class. When the
- * Task is complete, the imageView and Poster item are updated.
- *
- * NOTE: the imageView and the PosterItem have to be class variables to allow them to be updated
- * when the onPostExecute is called
- */
-/**************************************************************************************************/
-/**
- * void loadImage(String, PosterItem, ImageView) - calls an asyncTask to load the image from
- * the internet
- * @param url - url of the image of the movie poster
- * @param item - Poster Item holding movie information for the Adapter
- * @param imgPoster - imageView used to display poster image
- */
-    public void loadImage(String url,PosterItem item,ImageView imgPoster){
-        if(url != null && !url.equals("")){
-            new ImageLoadTask(item, imgPoster).execute(url);
-        }
-    }
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * ImageLoadTask extends AsyncTask<String, String, Bitmap> - will download an image from the
- * internet and, when the download is complete, update the imageView with the download image
- * and save the image to PosterItem.
- */
-/**************************************************************************************************/
-
-    private class ImageLoadTask extends AsyncTask<String, String, Bitmap>{
-
-/**************************************************************************************************/
-
-        //mItem - PosterItem object from adapter used to store image after download is complete
-        PosterItem mItem;
-        //mImgPoster - ImageView from adapter used to display image after download is complete
-        ImageView mImgPoster;
-
-/**************************************************************************************************/
-/**
- * ImageLoadTask(PosterItem, ImageView) - constructor
- * @param item - PosterItem object used to save image after download
- * @param img - ImageView object used to display image after download
- */
-        public ImageLoadTask(PosterItem item, ImageView img){
-            mItem = item;
-            mImgPoster = img;
-        }
-
-        @Override
-        protected void onPreExecute(){
-            //does nothing
-        }
-
-/**
- * Bitmap doInBackground(String...) - downloads an image from the given url
- * @param params - url of image
- * @return - bitmap image of poster
- */
-        protected Bitmap doInBackground(String... params){
-            Log.d("Movies", "ImageLoadTask.doInBackground");
-            Bitmap b = null;
-            try{
-                //download image using url
-                b = BitmapFactory.decodeStream((InputStream) new URL(params[0]).getContent());
-            }
-            catch(MalformedURLException e){
-                Log.d("Movies", "     malformedURL");
-            }
-            catch(IOException e){
-                Log.d("Movies", "     IOException");
-            }
-            return b;
-        }
-
-/**
- * void onPostExecute(Bitmap) - saves and displays bitmap if download was successful
- * @param ret - bitmap of movie poster
- */
-        protected void onPostExecute(Bitmap ret){
-            if(ret != null){
-                //display image in imageView
-                mImgPoster.setImageBitmap(ret);
-                //save image to PosterItem
-                mItem.setImage(ret);
-            }
-        }
-
-    }
 
 }
