@@ -5,9 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,10 +18,12 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.adapter.util.ViewHolder;
+import me.makeachoice.movies.model.json.MovieJSON;
 
 /**
 * PosterAdapter extends BaseAdapter class and is used as a List Adapter to display an image
@@ -148,7 +152,6 @@ public class PosterAdapter extends MyAdapter {
         if (convertView == null) {
             // if not recycled, inflate layout of new view object
             convertView = mInflater.inflate(mItemLayoutId, null);
-            convertView.setOnClickListener(mListener);
         }
 
         //updateView with data
@@ -157,6 +160,10 @@ public class PosterAdapter extends MyAdapter {
         return convertView;
     }
 
+    HashMap<Bitmap,Integer> mMyMap = new HashMap<>();
+    public HashMap<Bitmap, Integer> getMap(){
+        return mMyMap;
+    }
 
 /**************************************************************************************************/
 
@@ -171,7 +178,7 @@ public class PosterAdapter extends MyAdapter {
         PosterItem item = mItems.get(position);
 
         //update view with poster image
-        updatePosterView(item, convertView);
+        updatePosterView(item, convertView, position);
         //update view with movie title
         updateTitleView(item, convertView);
     }
@@ -181,13 +188,21 @@ public class PosterAdapter extends MyAdapter {
  * @param item - Poster Item object holding movie info
  * @param convertView - layout view holding the child views
  */
-    private void updatePosterView(PosterItem item, View convertView){
+    private void updatePosterView(PosterItem item, View convertView, int position){
+        //TODO - removed ViewHolder pattern to handle OnClick events in GridView, researh further
         //get child view using ViewHolder class
-        ImageView imgPoster = ViewHolder.get(convertView, mPosterViewId);
+        /*ImageView imgPoster = ViewHolder.get(convertView, mPosterViewId);
         if(imgPoster == null){
             //if imageView is null, get imageView using id
             imgPoster = (ImageView)convertView.findViewById(mPosterViewId);
-        }
+        }*/
+
+        //get ImageView
+        ImageView imgPoster = (ImageView)convertView.findViewById(mPosterViewId);
+        //set onClick listener
+        imgPoster.setOnClickListener(mListener);
+        //save adapter position to Tag
+        imgPoster.setTag(position);
 
         //check if bitmap image is available
         if(item.getImage() != null){
@@ -201,11 +216,11 @@ public class PosterAdapter extends MyAdapter {
     }
 
 
-        /**
-         * void updateTitleView(PosterItem, View) - update textView with title of movie
-         * @param item - Poster Item object hodling movie info
-         * @param convertView - layout view holding child views
-         */
+/**
+ * void updateTitleView(PosterItem, View) - update textView with title of movie
+ * @param item - Poster Item object hodling movie info
+ * @param convertView - layout view holding child views
+ */
     private void updateTitleView(PosterItem item, View convertView){
         //get child view using ViewHolder class
         TextView txtTitle = ViewHolder.get(convertView, mTitleViewId);
