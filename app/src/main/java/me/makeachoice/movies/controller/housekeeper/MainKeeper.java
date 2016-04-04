@@ -291,7 +291,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * void prepareFragment - createFragment to be displayed
  */
     public void prepareFragment(){
-        Log.d("Movies", "MainKeeper.prepareFragment: " + mSortBy);
 
         if(mCurrentFragName.equals(NAME_POSTER) || mCurrentFragName.equals(NAME_EMPTY)){
             if(mBoss.getModel(mSortBy) != null){
@@ -334,7 +333,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
     private int mInfoFragCount;
     public void onBackPressed(){
-        Log.d("Movies", "MainKeeper.onBackPressed");
         mCurrentFragName = NAME_POSTER;
 
         mFragAssistant.setHasInfoFragment(false);
@@ -363,8 +361,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
         @Override
         public void onClick(View v) {
-            Log.d("Movies", "MainKeeper.mPosterListener: " + v.toString());
-            Log.d("Movies", "     tag: " + v.getTag());
             mMovieIndex = (int)v.getTag();
             MovieJSON.MovieDetail item = mBoss.getModel(mSortBy).getMovie(mMovieIndex);
 
