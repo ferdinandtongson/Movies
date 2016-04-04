@@ -45,20 +45,6 @@ public class MovieButler extends MyButler{
 
 /**************************************************************************************************/
 
-    public boolean hasHttpConnection(){
-        Log.d("Movies", "MovieButler.establishHttpConnection");
-
-        if(mMovieWorker.hasConnectivity(mActivityContext)){
-            Log.d("Movies", "     connection true");
-            return true;
-        }
-        else{
-            Log.d("Movies", "     no connection");
-            //TODO - need to handle in an event that there is not internet connection
-            return false;
-        }
-    }
-
 /**
  * void requestMovies(int) - used to execute and api request for a list of movies
  * @param request - type of request (most popular or highest rated)
