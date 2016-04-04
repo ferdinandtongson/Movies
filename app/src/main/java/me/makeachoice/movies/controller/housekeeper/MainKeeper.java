@@ -1,30 +1,25 @@
 package me.makeachoice.movies.controller.housekeeper;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 
 import java.util.HashMap;
 
 import me.makeachoice.movies.MainActivity;
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.adapter.PosterAdapter;
-import me.makeachoice.movies.adapter.item.PosterItem;
+
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.assistant.MainFragmentAssistant;
 import me.makeachoice.movies.controller.housekeeper.maid.EmptyMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
-import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.staff.PosterStaff;
 import me.makeachoice.movies.controller.Boss;
@@ -89,7 +84,12 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
 
 /**************************************************************************************************/
-
+//TODO - this HouseKeeper is NOT very clean
+//TODO - move Maid initialization to an Assistant
+//TODO - move fragment transitioning logic all to mFragAssitant
+//TODO - MVP design is being violated in PosterAdapter!!!
+//TODO - Fix Bridge interfaces for Maids/HouseKeeper/Activities
+//TODO - Update HouseKeeper comments
     private MainFragmentAssistant mFragAssistant;
     private String mCurrentFragName;
     public MainKeeper(Boss boss, Context ctx){
@@ -105,6 +105,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         initHouseKeeping();
 
         mFragAssistant = new MainFragmentAssistant(LAYOUT_MAIN_CONTAINER);
+        mInfoFragCount = 0;
 
     }
 
@@ -290,29 +291,53 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * void prepareFragment - createFragment to be displayed
  */
     public void prepareFragment(){
-        //TODO - MovieSelect Fragment is hard-coded in this method
         Log.d("Movies", "MainKeeper.prepareFragment: " + mSortBy);
 
-        if(mBoss.getModel(mSortBy) != null){
+        if(mCurrentFragName.equals(NAME_POSTER) || mCurrentFragName.equals(NAME_EMPTY)){
+            if(mBoss.getModel(mSortBy) != null){
 
-            if(mPosterStaff == null){
-                mPosterStaff = new PosterStaff(mActivityContext, mBoss.getModel(mSortBy));
+                if(mPosterStaff == null){
+                    mPosterStaff = new PosterStaff(mActivityContext, mBoss.getModel(mSortBy));
+                }
+
+                //set list
+                mPosterMaid.setListAdapter(mPosterStaff.getPosterAdapter(mPosterListener));
+
+                mCurrentFragName = NAME_POSTER;
+                //get PosterFragment and display
+                mFragAssistant.requestFragment(mFragmentManager,
+                        mFragmentRegistry.get(NAME_POSTER), NAME_POSTER);
+            }
+            else{
+                mCurrentFragName = NAME_EMPTY;
+                //get EmptyFragment and display
+                mFragAssistant.requestFragment(mFragmentManager,
+                        mFragmentRegistry.get(NAME_EMPTY), NAME_EMPTY);
+            }
+        }
+        else if(mCurrentFragName.equals(NAME_INFO)){
+
+            MovieJSON.MovieDetail item = mBoss.getModel(mSortBy).getMovie(mMovieIndex);
+
+            mInfoMaid.setMovie(item);
+
+            if (mFragAssistant.getHasInfoFragment()){
+                mFragAssistant.popFragment(mFragmentManager,
+                        mFragmentRegistry.get(NAME_POSTER),
+                        NAME_POSTER,
+                        mFragmentRegistry.get(NAME_INFO),
+                        NAME_INFO);
             }
 
-            //set list
-            mPosterMaid.setListAdapter(mPosterStaff.getPosterAdapter(mPosterListener));
+        }
+    }
 
-            //get PosterFragment and display
-            mFragAssistant.requestFragment(mFragmentManager,
-                    mFragmentRegistry.get(NAME_POSTER), NAME_POSTER);
-        }
-        else{
-            //get EmptyFragment and display
-            mFragAssistant.requestFragment(mFragmentManager,
-                    mFragmentRegistry.get(NAME_EMPTY), NAME_EMPTY);
-        }
-        /*mFragAssistant.requestFragment(mFragmentManager,
-                mFragmentRegistry.get(NAME_INFO), NAME_INFO);*/
+    private int mInfoFragCount;
+    public void onBackPressed(){
+        Log.d("Movies", "MainKeeper.onBackPressed");
+        mCurrentFragName = NAME_POSTER;
+
+        mFragAssistant.setHasInfoFragment(false);
 
     }
 
@@ -328,6 +353,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         return mPosterStaff.getPosterAdapter(mPosterListener);
     }
 
+    private int mMovieIndex;
     private View.OnClickListener mPosterListener = new View.OnClickListener(){
 
         private int mPosition;
@@ -337,23 +363,15 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
         @Override
         public void onClick(View v) {
-
             Log.d("Movies", "MainKeeper.mPosterListener: " + v.toString());
-            //HashMap<String, Integer> myMap = mPosterStaff.getRealPosterAdapter().getMap();
-
-            //Log.d("Movies", "     map: " + myMap.toString());
-            //Integer index = myMap.get(v.toString());
-            //Log.d("Movies", "     index: " + index);
             Log.d("Movies", "     tag: " + v.getTag());
-            int index = (int)v.getTag();
-            MovieJSON.MovieDetail item = mBoss.getModel(mSortBy).getMovie(index);
+            mMovieIndex = (int)v.getTag();
+            MovieJSON.MovieDetail item = mBoss.getModel(mSortBy).getMovie(mMovieIndex);
 
-
-            Log.d("Movies", "     movie: " + item.getTitle());
             mInfoMaid.setMovie(item);
 
-            //PosterItem posterItem = (PosterItem)mPosterStaff.getRealPosterAdapter().getItem(index);
-            //mInfoMaid.setPoster(v.getBackground());
+            mCurrentFragName = NAME_INFO;
+            mInfoFragCount = mInfoFragCount + 1;
 
             mFragAssistant.requestDetailFragment(mFragmentManager,
                     mFragmentRegistry.get(NAME_INFO), NAME_POSTER, NAME_INFO);
@@ -398,10 +416,28 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
             sortBy = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
 
+        //TODO - clean up logic structure (overly complicated)
         if(mSortBy != sortBy){
             mSortBy = sortBy;
             mPosterStaff = null;
-            prepareFragment();
+
+            if(mCurrentFragName.equals(NAME_INFO)){
+                mCurrentFragName = NAME_POSTER;
+                mFragAssistant.menuPopFragment(mFragmentManager);
+                prepareFragment();
+            }
+            else{
+                prepareFragment();
+            }
+        }
+        else{
+            //currently looking at InfoFrag but return to PosterFrag
+            //mFragmentManager.popBackStack();
+            if(mCurrentFragName.equals(NAME_INFO)){
+                mCurrentFragName = NAME_POSTER;
+                mFragAssistant.menuPopFragment(mFragmentManager);
+                prepareFragment();
+            }
         }
 
     }
@@ -418,9 +454,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
     }
 
 /**************************************************************************************************/
-
-
-
     /**
      * void onItemClick(int) - event listener call by the fragment when an app item has been clicked
      * @param position - list position of item clicked
@@ -434,12 +467,5 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         Toast.makeText(mActivityContext, msg, Toast.LENGTH_SHORT).show();
     }
 
-    public String getPosterMaidName(){
-        return NAME_POSTER;
-    }
-
-    public String getEmptyMaidName(){
-        return NAME_EMPTY;
-    }
 
 }
