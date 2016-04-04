@@ -1,6 +1,7 @@
 package me.makeachoice.movies.controller.housekeeper;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import me.makeachoice.movies.MainActivity;
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.adapter.PosterAdapter;
+import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.assistant.MainFragmentAssistant;
 import me.makeachoice.movies.controller.housekeeper.maid.EmptyMaid;
@@ -291,7 +293,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         //TODO - MovieSelect Fragment is hard-coded in this method
         Log.d("Movies", "MainKeeper.prepareFragment: " + mSortBy);
 
-        Fragment fragment;
         if(mBoss.getModel(mSortBy) != null){
 
             if(mPosterStaff == null){
@@ -301,16 +302,17 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
             //set list
             mPosterMaid.setListAdapter(mPosterStaff.getPosterAdapter(mPosterListener));
 
-            //get PosterFragment
-            fragment = mFragmentRegistry.get(NAME_POSTER);
+            //get PosterFragment and display
+            mFragAssistant.requestFragment(mFragmentManager,
+                    mFragmentRegistry.get(NAME_POSTER), NAME_POSTER);
         }
         else{
-            fragment = mFragmentRegistry.get(NAME_EMPTY);
+            //get EmptyFragment and display
+            mFragAssistant.requestFragment(mFragmentManager,
+                    mFragmentRegistry.get(NAME_EMPTY), NAME_EMPTY);
         }
-
-        Log.d("Movies", "     manager: " + mFragmentManager.toString());
-        //check if Fragment needs to be added to the Fragment manager
-        mFragAssistant.requestFragment(mFragmentManager, fragment);
+        /*mFragAssistant.requestFragment(mFragmentManager,
+                mFragmentRegistry.get(NAME_INFO), NAME_INFO);*/
 
     }
 
@@ -327,12 +329,34 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
     }
 
     private View.OnClickListener mPosterListener = new View.OnClickListener(){
+
+        private int mPosition;
+        public void setPosition(int position){
+            mPosition = position;
+        }
+
         @Override
         public void onClick(View v) {
-            GridView gridView = (GridView)v.getParent();
 
-            int index = gridView.indexOfChild(v);
-            Log.d("Movies", "     movie: " + mBoss.getModel(mSortBy).getMovie(index).getTitle());
+            Log.d("Movies", "MainKeeper.mPosterListener: " + v.toString());
+            //HashMap<String, Integer> myMap = mPosterStaff.getRealPosterAdapter().getMap();
+
+            //Log.d("Movies", "     map: " + myMap.toString());
+            //Integer index = myMap.get(v.toString());
+            //Log.d("Movies", "     index: " + index);
+            Log.d("Movies", "     tag: " + v.getTag());
+            int index = (int)v.getTag();
+            MovieJSON.MovieDetail item = mBoss.getModel(mSortBy).getMovie(index);
+
+
+            Log.d("Movies", "     movie: " + item.getTitle());
+            mInfoMaid.setMovie(item);
+
+            //PosterItem posterItem = (PosterItem)mPosterStaff.getRealPosterAdapter().getItem(index);
+            //mInfoMaid.setPoster(v.getBackground());
+
+            mFragAssistant.requestDetailFragment(mFragmentManager,
+                    mFragmentRegistry.get(NAME_INFO), NAME_POSTER, NAME_INFO);
 
         }
     };
