@@ -141,7 +141,6 @@ public class InfoFragment extends MyFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("Movies", "InfoFragment.onActivityCreated");
 
         //get child view for fragment
         if(mTxtTitle == null){
@@ -160,7 +159,7 @@ public class InfoFragment extends MyFragment {
         mMovieItem = ((InfoMaid) mBridge).getMovie();
         updateTextViews();
         updatePoster();
-        updateRatingBar();
+        //updateRatingBar();
     }
 
     private void updateTextViews(){
@@ -175,9 +174,6 @@ public class InfoFragment extends MyFragment {
     }
 
     private void updatePoster(){
-        Log.d("Movies", "InfoFragment.updatePoster");
-        Log.d("Movies", "     img: " + mImgPoster.toString());
-        //check if bitmap image is available
         Picasso.with(mContext).load(mMovieItem.getPosterPath()).into(mImgPoster);
     }
 
