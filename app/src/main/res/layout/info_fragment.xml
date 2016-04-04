@@ -54,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/txt_release"
                 android:layout_marginTop="7sp"
+                android:padding="5sp"
                 android:text="Cast info placeholder"
                 android:textSize="12sp"
                 android:lines="7"
