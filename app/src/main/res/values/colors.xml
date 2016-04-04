@@ -10,4 +10,12 @@
     <color name="powderBrownish">#D4A190</color>
     <color name="powderOrangeish">#FF6103</color>
 
+    <color name="powderBlueish_20">#3390C3D4</color>
+    <color name="powderPurpleish_20">#CCC390D4</color>
+    <color name="powderGreenish_20">#CCA1D490</color>
+    <color name="powderBrownish_20">#CCD4A190</color>
+    <color name="powderOrangeish_20">#CCFF6103</color>
+
+    <color name="white">#FFFFFF</color>
+
 </resources>
