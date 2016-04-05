@@ -120,6 +120,11 @@ public class MovieJSON {
         mList.remove(index);
     }
 
+    public void clearMovies(){
+        mList.clear();
+        mList = null;
+    }
+
     public boolean checkForMovie(MovieDetail detail){
         return mList.contains(detail);
     }
