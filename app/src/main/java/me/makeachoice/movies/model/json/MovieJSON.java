@@ -121,8 +121,10 @@ public class MovieJSON {
     }
 
     public void clearMovies(){
-        mList.clear();
-        mList = null;
+        if(mList != null){
+            mList.clear();
+            mList = null;
+        }
     }
 
     public boolean checkForMovie(MovieDetail detail){
