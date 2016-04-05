@@ -115,4 +115,9 @@ public class PosterStaff {
     public PosterAdapter getRealPosterAdapter(){
         return mPosterAdapter;
     }
+
+    public void clearAdapter(){
+        mPosterAdapter.clearAdapter();
+    }
+
 }
