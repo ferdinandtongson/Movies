@@ -31,6 +31,9 @@ public class MovieButler extends MyButler{
     //mMovieModel - a ListArray of data taken from a JSON response
     MovieJSON mMovieModel;
 
+    //mWorking - boolean value to check if a Worker is working in the background
+    Boolean mWorking;
+
 /**************************************************************************************************/
 
     public MovieButler(Context ctx, Boss boss){
@@ -39,8 +42,18 @@ public class MovieButler extends MyButler{
         //Application context
         mBoss = boss;
 
+        //flag to check if work is being done in the background
+        mWorking = false;
+
         //get TheMovieDB api key from resource file
         mApiKey = mActivityContext.getString(R.string.api_key_tmdb);
+    }
+
+    public void stopWorking(){
+        if(mWorking){
+            mWorking = false;
+            mMovieWorker.cancel(true);
+        }
     }
 
 /**************************************************************************************************/
@@ -50,6 +63,13 @@ public class MovieButler extends MyButler{
  * @param request - type of request (most popular or highest rated)
  */
     public void requestMovies(int request){
+        Log.d("Movies", "MovieButler.requestMovies");
+        if(mWorking){
+            Log.d("Movies", "     thread cancelled");
+            mMovieWorker.cancel(true);
+        }
+
+
         //initializes the AsyncTask worker
         mMovieWorker = new MovieWorker(this);
 
@@ -95,6 +115,9 @@ public class MovieButler extends MyButler{
         else{
             //TODO - need to handle event of a download failure
         }
+
+        //work has finished
+        mWorking = false;
     }
 
 
@@ -104,6 +127,10 @@ public class MovieButler extends MyButler{
  */
     public MovieJSON getModel( ){
         return mMovieModel;
+    }
+
+    public void clearModel(){
+        mMovieWorker.getMovies().clearMovies();
     }
 
 /**************************************************************************************************/
