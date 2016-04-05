@@ -1,5 +1,8 @@
 package me.makeachoice.movies;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -57,29 +60,41 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d("Movies", "MainActivity.onCreate");
         //start Boss
-        final Boss mBoss = (Boss)getApplicationContext();
+        mBoss = (Boss)getApplicationContext();
         //register Activity context with Boss
         mBoss.setActivityContext(this);
 
-        Log.d("Movies", "MainActivity.onCreate");
-        if(mBoss.getHouseKeeper(MainKeeper.NAME) == null){
-            //start MyHouseKeeper for this Activity
-            mHouseKeeper = new MainKeeper(mBoss, this);
+        if(hasConnectivity(this)){
+            if(mBoss.getHouseKeeper(MainKeeper.NAME) == null){
+                //start MyHouseKeeper for this Activity
+                mHouseKeeper = new MainKeeper(mBoss, this);
+            }
+
+            //Note setContent must happen before toolbar
+            setContentView(mHouseKeeper.getActivityLayoutId());
+
+            //send FragmentManger to HouseKeeper, a new FragmentManger is created at onCreate()
+            mHouseKeeper.setFragmentManager(getSupportFragmentManager());
+
+            //set flag so fragment waits until Activity is Resumed, onPostResume changes flag
+            mHouseKeeper.isSafeToCommitFragment(false);
+
+            //Create fragment, will be automatically added to fragment manager
+            mHouseKeeper.prepareFragment();
+
+            //Create toolbar with creation of Activity
+            initToolbar();
         }
+        else{
+            //TODO - need to code here
+        }
+    }
 
-        //Note setContent must happen before toolbar
-        setContentView(mHouseKeeper.getActivityLayoutId());
-
-        //send FragmentManger to HouseKeeper, a new FragmentManger is created at onCreate()
-        mHouseKeeper.setFragmentManager(getSupportFragmentManager());
-
-        //Create fragment, will be automatically added to fragment manager
-        mHouseKeeper.prepareFragment();
-
-        //Create toolbar with creation of Activity
-        initToolbar();
-
+    public void onStart(){
+        super.onStart();
+        mHouseKeeper.isSafeToCommitFragment(false);
     }
 
     public void onSaveInstanceState(Bundle saveState){
@@ -88,9 +103,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onPostResume(){
+        super.onPostResume();
+        mHouseKeeper.onActivityPostResume();
+    }
+
+    @Override
     public void onBackPressed(){
         super.onBackPressed();
         mHouseKeeper.onBackPressed();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        mHouseKeeper.isSafeToCommitFragment(false);
+    }
+
+    private static Boss mBoss;
+    public void closeApp(){
+        Log.d("Movies", "MainActivity.closeApp");
+        mBoss.clearMovies();
+        this.finish();
     }
 
 /**************************************************************************************************/
@@ -151,4 +185,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 /**************************************************************************************************/
+
+    private boolean hasConnectivity(Context ctx){
+        //get Connectivity Manger
+        ConnectivityManager connMgr = (ConnectivityManager)
+                ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        //get access to network information from phone
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        //check if we have connection
+        if(networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+
 }
