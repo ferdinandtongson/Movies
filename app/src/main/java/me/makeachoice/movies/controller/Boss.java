@@ -53,7 +53,7 @@ public class Boss extends Application{
  * @param request - type of movie data requested (most popular or highest rated)
  * @return - an array list of movie data
  */
-    public MovieJSON getModel(int request){
+    public MovieJSON getMovies(int request){
         //check if there is data or if it is a new request
         if(mButler.getModel() == null || mMovieRequest != request){
             //record current movie request
@@ -68,22 +68,10 @@ public class Boss extends Application{
         return mButler.getModel();
     }
 
-    public boolean hasConnectivity(Context ctx){
-        //get Connectivity Manger
-        ConnectivityManager connMgr = (ConnectivityManager)
-                ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        //get access to network information from phone
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        //check if we have connection
-        if(networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        }
-        else{
-            return false;
-        }
+    public void clearMovies(){
+        mButler.clearModel();
     }
+
 
 /**
  * void downloadMovieDataComplete() - communication channel used by Butlers to let the Boss
