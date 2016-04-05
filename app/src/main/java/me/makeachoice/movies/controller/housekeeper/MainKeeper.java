@@ -92,10 +92,9 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 //TODO - Update HouseKeeper comments
     private MainFragmentAssistant mFragAssistant;
     private String mCurrentFragName;
-    public MainKeeper(Boss boss, Context ctx){
+    public MainKeeper(Boss boss){
         Log.d("Movies", "MainKeeper constructor");
         mBoss = boss;
-        mActivityContext = ctx;
 
         mBoss.registerHouseKeeper(NAME, this);
 
@@ -113,6 +112,9 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         mFragmentManager = manager;
     }
 
+    public void setActivity(Context ctx){
+        mActivityContext = ctx;
+    }
 
 /**************************************************************************************************/
 /**
@@ -291,12 +293,13 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * void prepareFragment - createFragment to be displayed
  */
     public void prepareFragment(){
-
+        Log.d("Movies", "MainKeeper.prepareFragment: " + mCurrentFragName);
         if(mCurrentFragName.equals(NAME_POSTER) || mCurrentFragName.equals(NAME_EMPTY)){
-            if(mBoss.getModel(mSortBy) != null){
-
+            Log.d("Movies", "     here");
+            if(mBoss.getMovies(mSortBy) != null){
+                Log.d("Movies", "     has movies!!!!: " + mBoss.getMovies(mSortBy).getMovieCount());
                 if(mPosterStaff == null){
-                    mPosterStaff = new PosterStaff(mActivityContext, mBoss.getModel(mSortBy));
+                    mPosterStaff = new PosterStaff(mActivityContext, mBoss.getMovies(mSortBy));
                 }
 
                 //set list
@@ -308,6 +311,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
                         mFragmentRegistry.get(NAME_POSTER), NAME_POSTER);
             }
             else{
+                Log.d("Movies", "     no movies");
                 mCurrentFragName = NAME_EMPTY;
                 //get EmptyFragment and display
                 mFragAssistant.requestFragment(mFragmentManager,
@@ -316,27 +320,47 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         }
         else if(mCurrentFragName.equals(NAME_INFO)){
 
-            MovieJSON.MovieDetail item = mBoss.getModel(mSortBy).getMovie(mMovieIndex);
+            MovieJSON.MovieDetail item = mBoss.getMovies(mSortBy).getMovie(mMovieIndex);
 
             mInfoMaid.setMovie(item);
 
-            if (mFragAssistant.getHasInfoFragment()){
+            mFragAssistant.requestFragment(mFragmentManager, mFragmentRegistry.get(NAME_INFO),
+                    NAME_INFO);
+            /*if (mFragAssistant.getHasInfoFragment()){
                 mFragAssistant.popFragment(mFragmentManager,
                         mFragmentRegistry.get(NAME_POSTER),
                         NAME_POSTER,
                         mFragmentRegistry.get(NAME_INFO),
                         NAME_INFO);
-            }
+            }*/
+
 
         }
     }
 
     private int mInfoFragCount;
     public void onBackPressed(){
-        mCurrentFragName = NAME_POSTER;
+        if(mCurrentFragName.equals(NAME_POSTER)){
+            ((MainActivity)mActivityContext).closeApp();
+        }
+        else{
+            mCurrentFragName = NAME_POSTER;
+            mFragAssistant.setHasInfoFragment(false);
+        }
+    }
 
-        mFragAssistant.setHasInfoFragment(false);
+    public void onActivityPostResume(){
+        Log.d("Movies", "MainKeeper.onActivityPostResume");
+        mFragAssistant.setSafeToCommitFragment(true);
 
+        //Create fragment, will be automatically added to fragment manager
+        prepareFragment();
+
+
+    }
+
+    public void isSafeToCommitFragment(boolean isSafe){
+        mFragAssistant.setSafeToCommitFragment(isSafe);
     }
 
 /**************************************************************************************************/
@@ -362,7 +386,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         @Override
         public void onClick(View v) {
             mMovieIndex = (int)v.getTag();
-            MovieJSON.MovieDetail item = mBoss.getModel(mSortBy).getMovie(mMovieIndex);
+            MovieJSON.MovieDetail item = mBoss.getMovies(mSortBy).getMovie(mMovieIndex);
 
             mInfoMaid.setMovie(item);
 
@@ -415,23 +439,21 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         //TODO - clean up logic structure (overly complicated)
         if(mSortBy != sortBy){
             mSortBy = sortBy;
+            mPosterStaff.clearAdapter();
             mPosterStaff = null;
 
+            mBoss.clearMovies();
             if(mCurrentFragName.equals(NAME_INFO)){
-                mCurrentFragName = NAME_POSTER;
-                mFragAssistant.menuPopFragment(mFragmentManager);
-                prepareFragment();
+                ((MainActivity)mActivityContext).onBackPressed();
             }
-            else{
-                prepareFragment();
-            }
+
+            prepareFragment();
         }
         else{
             //currently looking at InfoFrag but return to PosterFrag
             //mFragmentManager.popBackStack();
             if(mCurrentFragName.equals(NAME_INFO)){
-                mCurrentFragName = NAME_POSTER;
-                mFragAssistant.menuPopFragment(mFragmentManager);
+                ((MainActivity)mActivityContext).onBackPressed();
                 prepareFragment();
             }
         }
@@ -456,7 +478,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
      */
     public void onItemClick(ListView l, View v, int position, long id){
         Log.d("Movies", "MainKeeper.onItemClick");
-        MovieJSON model = mBoss.getModel(mSortBy);
+        MovieJSON model = mBoss.getMovies(mSortBy);
         String msg = model.getMovie(position).getTitle();
 
         //display in long period of time

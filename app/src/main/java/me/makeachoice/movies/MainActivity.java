@@ -69,20 +69,21 @@ public class MainActivity extends AppCompatActivity {
         if(hasConnectivity(this)){
             if(mBoss.getHouseKeeper(MainKeeper.NAME) == null){
                 //start MyHouseKeeper for this Activity
-                mHouseKeeper = new MainKeeper(mBoss, this);
+                mHouseKeeper = new MainKeeper(mBoss);
             }
 
             //Note setContent must happen before toolbar
             setContentView(mHouseKeeper.getActivityLayoutId());
+
+            //TODO - passing of Activity Context is brittle!!!
+            //send Activity Context to HouseKeeper
+            mHouseKeeper.setActivity(this);
 
             //send FragmentManger to HouseKeeper, a new FragmentManger is created at onCreate()
             mHouseKeeper.setFragmentManager(getSupportFragmentManager());
 
             //set flag so fragment waits until Activity is Resumed, onPostResume changes flag
             mHouseKeeper.isSafeToCommitFragment(false);
-
-            //Create fragment, will be automatically added to fragment manager
-            mHouseKeeper.prepareFragment();
 
             //Create toolbar with creation of Activity
             initToolbar();

@@ -36,14 +36,17 @@ public class MovieButler extends MyButler{
 
 /**************************************************************************************************/
 
-    public MovieButler(Context ctx, Boss boss){
-        //Activity context
-        mActivityContext = ctx;
+    public MovieButler(Boss boss){
         //Application context
         mBoss = boss;
 
         //flag to check if work is being done in the background
         mWorking = false;
+
+    }
+
+    public void setActivityContext(Context ctx){
+        mActivityContext = ctx;
 
         //get TheMovieDB api key from resource file
         mApiKey = mActivityContext.getString(R.string.api_key_tmdb);
@@ -130,6 +133,7 @@ public class MovieButler extends MyButler{
     }
 
     public void clearModel(){
+        mMovieModel = null;
         mMovieWorker.getMovies().clearMovies();
     }
 

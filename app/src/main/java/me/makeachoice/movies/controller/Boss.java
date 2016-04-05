@@ -44,8 +44,10 @@ public class Boss extends Application{
         //check if Butler is awake
         if(mButler == null){
             //initialize MovieButler
-            mButler = new MovieButler(mActivityContext, this);
+            mButler = new MovieButler(this);
         }
+
+        mButler.setActivityContext(ctx);
     }
 
 /**
@@ -69,6 +71,7 @@ public class Boss extends Application{
     }
 
     public void clearMovies(){
+        mButler.stopWorking();
         mButler.clearModel();
     }
 
