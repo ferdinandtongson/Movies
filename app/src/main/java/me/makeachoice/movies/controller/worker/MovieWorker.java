@@ -202,6 +202,14 @@ public class MovieWorker extends MyWorker{
         mButler.workComplete(result);
     }
 
+    @Override
+    protected void onCancelled(){
+        if(mDialog.isShowing()){
+            mDialog.dismiss();
+        }
+        //mButler.workComplete(false);
+    }
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
