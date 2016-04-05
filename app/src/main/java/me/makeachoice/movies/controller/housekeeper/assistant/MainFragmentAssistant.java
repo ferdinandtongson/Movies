@@ -14,7 +14,7 @@ public class MainFragmentAssistant {
     private int mContainerId;
     private boolean mHasFragment;
     private boolean mHasInfoFragment;
-
+    private boolean mIsSafeToCommit;
 
     public MainFragmentAssistant(int containerId){
 
@@ -46,7 +46,10 @@ public class MainFragmentAssistant {
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.replace(mContainerId, fragment, newFrag);
 
-        ft.commit();
+        if(mIsSafeToCommit){
+            //commit fragment to activity
+            ft.commit();
+        }
     }
 
     public void popFragment(FragmentManager manager, Fragment posterFrag, String posterName,
@@ -57,7 +60,11 @@ public class MainFragmentAssistant {
         ft.add(posterFrag, posterName);
         ft.addToBackStack(posterName);
         ft.replace(mContainerId, fragment, name);
-        ft.commit();
+
+        if(mIsSafeToCommit){
+            //commit fragment to activity
+            ft.commit();
+        }
     }
 
 
@@ -77,7 +84,10 @@ public class MainFragmentAssistant {
         FragmentTransaction ft = manager.beginTransaction();
 
         manager.popBackStack();
-        ft.commit();
+        if(mIsSafeToCommit){
+            //commit fragment to activity
+            ft.commit();
+        }
     }
 
 /**
@@ -91,8 +101,10 @@ public class MainFragmentAssistant {
         //add fragment to the fragment container
         ft.add(mContainerId, fragment, name);
 
-        //commit fragment to activity
-        ft.commit();
+        if(mIsSafeToCommit){
+            //commit fragment to activity
+            ft.commit();
+        }
     }
 
 /**
@@ -107,11 +119,27 @@ public class MainFragmentAssistant {
         //replace fragment held by the FragmentManager
         ft.replace(mContainerId, fragment, name);
 
-        //commit fragment to activity
-        ft.commit();
+        if(mIsSafeToCommit){
+            //commit fragment to activity
+            ft.commit();
+        }
     }
 
 /**************************************************************************************************/
 
+    public void isSafeToCommitFragment(FragmentManager manager, boolean isSafe){
+        Log.d("Movies", "FragAssistant.isSafeToCommitFragment");
+        Log.d("Movies", "     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        if(isSafe){
+            Log.d("Movies", "     Commit Frag!!!!");
+            mIsSafeToCommit = true;
+            manager.beginTransaction().commit();
+        }
+    }
+
+    public void setSafeToCommitFragment(boolean isSafe){
+        mIsSafeToCommit = isSafe;
+    }
 
 }
