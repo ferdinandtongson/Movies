@@ -64,6 +64,7 @@ public class PosterFragment extends MyFragment {
     public void onAttach(Context context){
         super.onAttach(context);
         //empty
+        Log.d("Movies", "PosterFragment.onAttach");
     }
 
 /** onCreateView(...) is called when it's time for the fragment to draw its UI for the first
@@ -114,16 +115,22 @@ public class PosterFragment extends MyFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("Movies", "PosterFragment.onActivityCreated");
 
-        if(mGridView == null){
-            Log.d("Movies", "     gridView is null");
-            //create the child view, gridview
-            mGridView = (GridView)mLayout.findViewById(mGridViewId);
+        if(mBridge.getListAdapter().isEmpty()){
+            //TODO - using Bridge communication as a work around to Empty PosterFrag bug
+            //will create a zombie empty fragment, using Bridge as a workaround
+            mBridge.onItemClick(1);
+        }
+        else{
+            if(mGridView == null){
+                //create the child view, gridview
+                mGridView = (GridView)mLayout.findViewById(mGridViewId);
+            }
+
+            //add ListAdapter to gridview
+            mGridView.setAdapter(mBridge.getListAdapter());
         }
 
-        //add ListAdapter to gridview
-        mGridView.setAdapter(mBridge.getListAdapter());
     }
 
 /**
@@ -140,15 +147,6 @@ public class PosterFragment extends MyFragment {
         //save child view id (gridView)
         saveState.putInt(KEY_GRID_VIEW_ID, mGridViewId);
 
-    }
-
-/**
- * onDetach( ) is called immediately prior to the fragment no longer being associated with its
- * activity.
- */
-    @Override
-    public void onDetach(){
-        super.onDetach();
     }
 
 
@@ -196,7 +194,6 @@ public class PosterFragment extends MyFragment {
  * @param position - position of the item; position is zero based (0 - x)
  */
     public void onItemClick(int position){
-        Log.d("SimpleListFragment", "PosterFragment.onListItemClick");
         //sends the click event across the bridge for the activity to handle
         mBridge.onItemClick(position);
     }
