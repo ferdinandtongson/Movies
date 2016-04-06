@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
@@ -289,6 +290,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * void prepareFragment - createFragment to be displayed
  */
     public void prepareFragment(){
+        Log.d("Movies", "MainKeeper.prepareFragment");
         //TODO - you've created a beautiful forest of code, please trim!!!!
         //TODO - drink less coffee!!!
         if(mCurrentFragName.equals(NAME_POSTER) || mCurrentFragName.equals(NAME_EMPTY)){
@@ -319,8 +321,8 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
             mInfoMaid.setMovie(item);
 
-            mFragAssistant.requestFragment(mFragmentManager, mFragmentRegistry.get(NAME_INFO),
-                    NAME_INFO);
+            mFragAssistant.requestDetailFragment(mFragmentManager,
+                    mFragmentRegistry.get(NAME_INFO), NAME_POSTER, NAME_INFO);
         }
     }
 
@@ -341,8 +343,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
         //Create fragment, will be automatically added to fragment manager
         prepareFragment();
-
-
     }
 
     public void isSafeToCommitFragment(boolean isSafe){
