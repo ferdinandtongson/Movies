@@ -19,6 +19,44 @@ import me.makeachoice.movies.model.json.MovieJSON;
  * tries to adhere to the MVP (Model-View-Presenter) model so Model-View communication is
  * prevented; in MVC (Model-View-Controller) model, the Model and View can communicate
  */
+
+//TODO - stage2 Notes
+/**
+ * ActivityContext cannot be passed into the constructor of any class. Check all classes for any
+ * references to ActivityContext. Place reference only in Boss since Boss will be updated the most
+ * current ActivityContext whenever a new activity is created.
+ *
+ * Communication Bridges across the whole HouseKeeping staff needs to be remodeled. Base class
+ * Bridges do not work but there needs to be a standard system of communication. Maybe use a
+ * HashMap message registry with public static message codes or something......
+ *
+ * FragmentManagement is a mess. With Activity Lifecycle and Fragment Lifecycle being a bit wonky,
+ * a standard way of how an Activity communicates with a Fragment needs to be establish; for example
+ * isSafeToCommitFragment() method. Should be placed in a BaseClass, Interface or communication
+ * Bridge.
+ *
+ * Did I mention that the Fragment Lifecycle is a bit wonky!! Trace the fragment lifecycle to check
+ * for null ListAdapters, Container Layouts, Child Views, running threads, etc.
+ *
+ * The Butler class needs to handle more responsibility for cleaning, clearing, and checking for
+ * data models; reference point and all that. Workers should not hold reference points for data. As
+ * well, the Butler should be able to check on the status of any running threads so need to create
+ * a registry for running threads and push and pop them when they start and finish.
+ *
+ * Shutdown procedure from front to back is not implemented at all. Assuming that Android will take
+ * care of shutting down processes is not a very clever idea. Implement shutdown procedures for all
+ * Control classes and thread first.
+ *
+ * HouseKeeper is a mess. Create a MaidAssistant class to do all the initialization and shutdown of
+ * the Maids. Look into moving more code into the MainFragmentAssistant class to deal with fragment
+ * transitions; prepareFragment() should be placed there or 90% of the code at least.
+ *
+ * Zombie Fragment bug will be a problem going forward. Either remove fragment registry and keep
+ * instantiating the fragment every time (which defeats the whole point of having a fragment in the
+ * first place) or I'm not understanding something. Remember to debug around onActivityCreated in
+ * the Fragment class whenever a Zombie Fragment is created!!
+ *
+ */
 public class Boss extends Application{
 
 /**************************************************************************************************/
