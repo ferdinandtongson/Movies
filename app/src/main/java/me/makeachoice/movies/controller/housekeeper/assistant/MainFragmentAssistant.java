@@ -3,12 +3,12 @@ package me.makeachoice.movies.controller.housekeeper.assistant;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-
 
 /**
  * MainFragmentAssistant is to assist in managing Fragments for HouseKeeper class
  */
+
+//TODO - look at MainFragmentAssistant, feels slightly twisted....
 public class MainFragmentAssistant {
 
     private int mContainerId;
@@ -52,21 +52,6 @@ public class MainFragmentAssistant {
         }
     }
 
-    public void popFragment(FragmentManager manager, Fragment posterFrag, String posterName,
-                            Fragment fragment, String name){
-        //TODO - trace stack to understand what is really going on here with the fragments
-        FragmentTransaction ft = manager.beginTransaction();
-        manager.popBackStackImmediate();
-        ft.add(posterFrag, posterName);
-        ft.addToBackStack(posterName);
-        ft.replace(mContainerId, fragment, name);
-
-        if(mIsSafeToCommit){
-            //commit fragment to activity
-            ft.commit();
-        }
-    }
-
 
     public void requestFragment(FragmentManager manager, Fragment fragment, String name){
 
@@ -77,16 +62,6 @@ public class MainFragmentAssistant {
 
             mHasFragment = true;
             addFragment(manager, fragment, name);
-        }
-    }
-
-    public void menuPopFragment(FragmentManager manager){
-        FragmentTransaction ft = manager.beginTransaction();
-
-        manager.popBackStack();
-        if(mIsSafeToCommit){
-            //commit fragment to activity
-            ft.commit();
         }
     }
 
@@ -126,17 +101,6 @@ public class MainFragmentAssistant {
     }
 
 /**************************************************************************************************/
-
-    public void isSafeToCommitFragment(FragmentManager manager, boolean isSafe){
-        Log.d("Movies", "FragAssistant.isSafeToCommitFragment");
-        Log.d("Movies", "     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-        if(isSafe){
-            Log.d("Movies", "     Commit Frag!!!!");
-            mIsSafeToCommit = true;
-            manager.beginTransaction().commit();
-        }
-    }
 
     public void setSafeToCommitFragment(boolean isSafe){
         mIsSafeToCommit = isSafe;
