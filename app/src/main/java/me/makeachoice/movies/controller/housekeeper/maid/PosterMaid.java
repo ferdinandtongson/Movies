@@ -1,12 +1,12 @@
 package me.makeachoice.movies.controller.housekeeper.maid;
 
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import me.makeachoice.movies.R;
+import me.makeachoice.movies.controller.housekeeper.MainKeeper;
 import me.makeachoice.movies.fragment.PosterFragment;
 
 /**
@@ -141,7 +141,10 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge{
      * @param position - list position of item clicked
      */
     public void onItemClick(int position){
-        //do not use
+        //TODO - temporary workaround for PosterFragment bug
+        //temporary use of Bridge method as a work around for Empty PosterFragment bug
+        mFragment = initFragment();
+        ((MainKeeper)mBridge).onItemClick();
     }
 
 
