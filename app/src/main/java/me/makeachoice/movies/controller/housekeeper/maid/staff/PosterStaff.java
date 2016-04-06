@@ -16,10 +16,10 @@ import me.makeachoice.movies.model.json.MovieJSON;
  */
 public class PosterStaff {
 
+    //TODO - ActivityContext is brittle!!!!
     private Context mActivityContext;
     private MovieJSON mModel;
-    public PosterStaff(Context ctx, MovieJSON model){
-        mActivityContext = ctx;
+    public PosterStaff(MovieJSON model){
         mModel = model;
     }
 
