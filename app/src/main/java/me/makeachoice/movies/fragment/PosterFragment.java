@@ -193,7 +193,7 @@ public class PosterFragment extends MyFragment {
  */
     public void onItemClick(int position){
         //sends the click event across the bridge for the activity to handle
-        mBridge.onItemClick(MSG_IS_EMPTY);
+        mBridge.onItemClick(position);
     }
 /**************************************************************************************************/
 
