@@ -4,12 +4,10 @@ import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -87,13 +85,11 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 //TODO - this HouseKeeper is NOT very clean
 //TODO - move Maid initialization to an Assistant
 //TODO - move fragment transitioning logic all to mFragAssitant
-//TODO - MVP design is being violated in PosterAdapter!!!
 //TODO - Fix Bridge interfaces for Maids/HouseKeeper/Activities
 //TODO - Update HouseKeeper comments
     private MainFragmentAssistant mFragAssistant;
     private String mCurrentFragName;
     public MainKeeper(Boss boss){
-        Log.d("Movies", "MainKeeper constructor");
         mBoss = boss;
 
         mBoss.registerHouseKeeper(NAME, this);
@@ -293,13 +289,13 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * void prepareFragment - createFragment to be displayed
  */
     public void prepareFragment(){
-        Log.d("Movies", "MainKeeper.prepareFragment: " + mCurrentFragName);
+        //TODO - you've created a beautiful forest of code, please trim!!!!
+        //TODO - drink less coffee!!!
         if(mCurrentFragName.equals(NAME_POSTER) || mCurrentFragName.equals(NAME_EMPTY)){
-            Log.d("Movies", "     here");
             if(mBoss.getMovies(mSortBy) != null){
-                Log.d("Movies", "     has movies!!!!: " + mBoss.getMovies(mSortBy).getMovieCount());
                 if(mPosterStaff == null){
-                    mPosterStaff = new PosterStaff(mActivityContext, mBoss.getMovies(mSortBy));
+                    mPosterStaff = new PosterStaff(mBoss.getMovies(mSortBy));
+                    mPosterStaff.setActivityContext(mActivityContext);
                 }
 
                 //set list
@@ -311,7 +307,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
                         mFragmentRegistry.get(NAME_POSTER), NAME_POSTER);
             }
             else{
-                Log.d("Movies", "     no movies");
                 mCurrentFragName = NAME_EMPTY;
                 //get EmptyFragment and display
                 mFragAssistant.requestFragment(mFragmentManager,
@@ -326,15 +321,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
             mFragAssistant.requestFragment(mFragmentManager, mFragmentRegistry.get(NAME_INFO),
                     NAME_INFO);
-            /*if (mFragAssistant.getHasInfoFragment()){
-                mFragAssistant.popFragment(mFragmentManager,
-                        mFragmentRegistry.get(NAME_POSTER),
-                        NAME_POSTER,
-                        mFragmentRegistry.get(NAME_INFO),
-                        NAME_INFO);
-            }*/
-
-
         }
     }
 
@@ -346,11 +332,11 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         else{
             mCurrentFragName = NAME_POSTER;
             mFragAssistant.setHasInfoFragment(false);
+            prepareFragment();
         }
     }
 
     public void onActivityPostResume(){
-        Log.d("Movies", "MainKeeper.onActivityPostResume");
         mFragAssistant.setSafeToCommitFragment(true);
 
         //Create fragment, will be automatically added to fragment manager
@@ -391,7 +377,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
             mInfoMaid.setMovie(item);
 
             mCurrentFragName = NAME_INFO;
-            mInfoFragCount = mInfoFragCount + 1;
+            //mInfoFragCount = mInfoFragCount + 1;
 
             mFragAssistant.requestDetailFragment(mFragmentManager,
                     mFragmentRegistry.get(NAME_INFO), NAME_POSTER, NAME_INFO);
@@ -438,7 +424,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
         //TODO - clean up logic structure (overly complicated)
         if(mSortBy != sortBy){
-            mSortBy = sortBy;
+           mSortBy = sortBy;
             mPosterStaff.clearAdapter();
             mPosterStaff = null;
 
@@ -446,8 +432,10 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
             if(mCurrentFragName.equals(NAME_INFO)){
                 ((MainActivity)mActivityContext).onBackPressed();
             }
+            else{
+                prepareFragment();
+            }
 
-            prepareFragment();
         }
         else{
             //currently looking at InfoFrag but return to PosterFrag
@@ -477,13 +465,12 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
      * @param position - list position of item clicked
      */
     public void onItemClick(ListView l, View v, int position, long id){
-        Log.d("Movies", "MainKeeper.onItemClick");
-        MovieJSON model = mBoss.getMovies(mSortBy);
-        String msg = model.getMovie(position).getTitle();
-
-        //display in long period of time
-        Toast.makeText(mActivityContext, msg, Toast.LENGTH_SHORT).show();
+        //empty
     }
 
+    public void onItemClick(){
+        //TODO - this is a workaround for zombie Empty PosterFragment bug
+        mFragmentRegistry.put(NAME_POSTER, mPosterMaid.getFragment());
+    }
 
 }
