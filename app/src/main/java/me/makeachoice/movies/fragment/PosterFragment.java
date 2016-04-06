@@ -91,6 +91,7 @@ public class PosterFragment extends MyFragment {
 
         //get Application context, the Boss
         Boss boss = (Boss)getActivity().getApplicationContext();
+
         try{
             //check if Maid is implementing interface
             mBridge = (Bridge)boss.getMaid(mServiceName);
@@ -98,7 +99,6 @@ public class PosterFragment extends MyFragment {
             throw new ClassCastException(boss.toString() +
                     " must implement OnSimpleListListener");
         }
-
 
         //create and return fragment layout view from file found in res/layout/xxx.xml,
         if(mLayout == null){
@@ -124,7 +124,7 @@ public class PosterFragment extends MyFragment {
         else{
             if(mGridView == null){
                 //create the child view, gridview
-                mGridView = (GridView)mLayout.findViewById(mGridViewId);
+                mGridView = (GridView) mLayout.findViewById(mGridViewId);
             }
 
             //add ListAdapter to gridview
@@ -164,8 +164,6 @@ public class PosterFragment extends MyFragment {
  * @param id  - resource layout id
  */
     public void setLayout(int id){
-        Log.d("SimpleListFragment", "PosterFragment.setLayout");
-
         //save layout id to an instance variable
         mLayoutId = id;
     }
@@ -195,7 +193,7 @@ public class PosterFragment extends MyFragment {
  */
     public void onItemClick(int position){
         //sends the click event across the bridge for the activity to handle
-        mBridge.onItemClick(position);
+        mBridge.onItemClick(MSG_IS_EMPTY);
     }
 /**************************************************************************************************/
 
