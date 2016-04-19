@@ -9,10 +9,13 @@ import me.makeachoice.movies.R;
 public class PosterPage {
 
 /**************************************************************************************************/
-// Item layout ids used in a gridView, from item_poster.xml
+// Card Item layout ids used in a RecyclerView, from poster_card.xml
 
-    //POSTER_ITEM_LAYOUT_ID is the layout used for each item in the Poster gridView
-    public static final int POSTER_ITEM_LAYOUT_ID = R.layout.item_poster;
+    //POSTER_CARD_LAYOUT_ID is the layout used for each item in the Poster RecyclerView
+    public static final int POSTER_CARD_LAYOUT_ID = R.layout.card_poster;
+
+    //POSTER_ITEM_CRD_ID is the cardView id used to display the cardView
+    public static final int POSTER_ITEM_CRD_ID = R.id.crd_poster;
 
     //POSTER_ITEM_IMG_ID is the imageView id used to display the poster
     public static final int POSTER_ITEM_IMG_ID = R.id.img_poster;
@@ -23,13 +26,13 @@ public class PosterPage {
 /**************************************************************************************************/
 
 /**************************************************************************************************/
-// Fragment layout ids used to display a gridView of movie posters, from poster_fragment.xml
+// Fragment layout ids used to display a grid of movie posters, from poster_fragment.xml
 
     //POSTER_FRAGMENT_LAYOUT_ID is the fragment layout used to display a bunch of movie posters
     public static final int POSTER_FRAGMENT_LAYOUT_ID = R.layout.poster_fragment;
 
-    //POSTER_GRD_ID is the gridView id used poster fragment
-    public static final int POSTER_GRD_ID = R.id.grd_poster;
+    //POSTER_REC_ID is the RecyclerView id used poster fragment
+    public static final int POSTER_REC_ID = R.id.rec_poster;
 
 /**************************************************************************************************/
 
