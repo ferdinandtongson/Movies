@@ -1,88 +1,76 @@
 package me.makeachoice.movies.controller.housekeeper.maid.staff;
 
-import android.content.Context;
-import android.view.View;
-import android.widget.ListAdapter;
-
 import java.util.ArrayList;
 
-import me.makeachoice.movies.R;
-import me.makeachoice.movies.adapter.PosterAdapter;
 import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.model.json.MovieJSON;
 
 /**
- * PosterStaffs' purpose is to create the PosterAdapter and prepare it  for consumption
+ * PosterStaff takes Poster Model data and prepares the data to be consumed by the HouseKeeping
+ * staff
  */
 public class PosterStaff {
 
-    //TODO - ActivityContext is brittle!!!!
-    private Context mActivityContext;
-    private MovieJSON mModel;
-    public PosterStaff(MovieJSON model){
-        mModel = model;
-    }
-
-    public void setActivityContext(Context ctx){
-        mActivityContext = ctx;
-    }
-
-    public void setModel(MovieJSON model){
-        mModel = model;
-    }
-
 /**************************************************************************************************/
 /**
- * PosterAdapter - ListAdapter which displays a list of movies posters. PosterAdapter uses
- * the following resource ids:
- *      LAYOUT_ITEM_POSTER - layout id
- *      ITEM_MOVIE_CHILD_POSTER_VIEW - child view in layout, imageView
- *      ITEM_MOVIE_CHILD_TITLE_VIEW - child view in layout, textView
+ * Class Variables:
+ *      ArrayList<PosterItem> mList - array list of poster data ready for comsumption by View
  */
 /**************************************************************************************************/
-    //LAYOUT_ITEM_MOVIE - item layout id used by PosterAdapter
-    private final static int LAYOUT_ITEM_POSTER = R.layout.item_poster;
 
-    //Child View ids from Item Layouts above
-    private final static int ITEM_MOVIE_CHILD_POSTER_VIEW = R.id.img_poster;
-    private final static int ITEM_MOVIE_CHILD_TITLE_VIEW = R.id.txt_title;
+    //mPosterList - list of PosterItems ready for consumption by View
+    ArrayList<PosterItem> mList;
 
-    //mPosterAdapter - ListAdapter to be consumed by a PosterAdapter consumer
-    PosterAdapter mPosterAdapter;
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * ListAdapter initPosterAdapter(Context, MovieJSON) - initialize the Movie Poster adapter for
- * consumption.
- * @return ListAdapter - will return a reference to the Poster adapter create with the model
+ * PosterStaff - constructor
  */
-    private ListAdapter initPosterAdapter(View.OnClickListener listener){
+    public PosterStaff(){ }
 
-        if(mPosterAdapter == null){
-            //create an ArrayList to hold the list items to be consumed by the ListAdapter
-            ArrayList<PosterItem> itemList = prepareListOfItems(mModel);
+/**************************************************************************************************/
+/**
+ * Getters:
+ *      ArrayList<PosterItem> getPosterItems
+ *
+ * Setters:
+ *      - None -
+ */
+/**************************************************************************************************/
+/**
+ * getPosterItems - list of PosterItems ready for use by the View
+ * @return - ArrayList<PosterItem>
+ */
+    public ArrayList<PosterItem> getPosterItems(){ return mList; }
 
-            //create array of layout and child id values for PosterAdapter
-            int[] ids = new int[PosterAdapter.INDEX_MAX];
-            ids[PosterAdapter.INDEX_LAYOUT_ID] = LAYOUT_ITEM_POSTER;
-            ids[PosterAdapter.INDEX_POSTER_ID] = ITEM_MOVIE_CHILD_POSTER_VIEW;
-            ids[PosterAdapter.INDEX_TITLE_ID] = ITEM_MOVIE_CHILD_TITLE_VIEW;
+/**************************************************************************************************/
 
-            //instantiate PosterAdapter with layout id found in res/layout and the child
-            mPosterAdapter = new PosterAdapter(mActivityContext, itemList, ids);
-            mPosterAdapter.setListener(listener);
-        }
-
-        return mPosterAdapter;
+/**************************************************************************************************/
+/**
+ * Public Methods:
+ *      void consumeModel(MovieJSON)
+ */
+/**************************************************************************************************/
+/**
+ * void consumeModel(MovieJSON) - takes data from Model and prepares it for use by View
+ * @param model - JSON type data model
+ */
+    public void consumeModel(MovieJSON model){
+        //take and prepare Poster data items from JSON model
+        mList = preparePosterItems(model);
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
 /**
- * ArrayList<PosterItem> prepareListOfItems(JSON) - prepares a list of PosterItems from the
+ * ArrayList<PosterItem> preparePosterItems(JSON) - prepares a list of PosterItems from the
  * MovieJSON data model
  * @param model - a list of MovieJSON objects
  * @return ArrayList<PosterItem> - a list of PosterItems
  */
-    private ArrayList<PosterItem> prepareListOfItems(MovieJSON model){
+    private ArrayList<PosterItem> preparePosterItems(MovieJSON model){
 
         //create an ArrayList to hold the list items
         ArrayList<PosterItem> itemList = new ArrayList<>();
@@ -103,21 +91,7 @@ public class PosterStaff {
         return itemList;
     }
 
-    public ListAdapter getPosterAdapter(View.OnClickListener listener){
-        if(mPosterAdapter == null){
-            return initPosterAdapter(listener);
-        }
+/**************************************************************************************************/
 
-        return mPosterAdapter;
-    }
-
-    //TODO - this is a current work around, need better solution
-    public PosterAdapter getRealPosterAdapter(){
-        return mPosterAdapter;
-    }
-
-    public void clearAdapter(){
-        mPosterAdapter.clearAdapter();
-    }
 
 }
