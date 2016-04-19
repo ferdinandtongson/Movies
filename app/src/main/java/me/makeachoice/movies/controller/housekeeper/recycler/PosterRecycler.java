@@ -68,6 +68,10 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
         return mPosters.size();
     }
 
+/**
+ * void setContext(Context) - get the Activity context
+ * @param ctx - Activity context
+ */
     public void setContext(Context ctx){
         mActivityContext = ctx;
     }
@@ -112,6 +116,7 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
         //add poster title
         holder.mTxtTitle.setText(mPosters.get(position).getTitle());
 
+        //add poster image, placeholder image and error image
         Picasso.with(mActivityContext)
                 .load(mPosters.get(position).getPosterPath())
                 .placeholder(PosterPage.POSTER_PLACEHOLDER_IMG_ID)
@@ -120,6 +125,10 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
     }
 
 /**************************************************************************************************/
+
+
+
+
 
 /**************************************************************************************************/
 /**
