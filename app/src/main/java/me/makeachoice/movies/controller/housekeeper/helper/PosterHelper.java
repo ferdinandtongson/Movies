@@ -1,12 +1,12 @@
-package me.makeachoice.movies.controller.housekeeper.page;
+package me.makeachoice.movies.controller.housekeeper.helper;
 
 import me.makeachoice.movies.R;
 
 /**
- * PosterPage contains constant definitions for all the resources used by any of the "Poster"
+ * PosterHelper contains constant definitions for all the resources used by any of the "Poster"
  * classes underneath the housekeeper.
  */
-public class PosterPage {
+public class PosterHelper {
 
 /**************************************************************************************************/
 // Card Item layout ids used in a RecyclerView, from poster_card.xml

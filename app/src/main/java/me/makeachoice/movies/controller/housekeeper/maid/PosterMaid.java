@@ -13,8 +13,8 @@ import java.util.ArrayList;
 
 import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.housekeeper.GridAutofitLayoutManager;
+import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.staff.PosterStaff;
-import me.makeachoice.movies.controller.housekeeper.page.PosterPage;
 import me.makeachoice.movies.controller.housekeeper.recycler.PosterRecycler;
 import me.makeachoice.movies.fragment.PosterFragment;
 import me.makeachoice.movies.model.json.MovieJSON;
@@ -32,7 +32,7 @@ import me.makeachoice.movies.model.json.MovieJSON;
  * It uses other classes to assist in the upkeeping of the Fragment:
  *      PosterFragment - handles the Fragment lifecycle
  *      PosterRecycler - RecyclerView adapter used to display the list of movie posters
- *      PosterPage - holds all static resources (layout id, view ids, etc)
+ *      PosterHelper - holds all static resources (layout id, view ids, etc)
  *      PosterStaff - prepares data model for consumption for the Poster View
  *
  * Variables from MyMaid:
@@ -174,7 +174,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
                            Bundle savedInstanceState){
 
         //inflate fragment from the xml fragment layout resource file
-        View v = inflater.inflate(PosterPage.POSTER_FRAGMENT_LAYOUT_ID, container, false);
+        View v = inflater.inflate(PosterHelper.POSTER_FRAGMENT_LAYOUT_ID, container, false);
 
         //return fragment
         return v;
@@ -187,9 +187,9 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  * @param layout - layout where child views reside
  */
     public void createActivity(Bundle savedInstanceState, View layout){
-
+        //TODO - need to stor Views instead of having to recreate every time.
         //get RecyclerView
-        RecyclerView recGrid = (RecyclerView)layout.findViewById(PosterPage.POSTER_REC_ID);
+        RecyclerView recGrid = (RecyclerView)layout.findViewById(PosterHelper.POSTER_REC_ID);
         //setHasFixedSize to true because 1)is true and 2)for optimization
         recGrid.setHasFixedSize(true);
 

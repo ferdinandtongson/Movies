@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import me.makeachoice.movies.adapter.item.PosterItem;
-import me.makeachoice.movies.controller.housekeeper.page.PosterPage;
+import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 
 /**
  * PosterRecycler extends RecyclerView.Adapter and is used to display the image of a poster and
@@ -117,7 +117,7 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
         //inflate the itemView
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
-                inflate(PosterPage.POSTER_CARD_LAYOUT_ID, viewGroup, false);
+                inflate(PosterHelper.POSTER_CARD_LAYOUT_ID, viewGroup, false);
 
 
         //return ViewHolder
@@ -138,8 +138,8 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
         //add poster image, placeholder image and error image
         Picasso.with(mBridge.getActivityContext())
                 .load(mPosters.get(position).getPosterPath())
-                .placeholder(PosterPage.POSTER_PLACEHOLDER_IMG_ID)
-                .error(PosterPage.POSTER_ERROR_IMG_ID)
+                .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
+                .error(PosterHelper.POSTER_ERROR_IMG_ID)
                 .into(holder.mImgPoster);
     }
 
@@ -183,13 +183,13 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
             super(recycleView);
 
             //set CardView object
-            mCrdPoster = (CardView)recycleView.findViewById(PosterPage.POSTER_ITEM_CRD_ID);
+            mCrdPoster = (CardView)recycleView.findViewById(PosterHelper.POSTER_ITEM_CRD_ID);
 
             //set TextView object used to display title of poster
-            mTxtTitle = (TextView)recycleView.findViewById(PosterPage.POSTER_ITEM_TXT_ID);
+            mTxtTitle = (TextView)recycleView.findViewById(PosterHelper.POSTER_ITEM_TXT_ID);
 
             //set ImageView object used to display image of poster
-            mImgPoster = (ImageView)recycleView.findViewById(PosterPage.POSTER_ITEM_IMG_ID);
+            mImgPoster = (ImageView)recycleView.findViewById(PosterHelper.POSTER_ITEM_IMG_ID);
         }
     }
 
