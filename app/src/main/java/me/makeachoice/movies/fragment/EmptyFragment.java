@@ -2,11 +2,9 @@ package me.makeachoice.movies.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import me.makeachoice.movies.controller.Boss;
 
@@ -17,16 +15,12 @@ import me.makeachoice.movies.controller.Boss;
  * a GridView or ListView child ONLY is empty.
  *
  * Variables from MyFragment:
- *      String KEY_LAYOUT
  *      String KEY_SERVICE_NAME
  *
- *      int mLayoutId
- *      View mLayout
  *      String mServiceName
  *      Bridge mBridge
  *
  * Methods from MyFragment:
- *      void setLayout(int)
  *      void setServiceName(String)
  */
 public class EmptyFragment extends MyFragment {
@@ -43,21 +37,6 @@ public class EmptyFragment extends MyFragment {
     }
 
     public EmptyFragment(){}
-
-/**************************************************************************************************/
-
-    //mTextViewId - child view of layout, contains "Empty" message
-    private int mTextViewId;
-
-    //KEY_TEXT_VIEW_ID - key used for bundle to save id of the textView child
-    String KEY_TEXT_VIEW_ID = "TextViewId";
-    //KEY_MESSAGE - key used for bundle to save message used in the textView child
-    String KEY_MESSAGE = "Message";
-    //mTxtMessage - textView displaying message
-    private TextView mTxtMessage;
-
-    //mMessage - message when fragment is displayed
-    String mMessage;
 
 /**************************************************************************************************/
 
@@ -87,31 +66,27 @@ public class EmptyFragment extends MyFragment {
 
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
-            //get layout id to inflate root view
-            mLayoutId = savedInstanceState.getInt(KEY_LAYOUT);
             //get name of servers up-keeping this fragment
             mServiceName = savedInstanceState.getString(KEY_SERVICE_NAME);
-            //get id of textView containing the "Empty" message
-            mTextViewId = savedInstanceState.getInt(KEY_TEXT_VIEW_ID);
-            //get message for textView child
-            mMessage = savedInstanceState.getString(KEY_MESSAGE);
-
         }
 
         //get application context, the Boss
         Boss boss = (Boss)getActivity().getApplicationContext();
+
         try{
             //make sure Maid is implementing the Bridge interface
             mBridge = (Bridge)boss.getMaid(mServiceName);
         }catch(ClassCastException e){
             throw new ClassCastException(boss.toString() +
-                    " must implement OnSimpleListListener");
+                    " must implement Bridge interface");
         }
 
         //create and return fragment layout view from file found in res/layout/xxx.xml,
         if(mLayout == null){
-            mLayout = inflater.inflate(mLayoutId, container, false);
+            //mLayout = inflater.inflate(mLayoutId, container, false);
+            mLayout = mBridge.createView(inflater, container, savedInstanceState);
         }
+
         return mLayout;
     }
 
@@ -124,13 +99,7 @@ public class EmptyFragment extends MyFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(mTxtMessage == null){
-            //create the textView that will display a message
-            mTxtMessage = (TextView)mLayout.findViewById(mTextViewId);
-        }
-
-        //set textView message
-        mTxtMessage.setText(mMessage);
+        mBridge.createActivity(savedInstanceState, mLayout);
     }
 
 /**
@@ -140,23 +109,8 @@ public class EmptyFragment extends MyFragment {
  */
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
-        //save layout id of fragment
-        saveState.putInt(KEY_LAYOUT, mLayoutId);
         //save name of server maintaining this fragment
         saveState.putString(KEY_SERVICE_NAME, mServiceName);
-        //save id of child view (textview) that displays the message
-        saveState.putInt(KEY_TEXT_VIEW_ID, mTextViewId);
-        //save message to be displayed
-        saveState.putString(KEY_MESSAGE, mMessage);
-    }
-
-/**
- * onDetach( ) is called immediately prior to the fragment no longer being associated with its
- * activity.
- */
-    @Override
-    public void onDetach(){
-        super.onDetach();
     }
 
 /**************************************************************************************************/
@@ -164,46 +118,14 @@ public class EmptyFragment extends MyFragment {
 /**************************************************************************************************/
 /**
  * Implemented abstract methods from MyFragment:
- *      void setLayout(int)
  *      void setServiceName(String)
  */
 /**************************************************************************************************/
-/**
- * void setLayout(int) allows the layout id for the fragment to be dynamically added
- * @param id  - resource layout id
- */
-    public void setLayout(int id){
-        Log.d("SimpleListFragment", "PosterFragment.setLayout");
-
-        //save layout id to an instance variable
-        mLayoutId = id;
-    }
-
-/**
- * void setServiceName(String) - sets the name of the server taking care of the fragment
- */
+    /**
+     * void setServiceName(String) - sets the name of the server taking care of the fragment
+     */
     public void setServiceName(String name){
         mServiceName = name;
-    }
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * void setTextViewId(int) - child view id of layout, a textview that will display a message
- * @param id - resource textview id
- */
-    public void setTextViewId(int id){
-        //save textview id to an instance variable
-        mTextViewId = id;
-    }
-
-/**
- * void setMessage(String) - message to be displayed by the fragment
- * @param message - string message
- */
-    public void setMessage(String message){
-        mMessage = message;
     }
 
 /**************************************************************************************************/

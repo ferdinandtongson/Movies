@@ -1,15 +1,19 @@
 package me.makeachoice.movies.controller.housekeeper.maid;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.widget.ListAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
-import me.makeachoice.movies.R;
+import me.makeachoice.movies.controller.housekeeper.page.EmptyPage;
 import me.makeachoice.movies.fragment.EmptyFragment;
-import me.makeachoice.movies.fragment.PosterFragment;
 
 /**
  * EmptyMaid initializes and takes care of communicating with the Fragment that hold the
- * "Empty" message when a simple fragment containing only a ListView or GridView is empty.
+ * "Empty" message.
  *
  * Its main purpose is to display a simple "Empty" message.
  *
@@ -21,103 +25,142 @@ import me.makeachoice.movies.fragment.PosterFragment;
  *      String mName
  *      Fragment mFragment
  *
- * Implements EmptyFragment.Bridge - NONE used
- *      ListAdapter getListAdapter() - not used
- *      void setListAdapter(ListAdapter) - not used
- *      void onItemClick(...) - not used
+ * Methods from MyMaid:
+ *      void initFragment()
+ *      Fragment getFragment()
+ *
+ * Implements EmptyFragment.Bridge
+ *      View createView(LayoutInflater, ViewGroup, Bundle);
+ *      void createActivity(Bundle, View);
+ *
+ * Bridge Interface:
+ *      void registerFragment(String, Fragment)
+ *
  */
 public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
 
-    private ListAdapter mListAdapter;
+/**************************************************************************************************/
+/**
+ * Class Variables
+ *      Bridge mBridge - class implementing Bridge interface
+ *
+ * Interface:
+ *      Bridge
+ */
+/**************************************************************************************************/
+
+    //mBridge - class implementing Bridge, typically a MyHouseKeeper class
+    private Bridge mBridge;
+
+    //Implemented communication line to any MyHouseKeeper class
     public interface Bridge{
+        //get Context of current Activity
+        Context getActivityContext();
         //Interface methods needed to be implemented by the instantiating class
         void registerFragment(String key, Fragment fragment);
     }
 
-    private Bridge mBridge;
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * EmptyMaid - constructor
+ * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
+ * @param name - name given to PosterMaid
+ */
     public EmptyMaid(Bridge bridge, String name){
 
+        //class implementing Bridge interface
         mBridge = bridge;
+
+        //service name given to PosterMaid
         mName = name;
 
+        //registers fragment PosterMaid is assigned to maintain
         mBridge.registerFragment(name, getFragment());
+
+        //initialize fragment to be maintained
+        initFragment();
     }
 
 /**************************************************************************************************/
-/**
- * Variables used for initializing Fragments
- */
+
 /**************************************************************************************************/
-    //LAYOUT_EMPTY_FRAGMENT - layout id used by Empty Fragment
-    private final static int LAYOUT_EMPTY_FRAGMENT = R.layout.empty_fragment;
-    //EMPTY_CHILD_TEXT_VIEW - child view in empty fragment layout, textView child
-    private final static int EMPTY_CHILD_TEXT_VIEW = R.id.txt_empty;
+/**
+ * Getters:
+ *      - None -
+ *
+ * Setters:
+ *      - None -
+ */
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * void initFragment() - initialize Fragment; set layout and child view ids and maid name
+ * Fragment related methods. Both createView(...) and createActivity(...) are called by
+ * PosterFragment when onCreateView(...) and onCreateActivity(...) are called in that class.
+ *
  */
-    protected Fragment initFragment(){
-        //create EmptyFragment
+/**************************************************************************************************/
+    /**
+     * void initFragment() - initialize Fragment, give name of Maid to fragment
+     */
+    protected void initFragment(){
+        //create PosterFragment
         EmptyFragment fragment = new EmptyFragment();
-
-        //send layout id to EmptyFragment
-        fragment.setLayout(LAYOUT_EMPTY_FRAGMENT);
-
-        //send child view id, gridView
-        fragment.setTextViewId(EMPTY_CHILD_TEXT_VIEW);
 
         //send Maid name to fragment
         fragment.setServiceName(mName);
 
-        return fragment;
+        //save fragment as class variable
+        //TODO - check if needed
+        mFragment = fragment;
     }
 
+/**
+ * View createView(LayoutInflater, ViewGroup, Bundle) - is called by PosterFragment when
+ * onCreateView(...) is called in that class. Prepares the Fragment View to be presented.
+ * @param inflater - layoutInflater to inflate the xml fragment layout resource file
+ * @param container - view that will hold the fragment view
+ * @param savedInstanceState - saved instance states
+ * @return - view of fragment is ready
+ */
+    public View createView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState){
+
+        //inflate fragment from the xml fragment layout resource file
+        View v = inflater.inflate(EmptyPage.EMPTY_FRAGMENT_LAYOUT_ID, container, false);
+
+        //return fragment
+        return v;
+    }
+
+    /**
+     * void createActivity(Bundle, View) - is called by PosterFragment when onCreateActivity(...)
+     * is called in that class. Sets child views in fragment before being seen by the user
+     * @param savedInstanceState - saved instance states
+     * @param layout - layout where child views reside
+     */
+    public void createActivity(Bundle savedInstanceState, View layout){
+
+        //create the textView that will display a message
+        TextView txtMessage = (TextView)layout.findViewById(EmptyPage.EMPTY_TXT_ID);
+
+        //set textView message
+        txtMessage.setText("Empty Message");
+    }
+
+
+
+    //TODO - check if can be removed
     public Fragment getFragment(){
         if(mFragment == null){
-            mFragment = initFragment();
+            initFragment();
         }
 
         return mFragment;
     }
 
 /**************************************************************************************************/
-
-
-/**************************************************************************************************/
-/**
- * SimpleListFragment.Bridge interface implementation.
- *      ListAdapter getListAdapter() - Fragments' access to the ListAdapter
- *      void setListAdapter() - used to ensure that the Maid class uses the setListAdapter method
- *      void onItemClick() - list item click event
- */
-/**************************************************************************************************/
-/**
- * ListAdapter getListAdapter() - Fragment can get access to the ListAdapter
- * @return ListAdapter - returns a list adapter created by the Boss
- */
-    public ListAdapter getListAdapter(){
-        return null;
-    }
-
-/**
- * void setListAdapter(ListAdapter) - set the ListAdapter the fragment is going to use, if any.
- * @param adapter - ListAdapter to be consumed by the fragment
- */
-    public void setListAdapter(ListAdapter adapter){
-        //is empty
-    }
-
-/**
- * void onItemClick(int) - event listener call by the fragment when an app item has been clicked
- * @param position - list position of item clicked
- */
-    public void onItemClick(int position){
-        //is empty
-    }
-
-/**************************************************************************************************/
-
 
 }
