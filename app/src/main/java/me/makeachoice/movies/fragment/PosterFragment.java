@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
 import me.makeachoice.movies.controller.Boss;
 
@@ -16,15 +15,12 @@ import me.makeachoice.movies.controller.Boss;
  * PosterFragment is a GridView fragment that will display a grid of posters (images)
  *
  * Variables from MyFragment:
- *      String KEY_LAYOUT
  *      String KEY_SERVICE_NAME
  *
- *      int mLayoutId
  *      String mServiceName
  *      Bridge mBridge
  *
  * Methods from MyFragment:
- *      void setLayout(int)
  *      void setServiceName(String)
  */
 public class PosterFragment extends MyFragment {
@@ -44,12 +40,6 @@ public class PosterFragment extends MyFragment {
 
 /**************************************************************************************************/
 
-    //mGridViewId - child view id of layout
-    private int mGridViewId;
-    //KEY_GRID_VIEW_ID - key used for bundle to save the child view id
-    String KEY_GRID_VIEW_ID = "GridViewId";
-    //mGridView - gridView of fragment
-    private GridView mGridView;
 
 /**************************************************************************************************/
 
@@ -64,7 +54,6 @@ public class PosterFragment extends MyFragment {
     public void onAttach(Context context){
         super.onAttach(context);
         //empty
-        Log.d("Movies", "PosterFragment.onAttach");
     }
 
 /** onCreateView(...) is called when it's time for the fragment to draw its UI for the first
@@ -81,12 +70,8 @@ public class PosterFragment extends MyFragment {
 
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
-            //get layout id to inflate root view
-            mLayoutId = savedInstanceState.getInt(KEY_LAYOUT);
             //get name of server maintaining this fragment
             mServiceName = savedInstanceState.getString(KEY_SERVICE_NAME);
-            //get child view id (gridview)
-            mGridViewId = savedInstanceState.getInt(KEY_GRID_VIEW_ID);
         }
 
         //get Application context, the Boss
@@ -102,8 +87,10 @@ public class PosterFragment extends MyFragment {
 
         //create and return fragment layout view from file found in res/layout/xxx.xml,
         if(mLayout == null){
-            mLayout = inflater.inflate(mLayoutId, container, false);
+            //mLayout = inflater.inflate(mLayoutId, container, false);
+            mLayout = mBridge.createView(inflater, container, savedInstanceState);
         }
+
         return mLayout;
     }
 
@@ -116,21 +103,7 @@ public class PosterFragment extends MyFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(mBridge.getListAdapter().isEmpty()){
-            //TODO - using Bridge communication as a work around to Empty PosterFrag bug
-            //will create a zombie empty fragment, using Bridge as a workaround
-            mBridge.onItemClick(1);
-        }
-        else{
-            if(mGridView == null){
-                //create the child view, gridview
-                mGridView = (GridView) mLayout.findViewById(mGridViewId);
-            }
-
-            //add ListAdapter to gridview
-            mGridView.setAdapter(mBridge.getListAdapter());
-        }
-
+        mBridge.createActivity(savedInstanceState, mLayout);
     }
 
 /**
@@ -140,34 +113,19 @@ public class PosterFragment extends MyFragment {
  */
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
-        //save layout id of fragment
-        saveState.putInt(KEY_LAYOUT, mLayoutId);
         //save name of server maintaining this fragment
         saveState.putString(KEY_SERVICE_NAME, mServiceName);
-        //save child view id (gridView)
-        saveState.putInt(KEY_GRID_VIEW_ID, mGridViewId);
 
     }
-
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
  * Implemented abstract methods from MyFragment:
- *      void setLayout(int)
  *      void setServiceName(String)
  */
 /**************************************************************************************************/
-/**
- * void setLayout(int) allows the layout id for the fragment to be dynamically added
- * @param id  - resource layout id
- */
-    public void setLayout(int id){
-        //save layout id to an instance variable
-        mLayoutId = id;
-    }
-
 /**
  * void setServiceName(String) - sets the name of the server taking care of the fragment
  */
@@ -175,26 +133,6 @@ public class PosterFragment extends MyFragment {
         mServiceName = name;
     }
 
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * void setGridViewId(int) allows the gridview id for the fragment to be dynamically added
- * @param id - resource gridview id
- */
-    public void setGridViewId(int id){
-        //save gridview id to an instance variable
-        mGridViewId = id;
-    }
-
-/**
- * void onListItemClick(int) is called when the user clicks on a list item
- * @param position - position of the item; position is zero based (0 - x)
- */
-    public void onItemClick(int position){
-        //sends the click event across the bridge for the activity to handle
-        mBridge.onItemClick(position);
-    }
 /**************************************************************************************************/
 
 
