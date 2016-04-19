@@ -9,10 +9,9 @@ import android.view.ViewGroup;
 
 import me.makeachoice.movies.controller.Boss;
 
-
 /**************************************************************************************************/
 /**
- * PosterFragment is a GridView fragment that will display a grid of posters (images)
+ * PosterFragment is a fragment that will display a grid of posters (images)
  *
  * Variables from MyFragment:
  *      String KEY_SERVICE_NAME
@@ -41,7 +40,6 @@ public class PosterFragment extends MyFragment {
 /**************************************************************************************************/
 
 
-/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
@@ -82,7 +80,7 @@ public class PosterFragment extends MyFragment {
             mBridge = (Bridge)boss.getMaid(mServiceName);
         }catch(ClassCastException e){
             throw new ClassCastException(boss.toString() +
-                    " must implement OnSimpleListListener");
+                    " must implement Bridge interface");
         }
 
         //create and return fragment layout view from file found in res/layout/xxx.xml,
@@ -134,7 +132,5 @@ public class PosterFragment extends MyFragment {
     }
 
 /**************************************************************************************************/
-
-
 
 }
