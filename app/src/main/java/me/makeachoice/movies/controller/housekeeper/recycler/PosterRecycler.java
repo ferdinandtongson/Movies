@@ -1,6 +1,7 @@
 package me.makeachoice.movies.controller.housekeeper.recycler;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,21 +31,38 @@ import me.makeachoice.movies.controller.housekeeper.page.PosterPage;
 public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHolder> {
 
 /**************************************************************************************************/
+/**
+ * Class Variables
+ *      ArrayList<PosterItem> mPosters - array list of poster data
+ *      Bridge mBridge - class implementing Bridge interface, typically a Maid class
+ *
+ * Interface:
+ *      Bridge
+ */
+/**************************************************************************************************/
 
-    //mActivityContext - activity context
-    private Context mActivityContext;
-
-    //mPosters - an arraylist of poster item data consumed by the adapter
+    //mPosters - an array list of poster item data consumed by the adapter
     private ArrayList<PosterItem> mPosters;
+
+    //mBridge - class implementing Bridge, typically a Maid class
+    private Bridge mBridge;
+
+    //Implemented communication line to a class
+    public interface Bridge{
+        //get Context of current Activity
+        Context getActivityContext();
+    }
+
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
  * PosterRecycler - constructor
- * @param items - array list of poster item data
+ * @param bridge - class implementing Bridge interface
  */
-    public PosterRecycler(ArrayList<PosterItem> items){
+    public PosterRecycler(Bridge bridge){
         //set poster item data
-        mPosters = items;
+        mBridge = bridge;
     }
 
 /**************************************************************************************************/
@@ -55,7 +73,7 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  *      int getItemCount()
  *
  * Setters:
- *      void setContext(Context)
+ *      void setPosters(ArrayList<PosterItem>)
  */
 /**************************************************************************************************/
 /**
@@ -69,11 +87,11 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
     }
 
 /**
- * void setContext(Context) - get the Activity context
- * @param ctx - Activity context
+ * void setPosters(ArrayList<PosterItem>) - get data to be display by the RecyclerView
+ * @param posters - list of poster data
  */
-    public void setContext(Context ctx){
-        mActivityContext = ctx;
+    public void setPosters(ArrayList<PosterItem> posters){
+        mPosters = posters;
     }
 
 /**************************************************************************************************/
@@ -81,7 +99,7 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
 /**************************************************************************************************/
 /**
  * Implemented Methods from RecyclerView.Adapter:
- *      ViewHolder onCreateViewHolder(ViewGrouop, int)
+ *      ViewHolder onCreateViewHolder(ViewGroup, int)
  *      void onBindViewHolder(ViewHolder, int)
  */
 /**************************************************************************************************/
@@ -109,15 +127,16 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
 /**
  * void onBindViewHolder(ViewHolder, int) - where we bind our data to the views
  * @param holder - ViewHolder class; PosterHolder
- * @param position - position of the itemView being binded
+ * @param position - position of the itemView being bound
  */
     @Override
     public void onBindViewHolder(PosterHolder holder, int position) {
+
         //add poster title
         holder.mTxtTitle.setText(mPosters.get(position).getTitle());
 
         //add poster image, placeholder image and error image
-        Picasso.with(mActivityContext)
+        Picasso.with(mBridge.getActivityContext())
                 .load(mPosters.get(position).getPosterPath())
                 .placeholder(PosterPage.POSTER_PLACEHOLDER_IMG_ID)
                 .error(PosterPage.POSTER_ERROR_IMG_ID)
@@ -146,6 +165,8 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  */
 /**************************************************************************************************/
 
+        //mCrdPoster - cardView that hold child views found below
+        protected CardView mCrdPoster;
         //mTxtTitle - textView that show the title of the poster
         protected TextView mTxtTitle;
         //mImgPoster - imageView that holds the image of the poster
@@ -160,6 +181,9 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  */
         public PosterHolder(View recycleView){
             super(recycleView);
+
+            //set CardView object
+            mCrdPoster = (CardView)recycleView.findViewById(PosterPage.POSTER_ITEM_CRD_ID);
 
             //set TextView object used to display title of poster
             mTxtTitle = (TextView)recycleView.findViewById(PosterPage.POSTER_ITEM_TXT_ID);
