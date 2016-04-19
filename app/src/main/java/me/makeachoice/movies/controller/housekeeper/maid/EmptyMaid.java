@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import me.makeachoice.movies.controller.housekeeper.page.EmptyPage;
+import me.makeachoice.movies.controller.housekeeper.helper.EmptyHelper;
 import me.makeachoice.movies.fragment.EmptyFragment;
 
 /**
@@ -129,7 +129,7 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
                            Bundle savedInstanceState){
 
         //inflate fragment from the xml fragment layout resource file
-        View v = inflater.inflate(EmptyPage.EMPTY_FRAGMENT_LAYOUT_ID, container, false);
+        View v = inflater.inflate(EmptyHelper.EMPTY_FRAGMENT_LAYOUT_ID, container, false);
 
         //return fragment
         return v;
@@ -144,7 +144,7 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
     public void createActivity(Bundle savedInstanceState, View layout){
 
         //create the textView that will display a message
-        TextView txtMessage = (TextView)layout.findViewById(EmptyPage.EMPTY_TXT_ID);
+        TextView txtMessage = (TextView)layout.findViewById(EmptyHelper.EMPTY_TXT_ID);
 
         //set textView message
         txtMessage.setText("Empty Message");

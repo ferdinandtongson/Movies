@@ -1,12 +1,12 @@
-package me.makeachoice.movies.controller.housekeeper.page;
+package me.makeachoice.movies.controller.housekeeper.helper;
 
 import me.makeachoice.movies.R;
 
 /**
- * EmptyPage contains constant definitions for all the resources used by any of the "Empty"
+ * EmptyHelper contains constant definitions for all the resources used by any of the "Empty"
  * classes underneath the housekeeper.
  */
-public class EmptyPage {
+public class EmptyHelper {
 
 
 /**************************************************************************************************/
