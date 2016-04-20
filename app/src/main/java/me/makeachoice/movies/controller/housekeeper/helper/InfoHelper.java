@@ -13,7 +13,10 @@ import me.makeachoice.movies.R;
 public class InfoHelper {
 
 /**************************************************************************************************/
-// Fragment layout ids used to display an empty fragment, from empty_fragment.xml
+/**
+ * Fragment layout ids used to display an empty fragment, from empty_fragment.xml
+ */
+/**************************************************************************************************/
 
     //INFO_FRAGMENT_LAYOUT_ID - layout used by Info Fragment
     public final static int INFO_FRAGMENT_LAYOUT_ID = R.layout.info_fragment;
@@ -36,7 +39,10 @@ public class InfoHelper {
 /**************************************************************************************************/
 
 /**************************************************************************************************/
-// Drawable resource ids used as image placeholders for the movie posters
+/**
+ * Drawable resource ids used as image placeholders for the movie poster
+ */
+/**************************************************************************************************/
 
     //INFO_PLACEHOLDER_IMG_ID is the placeholder image displayed before the poster image
     public static final int INFO_PLACEHOLDER_IMG_ID = R.drawable.placeholder;
@@ -46,8 +52,11 @@ public class InfoHelper {
 
 /**************************************************************************************************/
 
-
-    /**************************************************************************************************/
+/**************************************************************************************************/
+/**
+ * ViewHolder class used to hold the child views of InfoFragment
+ */
+/**************************************************************************************************/
 
     public static class ViewHolder{
         public boolean isEmpty;
@@ -59,4 +68,7 @@ public class InfoHelper {
         public TextView overview;
         public RatingBar stars;
     }
+
+/**************************************************************************************************/
+
 }
