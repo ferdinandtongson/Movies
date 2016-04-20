@@ -16,11 +16,17 @@ import me.makeachoice.movies.controller.Boss;
  * Variables from MyFragment:
  *      String KEY_SERVICE_NAME
  *
- *      String mServiceName
  *      Bridge mBridge
+ *      View mLayout
+ *      String mServiceName
  *
  * Methods from MyFragment:
  *      void setServiceName(String)
+ *
+ * Bridge Interface from MyFragment:
+ *      View createView(LayoutInflater, ViewGroup, Bundle)
+ *      void createActivity(Bundle, View)
+ *
  */
 public class PosterFragment extends MyFragment {
 /*
