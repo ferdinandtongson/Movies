@@ -1,29 +1,67 @@
 package me.makeachoice.movies.fragment;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListAdapter;
+import android.view.ViewGroup;
 
+/**************************************************************************************************/
 /**
- * Fragment abstract used for all my non-list fragments
+ * MyFragment abstract class extends Fragments
  */
-public abstract class MyFragment extends Fragment implements MyFragmentInterface{
+public abstract class MyFragment extends Fragment{
 
-    protected int mLayoutId;
+/**************************************************************************************************/
+/**
+ * Class Variables
+ *      String KEY_SERVICE_NAME - key value used to store service name into Bundle
+ *
+ *      View mLayout - View layout of the fragment
+ *      Bridge mBridge - class implementing Bridge interface
+ *      String mServiceName - name of the Maid class taking care of the fragment
+ *
+ * Interface:
+ *      Bridge
+ */
+/**************************************************************************************************/
+
+    //KEY_SERVICE_NAME - key value used to store the service into Bundle
+    protected String KEY_SERVICE_NAME = "ServiceName";
+
+    //mLayout - View layout of the fragment
     protected View mLayout;
-    protected String mServiceName;
+
+    //mBridge - class implementing Bridge interface
     protected Bridge mBridge;
 
-    abstract public void setLayout(int id);
-    abstract public void setServiceName(String name);
+    //mServiceName - name of the Maid class taking care of the fragment
+    protected String mServiceName;
 
-    //Upkeeping MyMaid class must implement this interface
+
+    //Implemented communication line, usually implemented by a Maid class
     public interface Bridge{
-        //TODO - need to change Bridge concept for Fragment classes
-        void onItemClick(int position);
-        ListAdapter getListAdapter();
+        //Bridge is called when onCreateView is called in the Fragment
+        View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
+        //Bridge is called when onCreateActivity is called in the Fragment
+        void createActivity(Bundle savedInstanceState, View layout);
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Abstract Methods:
+ *      setServiceName
+ */
+/**************************************************************************************************/
+    /**
+     * void setServiceName(String) sets the name of the server taking care of this Fragment
+     * @param name - name of server, usually a Maid class
+     */
+    abstract public void setServiceName(String name);
+
+/**************************************************************************************************/
 
 }
 
