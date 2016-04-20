@@ -1,59 +1,43 @@
 package me.makeachoice.movies;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.MainKeeper;
+import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
 
 /**
- * MainActivity is the main activity of this application.
+ * MainActivity is the main activity of this Movie application and will display a PosterFragment of
+ * movie posters to select from and and InfoFragment about a particular movie.
+ *
+ * MainActivity extends MyActivity which extends AppCompatActivity to allow for Fragment and
+ * Toolbar use.
+ *
+ * Variables from MyActivity:
+ *      mBridge
+ *
+ * Methods from MyActivity:
+ *      void finishActivity()
+ *
+ * Bridge Interface from MyActivity:
+ *      void create(Bundle savedInstanceState)
+ *      void postResume()
+ *      void backPressed()
+ *      void createOptionsMenu(Menu menu)
+ *      void optionsItemSelected(MenuItem item)
+ *
  */
-public class MainActivity extends AppCompatActivity {
-
-    //MyHouseKeeper class that handles the initialization of the MainActivity and Fragments as well
-    //as the communication between UI and the Boss
-    private static MainKeeper mHouseKeeper;
-
-    //Toolbar object used by the MainActivity
-    private Toolbar mToolbar;
-    //Floating Action Button used by the MainActivity
-    private FloatingActionButton mFloatButton;
-
-    public interface Bridge{
-        //Interface are methods the MyMaid has to implement but it is a one-way
-        //communication.
-        int getActivityLayoutId();
-        int getToolbarId();
-        int getMenuId();
-        int getFloatingActionButtonId();
-
-        void prepareFragment();
-        void setFragmentManager(FragmentManager manager);
-
-        View.OnClickListener getFABOnClickListener();
-        void onOptionsItemSelected(MenuItem item);
-    }
+public class MainActivity extends MyActivity {
 
 
 /**************************************************************************************************/
 /**
  * void onCreate() is called when the Activity is first being created or during a configuration
- * change (i.e. orientation change). Creates Boss and MyHouseKeeper class, inflates the Activity
+ * change (i.e. orientation change). Creates Boss and Bridge class, inflates the Activity
  * layout and the toolbar and floating action button (if any).
  *
- * If onCreate is being called because of a configuration change, savedInstanceState will not be
- * null.
  * @param savedInstanceState - saved instance states saved before the fragment was detached.
  */
     @Override
@@ -61,71 +45,54 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Log.d("Movies", "MainActivity.onCreate");
-        //start Boss
-        mBoss = (Boss)getApplicationContext();
+        //get Boss Application
+        Boss boss = (Boss)getApplicationContext();
+
         //register Activity context with Boss
-        mBoss.setActivityContext(this);
+        boss.setActivityContext(this);
 
-        if(hasConnectivity(this)){
-            if(mBoss.getHouseKeeper(MainKeeper.NAME) == null){
-                //start MyHouseKeeper for this Activity
-                mHouseKeeper = new MainKeeper(mBoss);
-            }
-
-            //Note setContent must happen before toolbar
-            setContentView(mHouseKeeper.getActivityLayoutId());
-
-            //TODO - passing of Activity Context is brittle!!!
-            //send Activity Context to HouseKeeper
-            mHouseKeeper.setActivity(this);
-
-            //send FragmentManger to HouseKeeper, a new FragmentManger is created at onCreate()
-            mHouseKeeper.setFragmentManager(getSupportFragmentManager());
-
-            //set flag so fragment waits until Activity is Resumed, onPostResume changes flag
-            mHouseKeeper.isSafeToCommitFragment(false);
-
-            //Create toolbar with creation of Activity
-            initToolbar();
+        try{
+            //check if HouseKeeper is implementing interface
+            mBridge = (Bridge)boss.getHouseKeeper(MainHelper.NAME);
+        }catch(ClassCastException e){
+            throw new ClassCastException(boss.toString() +
+                    " must implement Bridge interface");
         }
-        else{
-            //TODO - need to code here
-        }
+
+        //use HouseKeeper class to create activity
+        mBridge.create(savedInstanceState);
     }
 
-    public void onStart(){
-        super.onStart();
-        mHouseKeeper.isSafeToCommitFragment(false);
-    }
-
+/**
+ * onSaveInstanceState(...) is called any time before onDestroy( ) and is where you can save
+ * instance states by placing them into a bundle
+ * @param saveState - bundle object used to save any instance states
+ */
+    @Override
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
-
+        mBridge.saveInstanceState(saveState);
     }
 
+/**
+ * void onPostResume() is called after the activity and fragments have all resumed. Fragments
+ * are resumed with the activity's onResume() method but they are not guaranteed to have
+ * been resumed. Another approach is to use onResumeFragment()
+ */
     @Override
     public void onPostResume(){
         super.onPostResume();
-        mHouseKeeper.onActivityPostResume();
+        //signal to HouseKeeper that Activity and Fragments have resumed
+        mBridge.postResume();
     }
 
+/**
+ * void onBackPressed() is called when the User press the "Back" button
+ */
     @Override
     public void onBackPressed(){
         super.onBackPressed();
-        mHouseKeeper.onBackPressed();
-    }
-
-    @Override
-    public void onPause(){
-        super.onPause();
-        mHouseKeeper.isSafeToCommitFragment(false);
-    }
-
-    private static Boss mBoss;
-    public void closeApp(){
-        Log.d("Movies", "MainActivity.closeApp");
-        mBoss.clearMovies();
-        this.finish();
+        mBridge.backPressed();
     }
 
 /**************************************************************************************************/
@@ -138,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
  */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(mHouseKeeper.getMenuId(), menu);
+        //send to HouseKeeper to manage creation of toolbar
+        mBridge.createOptionsMenu(menu);
         return true;
     }
 
@@ -151,58 +118,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        //MyHouseKeeper handles menu item click event
-        mHouseKeeper.onOptionsItemSelected(item);
-
+        //send to HouseKeeper to manage event
+        mBridge.optionsItemSelected(item);
 
         return super.onOptionsItemSelected(item);
     }
 
 /**************************************************************************************************/
 
+
 /**************************************************************************************************/
 /**
- * void initToolbar() inflates the toolbar from the layout and then sets it into the Activity.
+ * Implemented abstract methods from MyActivity:
+ *      void finishActivity()
  */
-    public void initToolbar(){
-        //check if toolbar is already inflated
-        if(mToolbar == null){
-            //if null, inflate the toolbar
-            mToolbar = (Toolbar)findViewById(mHouseKeeper.getToolbarId());
-            //set support for toolbar, onCreateOptionsMenu() will be called
-            setSupportActionBar(mToolbar);
-        }
-    }
-
-/**
- * void initFloatButton() inflates the floating action button layout and sets Event Listeners
- */
-    public void initFloatButton(){
-
-        if(mFloatButton == null){
-            mFloatButton = (FloatingActionButton)findViewById
-                    (mHouseKeeper.getFloatingActionButtonId());
-            mFloatButton.setOnClickListener(mHouseKeeper.getFABOnClickListener());
-        }
-    }
 /**************************************************************************************************/
 
-    private boolean hasConnectivity(Context ctx){
-        //get Connectivity Manger
-        ConnectivityManager connMgr = (ConnectivityManager)
-                ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        //get access to network information from phone
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        //check if we have connection
-        if(networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        }
-        else{
-            return false;
-        }
+    public void finishActivity(){
+        //close activity
+        this.finish();
     }
+
+
+/**************************************************************************************************/
 
 
 }
