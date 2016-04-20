@@ -9,9 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
-import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.housekeeper.GridAutofitLayoutManager;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.staff.PosterStaff;
@@ -36,13 +33,11 @@ import me.makeachoice.movies.model.json.MovieJSON;
  *      PosterStaff - prepares data model for consumption for the Poster View
  *
  * Variables from MyMaid:
- *      MyHouseKeeper mHouseKeeper
  *      String mName
  *      Fragment mFragment
  *
  * Methods from MyMaid:
  *      void initFragment()
- *      Fragment getFragment()
  *
  * Implements PosterFragment.Bridge
  *      View createView(LayoutInflater, ViewGroup, Bundle);
@@ -52,6 +47,7 @@ import me.makeachoice.movies.model.json.MovieJSON;
  *      Context getActivityContext()
  *
  * Bridge Interface:
+ *      Context getActivityContext()
  *      void registerFragment(String, Fragment)
  *
  */
@@ -60,15 +56,18 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 /**************************************************************************************************/
 /**
  * Class Variables
+ *      PosterHelper.ViewHolder mViewHolder - holds all the child views of the fragment
  *      Bridge mBridge - class implementing Bridge interface
  *      PosterRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
  *      PosterStaff mStaff - processes data to be consumed by the Fragment
- *      ArrayList<PosterItem> mPosterItems - data to be consumed by the Fragment
  *
  * Interface:
  *      Bridge
  */
 /**************************************************************************************************/
+
+    //mViewHolder - holds all the child views of the fragment
+    private PosterHelper.ViewHolder mViewHolder;
 
     //mBridge - class implementing Bridge, typically a MyHouseKeeper class
     private Bridge mBridge;
@@ -79,9 +78,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
     //mStaff - processes data to be consumed by the Fragment
     private PosterStaff mStaff;
 
-    //mPosterItems - array list of data ready to be consumed by the Fragment
-    private ArrayList<PosterItem> mPosterItems;
-
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge{
@@ -89,6 +85,8 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         Context getActivityContext();
         //registers the Fragment the Maid class is responsible for
         void registerFragment(String key, Fragment fragment);
+        //notify HouseKeeper a poster has been selected
+        void onSelectedPoster(int position);
     }
 
 /**************************************************************************************************/
@@ -106,9 +104,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         //service name given to PosterMaid
         mName = name;
 
-        //registers fragment PosterMaid is assigned to maintain
-        mBridge.registerFragment(name, getFragment());
-
         //initialize fragment to be maintained
         initFragment();
 
@@ -117,6 +112,16 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 
         //initialize RecyclerView Adapter
         mRecycler = new PosterRecycler(this);
+
+        //initialize ViewHolder
+        mViewHolder = new PosterHelper.ViewHolder();
+
+        //ViewHolder is empty
+        mViewHolder.isEmpty = true;
+
+        //registers fragment PosterMaid is assigned to maintain
+        mBridge.registerFragment(name, mFragment);
+
     }
 
 /**************************************************************************************************/
@@ -150,16 +155,15 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 /**
  * void initFragment() - initialize Fragment, give name of Maid to fragment
  */
-    protected void initFragment(){
+    protected Fragment initFragment(){
         //create PosterFragment
         PosterFragment fragment = new PosterFragment();
 
         //send Maid name to fragment
         fragment.setServiceName(mName);
 
-        //save fragment as class variable
-        //TODO - check if needed
-        mFragment = fragment;
+        //return fragment
+        return fragment;
     }
 
 /**
@@ -187,20 +191,23 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  * @param layout - layout where child views reside
  */
     public void createActivity(Bundle savedInstanceState, View layout){
-        //TODO - need to stor Views instead of having to recreate every time.
-        //get RecyclerView
-        RecyclerView recGrid = (RecyclerView)layout.findViewById(PosterHelper.POSTER_REC_ID);
+        if(mViewHolder.isEmpty){
+            //get RecyclerView
+            mViewHolder.recycler = (RecyclerView)layout.findViewById(PosterHelper.POSTER_REC_ID);
+        }
+
         //setHasFixedSize to true because 1)is true and 2)for optimization
-        recGrid.setHasFixedSize(true);
+        mViewHolder.recycler.setHasFixedSize(true);
 
         //set onItemTouchListener for items in RecyclerView
         //TODO - need to fix and relocate onItemClick event logic
-        recGrid.addOnItemTouchListener(
+        mViewHolder.recycler.addOnItemTouchListener(
                 new RecyclerItemClickListener(mBridge.getActivityContext(),
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
                                 Log.d("Movies", "PosterFragment.onItemClick: " + position);
+                                mBridge.onSelectedPoster(position);
                             }
                         })
         );
@@ -211,21 +218,10 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
                 new GridAutofitLayoutManager(mBridge.getActivityContext(), 240);
 
         //set layout manager of RecyclerView
-        recGrid.setLayoutManager(manager);
+        mViewHolder.recycler.setLayoutManager(manager);
 
         //set RecyclerAdapter of RecyclerView
-        recGrid.setAdapter(mRecycler);
-    }
-
-
-
-    //TODO - check if can be removed
-    public Fragment getFragment(){
-        if(mFragment == null){
-            initFragment();
-        }
-
-        return mFragment;
+        mViewHolder.recycler.setAdapter(mRecycler);
     }
 
 /**************************************************************************************************/
@@ -246,9 +242,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 
         mStaff.consumeModel(model);
 
-        mPosterItems = mStaff.getPosterItems();
-
-        mRecycler.setPosters(mPosterItems);
+        mRecycler.setPosters(mStaff.getPosterItems());
     }
 
 /**************************************************************************************************/
