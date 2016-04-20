@@ -14,7 +14,7 @@ public class InfoHelper {
 
 /**************************************************************************************************/
 /**
- * Fragment layout ids used to display an empty fragment, from empty_fragment.xml
+ * Fragment layout ids used to display InfoFragment, from info_fragment.xml
  */
 /**************************************************************************************************/
 
@@ -40,7 +40,7 @@ public class InfoHelper {
 
 /**************************************************************************************************/
 /**
- * Drawable resource ids used as image placeholders for the movie poster
+ * Drawable resource ids used as image placeholders for the movie poster in info_fragment.xml
  */
 /**************************************************************************************************/
 
