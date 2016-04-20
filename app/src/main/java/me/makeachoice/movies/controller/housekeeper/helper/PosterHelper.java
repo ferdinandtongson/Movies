@@ -1,5 +1,7 @@
 package me.makeachoice.movies.controller.housekeeper.helper;
 
+import android.support.v7.widget.RecyclerView;
+
 import me.makeachoice.movies.R;
 
 /**
@@ -44,6 +46,19 @@ public class PosterHelper {
 
     //POSTER_ERROR_IMG_ID is the error image displayed if there is no movie poster image
     public static final int POSTER_ERROR_IMG_ID = R.drawable.placeholder_error;
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * ViewHolder class used to hold the child views of PosterFragment
+ */
+/**************************************************************************************************/
+
+    public static class ViewHolder{
+        public boolean isEmpty;
+        public RecyclerView recycler;
+    }
 
 /**************************************************************************************************/
 
