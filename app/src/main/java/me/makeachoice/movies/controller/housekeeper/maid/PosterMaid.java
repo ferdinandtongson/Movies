@@ -194,6 +194,9 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         if(mViewHolder.isEmpty){
             //get RecyclerView
             mViewHolder.recycler = (RecyclerView)layout.findViewById(PosterHelper.POSTER_REC_ID);
+
+            //ViewHolder is no longer empty
+            mViewHolder.isEmpty = false;
         }
 
         //setHasFixedSize to true because 1)is true and 2)for optimization
