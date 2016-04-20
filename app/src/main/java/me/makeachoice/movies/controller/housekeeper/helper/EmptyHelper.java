@@ -1,7 +1,5 @@
 package me.makeachoice.movies.controller.housekeeper.helper;
 
-import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import me.makeachoice.movies.R;
@@ -18,7 +16,7 @@ public class EmptyHelper {
  */
 /**************************************************************************************************/
 
-    //EMPTY_FRAGMENT_LAYOUT_ID is the fragment layout used to display a bunch of movie posters
+    //EMPTY_FRAGMENT_LAYOUT_ID is the fragment layout used to display an error message
     public static final int EMPTY_FRAGMENT_LAYOUT_ID = R.layout.empty_fragment;
 
     //EMPTY_TXT_ID is the textView displaying the "empty" message"
