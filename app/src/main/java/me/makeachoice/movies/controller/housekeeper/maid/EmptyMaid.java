@@ -20,20 +20,22 @@ import me.makeachoice.movies.fragment.EmptyFragment;
  * The EmptyMaid is only aware of the Fragment and the views at the fragment level. It is NOT
  * aware of the view above it (the Activity containing the Fragment).
  *
+ * It uses other classes to assist in the upkeeping of the Fragment:
+ *      EmptyFragment - handles the Fragment lifecycle
+ *
  * Variables from MyMaid:
- *      MyHouseKeeper mHouseKeeper
  *      String mName
  *      Fragment mFragment
  *
  * Methods from MyMaid:
  *      void initFragment()
- *      Fragment getFragment()
  *
  * Implements EmptyFragment.Bridge
  *      View createView(LayoutInflater, ViewGroup, Bundle);
  *      void createActivity(Bundle, View);
  *
  * Bridge Interface:
+ *      Context getActivityContext()
  *      void registerFragment(String, Fragment)
  *
  */
@@ -42,12 +44,16 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
 /**************************************************************************************************/
 /**
  * Class Variables
+ *      EmptyHelper.ViewHolder mViewHolder - holds all the child views of the fragment
  *      Bridge mBridge - class implementing Bridge interface
  *
  * Interface:
  *      Bridge
  */
 /**************************************************************************************************/
+
+    //mViewHolder - holds all the child views of the fragment
+    private EmptyHelper.ViewHolder mViewHolder;
 
     //mBridge - class implementing Bridge, typically a MyHouseKeeper class
     private Bridge mBridge;
@@ -76,11 +82,18 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
         //service name given to PosterMaid
         mName = name;
 
-        //registers fragment PosterMaid is assigned to maintain
-        mBridge.registerFragment(name, getFragment());
-
         //initialize fragment to be maintained
-        initFragment();
+        mFragment = initFragment();
+
+        //initialize ViewHolder
+        mViewHolder = new EmptyHelper.ViewHolder();
+
+        //ViewHolder is empty
+        mViewHolder.isEmpty = true;
+
+        //registers fragment EmptyMaid is assigned to maintain
+        mBridge.registerFragment(name, mFragment);
+
     }
 
 /**************************************************************************************************/
@@ -102,19 +115,18 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
  *
  */
 /**************************************************************************************************/
-    /**
-     * void initFragment() - initialize Fragment, give name of Maid to fragment
-     */
-    protected void initFragment(){
+/**
+ * void initFragment() - initialize Fragment, give name of Maid to fragment
+ */
+    protected Fragment initFragment(){
         //create PosterFragment
         EmptyFragment fragment = new EmptyFragment();
 
         //send Maid name to fragment
         fragment.setServiceName(mName);
 
-        //save fragment as class variable
-        //TODO - check if needed
-        mFragment = fragment;
+        //return fragment
+        return fragment;
     }
 
 /**
@@ -143,22 +155,17 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
      */
     public void createActivity(Bundle savedInstanceState, View layout){
 
-        //create the textView that will display a message
-        TextView txtMessage = (TextView)layout.findViewById(EmptyHelper.EMPTY_TXT_ID);
+        if(mViewHolder.isEmpty){
+            //create the textView that will display a message
+            mViewHolder.message = (TextView)layout.findViewById(EmptyHelper.EMPTY_TXT_ID);
 
-        //set textView message
-        txtMessage.setText("Empty Message");
-    }
-
-
-
-    //TODO - check if can be removed
-    public Fragment getFragment(){
-        if(mFragment == null){
-            initFragment();
+            //ViewHolder is no longer empty
+            mViewHolder.isEmpty = false;
         }
 
-        return mFragment;
+        //set textView message
+        mViewHolder.message.setText(layout.getResources().
+                getString(EmptyHelper.EMPTY_MSG_NO_NETWORK_ID));
     }
 
 /**************************************************************************************************/
