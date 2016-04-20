@@ -105,7 +105,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         mName = name;
 
         //initialize fragment to be maintained
-        initFragment();
+        mFragment = initFragment();
 
         //initialize Staff
         mStaff = new PosterStaff();
