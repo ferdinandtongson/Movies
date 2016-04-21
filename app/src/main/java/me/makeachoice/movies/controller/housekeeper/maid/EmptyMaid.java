@@ -62,7 +62,7 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
         //get Context of current Activity
         Context getActivityContext();
         //Interface methods needed to be implemented by the instantiating class
-        void registerFragment(String key, Fragment fragment);
+        void registerFragment(Integer key, Fragment fragment);
     }
 
 /**************************************************************************************************/
@@ -71,9 +71,8 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
 /**
  * EmptyMaid - constructor
  * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
- * @param name - name given to PosterMaid
  */
-    public EmptyMaid(Bridge bridge, String name){
+    public EmptyMaid(Bridge bridge){
 
         //class implementing Bridge interface
         mBridge = bridge;
@@ -88,7 +87,7 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
         mViewHolder.isEmpty = true;
 
         //registers fragment EmptyMaid is assigned to maintain
-        mBridge.registerFragment(name, mFragment);
+        mBridge.registerFragment(EmptyHelper.NAME_ID, mFragment);
 
     }
 

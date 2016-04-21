@@ -83,7 +83,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         //get Context of current Activity
         Context getActivityContext();
         //registers the Fragment the Maid class is responsible for
-        void registerFragment(String key, Fragment fragment);
+        void registerFragment(Integer key, Fragment fragment);
         //notify HouseKeeper a poster has been selected
         void onSelectedPoster(int position);
     }
@@ -94,9 +94,8 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 /**
  * PosterMaid - constructor
  * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
- * @param name - name given to PosterMaid
  */
-    public PosterMaid(Bridge bridge, String name){
+    public PosterMaid(Bridge bridge){
         //class implementing Bridge interface
         mBridge = bridge;
 
@@ -116,7 +115,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         mViewHolder.isEmpty = true;
 
         //registers fragment PosterMaid is assigned to maintain
-        mBridge.registerFragment(name, mFragment);
+        mBridge.registerFragment(PosterHelper.NAME_ID, mFragment);
 
     }
 

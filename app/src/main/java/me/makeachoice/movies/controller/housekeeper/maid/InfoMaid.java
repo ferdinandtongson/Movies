@@ -66,7 +66,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         //get Context of current Activity
         Context getActivityContext();
         //register fragment to the HouseKeeper
-        void registerFragment(String key, Fragment fragment);
+        void registerFragment(Integer key, Fragment fragment);
     }
 
 /**************************************************************************************************/
@@ -75,9 +75,8 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
     /**
      * InfoMaid - constructor
      * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
-     * @param name - name given to InfoMaid
      */
-    public InfoMaid(Bridge bridge, String name){
+    public InfoMaid(Bridge bridge){
 
         //class implementing Bridge interface
         mBridge = bridge;
@@ -92,7 +91,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         mViewHolder.isEmpty = true;
 
         //registers fragment PosterMaid is assigned to maintain
-        mBridge.registerFragment(name, mFragment);
+        mBridge.registerFragment(InfoHelper.NAME_ID, mFragment);
 
     }
 
