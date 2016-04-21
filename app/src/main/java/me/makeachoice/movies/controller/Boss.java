@@ -4,13 +4,13 @@ import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.MainKeeper;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
+import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.model.json.MovieJSON;
 
@@ -26,18 +26,6 @@ import me.makeachoice.movies.model.json.MovieJSON;
  * references to ActivityContext. Place reference only in Boss since Boss will be updated the most
  * current ActivityContext whenever a new activity is created.
  *
- * Communication Bridges across the whole HouseKeeping staff needs to be remodeled. Base class
- * Bridges do not work but there needs to be a standard system of communication. Maybe use a
- * HashMap message registry with public static message codes or something......
- *
- * FragmentManagement is a mess. With Activity Lifecycle and Fragment Lifecycle being a bit wonky,
- * a standard way of how an Activity communicates with a Fragment needs to be establish; for example
- * isSafeToCommitFragment() method. Should be placed in a BaseClass, Interface or communication
- * Bridge.
- *
- * Did I mention that the Fragment Lifecycle is a bit wonky!! Trace the fragment lifecycle to check
- * for null ListAdapters, Container Layouts, Child Views, running threads, etc.
- *
  * The Butler class needs to handle more responsibility for cleaning, clearing, and checking for
  * data models; reference point and all that. Workers should not hold reference points for data. As
  * well, the Butler should be able to check on the status of any running threads so need to create
@@ -47,14 +35,6 @@ import me.makeachoice.movies.model.json.MovieJSON;
  * care of shutting down processes is not a very clever idea. Implement shutdown procedures for all
  * Control classes and thread first.
  *
- * HouseKeeper is a mess. Create a MaidAssistant class to do all the initialization and shutdown of
- * the Maids. Look into moving more code into the MainFragmentAssistant class to deal with fragment
- * transitions; prepareFragment() should be placed there or 90% of the code at least.
- *
- * Zombie Fragment bug will be a problem going forward. Either remove fragment registry and keep
- * instantiating the fragment every time (which defeats the whole point of having a fragment in the
- * first place) or I'm not understanding something. Remember to debug around onActivityCreated in
- * the Fragment class whenever a Zombie Fragment is created!!
  *
  */
 public class Boss extends Application{
@@ -120,9 +100,9 @@ public class Boss extends Application{
  */
     public void downloadMovieDataComplete(){
         //instantiate HouseKeeper that will maintain the Main Activity
-        MainKeeper keeper = (MainKeeper)mHouseKeeperRegistry.get(MainKeeper.NAME);
+        MainKeeper keeper = (MainKeeper)mHouseKeeperRegistry.get(MainHelper.NAME_ID);
         //tells the HouseKeeper to prepare the fragments the Activity will use
-        keeper.prepareFragment();
+        keeper.displayFragment();
     }
 
 
@@ -132,10 +112,10 @@ public class Boss extends Application{
 /**************************************************************************************************/
 
     //mHouseKeeperRegistry - HashMap of instantiated HouseKeeper classes being used by the Boss
-    private HashMap<String, MyHouseKeeper> mHouseKeeperRegistry = new HashMap<>();
+    private HashMap<Integer, MyHouseKeeper> mHouseKeeperRegistry = new HashMap<>();
 
     //mMaidRegistry - HashMap of instantiated Maid classes being used by HouseKeepers
-    private HashMap<String, MyMaid> mMaidRegistry = new HashMap<>();
+    private HashMap<Integer, MyMaid> mMaidRegistry = new HashMap<>();
 
 /**************************************************************************************************/
     /**
@@ -143,7 +123,7 @@ public class Boss extends Application{
      * @param key - Maid name
      * @param maid - Maid class (in charge of maintaining fragments)
      */
-    public void registerMaid(String key, MyMaid maid){
+    public void registerMaid(Integer key, MyMaid maid){
         //register Maid
         mMaidRegistry.put(key, maid);
     }
@@ -153,7 +133,7 @@ public class Boss extends Application{
      * @param key - Maid name
      * @return - sends Maid reference
      */
-    public MyMaid getMaid(String key){
+    public MyMaid getMaid(Integer key){
         //send Maid
         return mMaidRegistry.get(key);
     }
@@ -163,7 +143,7 @@ public class Boss extends Application{
      * @param key - HouseKeeper name
      * @param keeper - HouseKeeper class (in charge of Activity objects)
      */
-    public void registerHouseKeeper(String key, MyHouseKeeper keeper){
+    public void registerHouseKeeper(int key, MyHouseKeeper keeper){
         //register HouseKeeper
         mHouseKeeperRegistry.put(key, keeper);
     }
@@ -173,6 +153,47 @@ public class Boss extends Application{
      * @param key - HouseKeeper Name
      * @return - sends HouseKeeper reference
      */
-    public MyHouseKeeper getHouseKeeper(String key){ return mHouseKeeperRegistry.get(key);}
+    public MyHouseKeeper getHouseKeeper(Integer key){
+
+        MyHouseKeeper houseKeeper = mHouseKeeperRegistry.get(key);
+
+        if(houseKeeper == null){
+            houseKeeper = startHouseKeeper(key);
+        }
+
+
+        return houseKeeper;
+    }
+
+    private MyHouseKeeper startHouseKeeper(Integer key){
+        if(key == MainHelper.NAME_ID){
+            MainKeeper keeper = new MainKeeper(this);
+            mHouseKeeperRegistry.put(key, keeper);
+            return keeper;
+        }
+
+        return null;
+    }
+
+    public Context getActivityContext(){
+        return mActivityContext;
+    }
+
+    public boolean hasConnectivity(){
+        //get Connectivity Manger
+        ConnectivityManager connMgr = (ConnectivityManager)
+                mActivityContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        //get access to network information from phone
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        //check if we have connection
+        if(networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
 }
