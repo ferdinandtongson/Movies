@@ -24,7 +24,6 @@ import me.makeachoice.movies.fragment.EmptyFragment;
  *      EmptyFragment - handles the Fragment lifecycle
  *
  * Variables from MyMaid:
- *      String mName
  *      Fragment mFragment
  *
  * Methods from MyMaid:
@@ -79,9 +78,6 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
         //class implementing Bridge interface
         mBridge = bridge;
 
-        //service name given to PosterMaid
-        mName = name;
-
         //initialize fragment to be maintained
         mFragment = initFragment();
 
@@ -123,7 +119,7 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
         EmptyFragment fragment = new EmptyFragment();
 
         //send Maid name to fragment
-        fragment.setServiceName(mName);
+        fragment.setMaidId(EmptyHelper.NAME_ID);
 
         //return fragment
         return fragment;

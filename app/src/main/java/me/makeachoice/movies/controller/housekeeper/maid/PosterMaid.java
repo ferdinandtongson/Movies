@@ -33,7 +33,6 @@ import me.makeachoice.movies.model.json.MovieJSON;
  *      PosterStaff - prepares data model for consumption for the Poster View
  *
  * Variables from MyMaid:
- *      String mName
  *      Fragment mFragment
  *
  * Methods from MyMaid:
@@ -101,9 +100,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         //class implementing Bridge interface
         mBridge = bridge;
 
-        //service name given to PosterMaid
-        mName = name;
-
         //initialize fragment to be maintained
         mFragment = initFragment();
 
@@ -159,8 +155,8 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         //create PosterFragment
         PosterFragment fragment = new PosterFragment();
 
-        //send Maid name to fragment
-        fragment.setServiceName(mName);
+        //send Maid id number to fragment
+        fragment.setMaidId(PosterHelper.NAME_ID);
 
         //return fragment
         return fragment;

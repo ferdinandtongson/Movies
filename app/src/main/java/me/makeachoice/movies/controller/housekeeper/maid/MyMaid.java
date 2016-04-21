@@ -12,13 +12,9 @@ public abstract class MyMaid {
 /**************************************************************************************************/
 /**
  * Class Variables
- *      String mName - name of the instantiated Maid class
  *      Fragment mFragment - fragment being maintained by the Maid
  *
 /**************************************************************************************************/
-
-    //mName - name of the Maid class
-    String mName;
 
     //mFragment - fragment being maintained by the Maid
     Fragment mFragment;

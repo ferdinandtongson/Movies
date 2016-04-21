@@ -28,7 +28,6 @@ import me.makeachoice.movies.model.json.MovieJSON;
  *      InfoHelper - holds all static resources (layout id, view ids, etc)
  *
  * Variables from MyMaid:
- *      String mName
  *      Fragment mFragment
  *
  * Methods from MyMaid:
@@ -83,9 +82,6 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         //class implementing Bridge interface
         mBridge = bridge;
 
-        //service name given to PosterMaid
-        mName = name;
-
         //initialize fragment to be maintained
         mFragment = initFragment();
 
@@ -127,7 +123,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         InfoFragment fragment = new InfoFragment();
 
         //send Maid name to fragment
-        fragment.setServiceName(mName);
+        fragment.setMaidId(InfoHelper.NAME_ID);
 
         //return fragment
         return fragment;
