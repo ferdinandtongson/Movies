@@ -1,9 +1,18 @@
 package me.makeachoice.movies.controller.housekeeper.maid;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.widget.ListAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
-import me.makeachoice.movies.R;
+import com.squareup.picasso.Picasso;
+
+import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.fragment.InfoFragment;
 import me.makeachoice.movies.model.json.MovieJSON;
 
@@ -14,58 +23,101 @@ import me.makeachoice.movies.model.json.MovieJSON;
  * The InfoMaid is only aware of the Fragment and the views at the fragment level. It is NOT
  * aware of the view above it (the Activity containing the Fragment).
  *
+ * It uses other classes to assist in the upkeeping of the Fragment:
+ *      InfoFragment - handles the Fragment lifecycle
+ *      InfoHelper - holds all static resources (layout id, view ids, etc)
+ *
  * Variables from MyMaid:
- *      MyHouseKeeper mHouseKeeper
  *      String mName
  *      Fragment mFragment
  *
- * Implements InfoFragment.Bridge - NONE used
- *      ListAdapter getListAdapter() - not used
- *      void setListAdapter(ListAdapter) - not used
- *      void onItemClick(...) - not used
+ * Methods from MyMaid:
+ *      void initFragment()
+ *
+ * Implements InfoFragment.Bridge
+ *      View createView(LayoutInflater, ViewGroup, Bundle);
+ *      void createActivity(Bundle, View);
+ *
+ * Bridge Interface:
+ *      Context getActivityContext()
+ *      void registerFragment(String, Fragment)
+ *
  */
 public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 
-    private ListAdapter mListAdapter;
+/**************************************************************************************************/
+/**
+ * Class Variables
+ *      InfoHelper.ViewHolder mViewHolder - holds all the child views of the fragment
+ *      Bridge mBridge - class implementing Bridge interface
+ *
+ * Interface:
+ *      Bridge
+ */
+/**************************************************************************************************/
+
+    //mViewHolder - holds all the child views of the fragment
+    private InfoHelper.ViewHolder mViewHolder;
+
+    //mBridge - class implementing Bridge, typically a MyHouseKeeper class
+    private Bridge mBridge;
+
+    //Implemented communication line to any MyHouseKeeper class
     public interface Bridge{
-        //Interface methods needed to be implemented by the instantiating class
+        //get Context of current Activity
+        Context getActivityContext();
+        //register fragment to the HouseKeeper
         void registerFragment(String key, Fragment fragment);
     }
 
-    private Bridge mBridge;
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+    /**
+     * InfoMaid - constructor
+     * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
+     * @param name - name given to InfoMaid
+     */
     public InfoMaid(Bridge bridge, String name){
 
+        //class implementing Bridge interface
         mBridge = bridge;
+
+        //service name given to PosterMaid
         mName = name;
 
-        mBridge.registerFragment(name, getFragment());
+        //initialize fragment to be maintained
+        mFragment = initFragment();
+
+        //initialize ViewHolder
+        mViewHolder = new InfoHelper.ViewHolder();
+
+        //ViewHolder is empty
+        mViewHolder.isEmpty = true;
+
+        //registers fragment PosterMaid is assigned to maintain
+        mBridge.registerFragment(name, mFragment);
+
     }
 
 /**************************************************************************************************/
+
+/**************************************************************************************************/
 /**
- * Variables used for initializing Fragments
+ * Getters:
+ *      - None -
+ *
+ * Setters:
+ *      - None -
  */
 /**************************************************************************************************/
-    //LAYOUT_INFO_FRAGMENT - layout used by Info Fragment
-    private final static int LAYOUT_INFO_FRAGMENT = R.layout.info_fragment;
-
-    //CHILD_TXT_TITLE - textView child for title of movie
-    private final static int CHILD_TXT_TITLE = R.id.txt_title;
-    //CHILD_IMG_POSTER - imageView child for poster image of movie
-    private final static int CHILD_IMG_POSTER = R.id.img_poster;
-    //CHILD_TXT_RELEASE - textView child for release date of movie
-    private final static int CHILD_TXT_RELEASE = R.id.txt_release;
-    //CHILD_TXT_CAST - textView child for cast members of movie
-    private final static int CHILD_TXT_CAST = R.id.txt_cast;
-    //CHILD_RTB_RATING - ratingBarView child for visual display of rating
-    private final static int CHILD_RTB_RATING = R.id.rtb_rating;
-    //CHILD_TXT_RATING - textView child for rating percentage of movie
-    private final static int CHILD_TXT_RATING = R.id.txt_rating;
-    //CHILD_TXT_OVERVIEW - textView child for overview, plot, of movie
-    private final static int CHILD_TXT_OVERVIEW = R.id.txt_overview;
 
 /**************************************************************************************************/
-
+/**
+ * Fragment related methods. Both createView(...) and createActivity(...) are called by
+ * PosterFragment when onCreateView(...) and onCreateActivity(...) are called in that class.
+ *
+ */
 /**************************************************************************************************/
 /**
  * void initFragment() - initialize Fragment; set layout and child view ids and maid name
@@ -74,27 +126,77 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         //create InfoFragment
         InfoFragment fragment = new InfoFragment();
 
-        //send layout id to InfoFragment
-        fragment.setLayout(LAYOUT_INFO_FRAGMENT);
-
-        //send Maid Name to fragment
+        //send Maid name to fragment
         fragment.setServiceName(mName);
 
-        Integer[] ids = {CHILD_TXT_TITLE, CHILD_TXT_RELEASE, CHILD_TXT_CAST,
-                CHILD_TXT_RATING, CHILD_TXT_OVERVIEW};
-
-        fragment.setTxtViewIds(ids);
-        fragment.setChildIds(CHILD_IMG_POSTER, CHILD_RTB_RATING);
-
+        //return fragment
         return fragment;
     }
 
-    public Fragment getFragment(){
-        if(mFragment == null){
-            mFragment = initFragment();
+/**
+ * View createView(LayoutInflater, ViewGroup, Bundle) - is called by InfoFragment when
+ * onCreateView(...) is called in that class. Prepares the Fragment View to be presented.
+ * @param inflater - layoutInflater to inflate the xml fragment layout resource file
+ * @param container - view that will hold the fragment view
+ * @param savedInstanceState - saved instance states
+ * @return - view of fragment is ready
+ */
+    public View createView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState){
+
+        //inflate fragment from the xml fragment layout resource file
+        View v = inflater.inflate(InfoHelper.INFO_FRAGMENT_LAYOUT_ID, container, false);
+
+        //return fragment
+        return v;
+    }
+
+    /**
+     * void createActivity(Bundle, View) - is called by PosterFragment when onCreateActivity(...)
+     * is called in that class. Sets child views in fragment before being seen by the user
+     * @param savedInstanceState - saved instance states
+     * @param layout - layout where child views reside
+     */
+    public void createActivity(Bundle savedInstanceState, View layout){
+
+        //get child view for fragment
+        if(mViewHolder.isEmpty){
+            //get textView children
+            mViewHolder.title = (TextView)layout.findViewById(InfoHelper.INFO_TXT_TITLE);
+            mViewHolder.release = (TextView)layout.findViewById(InfoHelper.INFO_TXT_RELEASE);
+            mViewHolder.cast = (TextView)layout.findViewById(InfoHelper.INFO_TXT_CAST);
+            mViewHolder.rating = (TextView)layout.findViewById(InfoHelper.INFO_TXT_RATING);
+            mViewHolder.overview = (TextView)layout.findViewById(InfoHelper.INFO_TXT_OVERVIEW);
+
+            //get imageView and ratingBar child
+            mViewHolder.poster = (ImageView)layout.findViewById(InfoHelper.INFO_IMG_POSTER);
+            mViewHolder.stars = (RatingBar)layout.findViewById(InfoHelper.INFO_RTB_RATING);
+
+            //ViewHolder no longer empty
+            mViewHolder.isEmpty = false;
         }
 
-        return mFragment;
+        updateTextViews();
+        updatePoster();
+    }
+
+    private void updateTextViews(){
+
+        mViewHolder.title.setText(mItem.getOriginalTitle());
+        mViewHolder.release.setText(mItem.getReleaseDate());
+        mViewHolder.cast.setText("Placeholder for cast");
+        mViewHolder.rating.setText(mItem.getVoteAverage().toString());
+        mViewHolder.overview.setText(mItem.getOverview());
+    }
+
+
+    private void updatePoster(){
+        //add poster image, placeholder image and error image
+        Picasso.with(mBridge.getActivityContext())
+                .load(mItem.getPosterPath())
+                .placeholder(InfoHelper.INFO_PLACEHOLDER_IMG_ID)
+                .error(InfoHelper.INFO_ERROR_IMG_ID)
+                .into(mViewHolder.poster);
     }
 
 /**************************************************************************************************/
@@ -108,33 +210,6 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
  *      void onItemClick() - list item click event
  */
 /**************************************************************************************************/
-/**
- * ListAdapter getListAdapter() - Fragment can get access to the ListAdapter
- * @return ListAdapter - returns a list adapter created by the Boss
- */
-    public ListAdapter getListAdapter(){
-        return null;
-    }
-
-/**
- * void setListAdapter(ListAdapter) - set the ListAdapter the fragment is going to use, if any.
- * @param adapter - ListAdapter to be consumed by the fragment
- */
-    public void setListAdapter(ListAdapter adapter){
-        //is empty
-    }
-
-/**
- * void onItemClick(int) - event listener call by the fragment when an app item has been clicked
- * @param position - list position of item clicked
- */
-    public void onItemClick(int position){
-        //is empty
-    }
-
-    public String[] getTxtValues(){
-        return mValues;
-    }
 
 //TODO - methods in InfoMaid are a bit rough
     public MovieJSON.MovieDetail getMovie(){
@@ -143,22 +218,11 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 
 //TODO - using MovieJSON.MovieDetail is breaking MVP design!!
 //TODO - String values are hardcode here - move to resource file
-    private String[] mValues;
     private MovieJSON.MovieDetail mItem;
     public void setMovie(MovieJSON.MovieDetail item){
         mItem = item;
-        String [] values = {item.getOriginalTitle(), item.getReleaseDate(),
-                "Placeholder for casting info",
-                "User Rating: " + item.getVoteAverage().toString(),
-                item.getOverview()};
-
-        mValues = values;
-        mRating = item.getVoteAverage();
     }
 
-
-    private Double mRating;
 /**************************************************************************************************/
-
 
 }
