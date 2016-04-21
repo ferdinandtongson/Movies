@@ -53,7 +53,7 @@ public class MainActivity extends MyActivity {
 
         try{
             //check if HouseKeeper is implementing interface
-            mBridge = (Bridge)boss.getHouseKeeper(MainHelper.NAME);
+            mBridge = (Bridge)boss.getHouseKeeper(MainHelper.NAME_ID);
         }catch(ClassCastException e){
             throw new ClassCastException(boss.toString() +
                     " must implement Bridge interface");
