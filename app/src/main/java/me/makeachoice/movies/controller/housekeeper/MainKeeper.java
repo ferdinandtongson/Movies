@@ -221,11 +221,13 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         initToolbar();
 
         //check for connectivity
-        if (mBoss.hasConnectivity()){
-            //TODO - do something here??
-        }
-        else{
-            //TODO - need to code here
+        if(!mBoss.hasNetworkConnection()){
+            //no network, update current fragment to EmptyFragment
+            mCurrentFragId = EmptyHelper.NAME_ID;
+
+            //get EmptyFragment and display
+            mFragAssistant.changeFragment(mFragmentManager, MainHelper.MAIN_CONTAINER_ID,
+                    mFragmentRegistry.get(EmptyHelper.NAME_ID));
         }
 
     }
