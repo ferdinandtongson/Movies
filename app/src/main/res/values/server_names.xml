@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_keeper">Main Keeper</string>
+        <string name="poster_maid">Poster Maid</string>
+        <string name="info_maid">Info Maid</string>
+        <string name="empty_maid">Empty Maid</string>
+</resources>
