@@ -1,27 +1,122 @@
 package me.makeachoice.movies.model.json;
 
-import android.graphics.Bitmap;
-
 import java.util.ArrayList;
 
 /**
- * MovieJSON models the json data from TMDb (TheMovieDB) API.
+ * MovieJSON models the json data from TMDb (TheMovieDB) API. Creates an array list that contains
+ * the data received the TheMovieDB API call.
  *
- * The MovieModel models:
- *      original_title      title               overview
- *      release_date        original_language
- *      popularity          vote_count          vote_average
- *      genre_ids           adult
- *      poster_path         backdrop_path       video
- *
- *
- *
+ * Contains an inner class MovieDetail to hold individual detailed information of Movies
  *
  */
 public class MovieJSON {
-    private ArrayList<MovieDetail> mList = new ArrayList<MovieDetail>();
+
+/**************************************************************************************************/
+/**
+ * Class Variables:
+ *      ArrayList<MovieDetail> mList - list of MovieDetail data
+ */
+/**************************************************************************************************/
+
+    //mList - list of MovieDetail data
+    private ArrayList<MovieDetail> mList = new ArrayList<>();
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Getters:
+ *      MovieDetail getMovie(int) - get MovieDetial in given list position
+ *      int getMovieCount() - get number of items in list
+ *
+ * Setters:
+ *      - None -
+ */
+/**************************************************************************************************/
+/**
+ * MovieDetail getMovie(int) - get the movie detail data in the current index position
+ * @param index - position of data in the list
+ * @return - MovieDetail data of movie
+ */
+    public MovieDetail getMovie(int index){
+        //return MovieDetail in the current index position of list
+        return mList.get(index);
+    }
+
+/**
+ * int getMovieCount() - get number of MovieDetail data items in the list
+ * @return - number of items in the list
+ */
+    public int getMovieCount(){
+        //get size of MovieDetail list
+        return mList.size();
+    }
+
+/**************************************************************************************************/
+/**
+ * Class Methods:
+ *      void addMovie(MovieDetail) - adds MovieDetail to list
+ *      void clearMovies() - clear
+ */
+/**************************************************************************************************/
+/**
+ * void addMovie(MovieDetail) - add MovieDetail to array list
+ * @param detail - MovieDetail object to add to list
+ */
+    public void addMovie(MovieDetail detail){
+
+        //check if array list has been created
+        if(mList == null){
+            //create array list
+            mList = new ArrayList<>();
+        }
+        //this inserts app at the end of the list
+        mList.add(detail);
+    }
+
+/**
+ * void clearMovies() - clear array list of movies and null reference
+ */
+    public void clearMovies(){
+        if(mList != null){
+            mList.clear();
+            mList = null;
+        }
+    }
+
+/**************************************************************************************************/
+
+
+/**************************************************************************************************/
+/**
+ * Inner Class MovieDetail - holds detailed information received through the API call
+ */
+/**************************************************************************************************/
 
     public class MovieDetail{
+
+/**************************************************************************************************/
+/**
+ * Class Variables:
+ *      String mOriginalTitle - original title of movie (may be in a foreign language)
+ *      String mTitle - title of movie (English title, if original title was in different langague)
+ *      String mOverview - plot of movie
+ *
+ *      String mReleaseDate - date movie was released
+ *      String mOriginalLanguage - original language of movie
+ *
+ *      Double mPopularity - popularity of movie
+ *      Double mVoteCount - number of votes from users that the movie has received
+ *      Double mVoteAverage - average vote score the movie has received
+ *
+ *      Integer[] mGenreIds - id numbers for genres the movie fits into
+ *      Boolean mAdult - is the movie in the Adult category
+ *
+ *      String mPosterPath - url path to the poster image of the movie
+ *      String mBackdropPath - url path to the backdeop image of the movie
+ *      Boolean mVideo - if the movie has a video link to it or not
+ */
+/**************************************************************************************************/
 
         private String mOriginalTitle;
         private String mTitle;
@@ -41,9 +136,13 @@ public class MovieJSON {
         private String mBackdropPath;
         private Boolean mVideo;
 
-        private Bitmap mPosterImage;
+/**************************************************************************************************/
 
-        public MovieDetail(){}
+/**************************************************************************************************/
+/**
+ * Getters and Setters Methods
+ */
+/**************************************************************************************************/
 
         public String getOriginalTitle(){return mOriginalTitle;}
         public String getTitle(){return mTitle;}
@@ -62,8 +161,6 @@ public class MovieJSON {
         public String getPosterPath(){return mPosterPath;}
         public String getBackdropPath(){return mBackdropPath;}
         public Boolean getVideo(){return mVideo;}
-
-        public Bitmap getPosterImage(){return mPosterImage;}
 
 
         public void setOriginalTitle(String title){mOriginalTitle = title;}
@@ -84,54 +181,10 @@ public class MovieJSON {
         public void setBackdropPath(String path){mBackdropPath = path;}
         public void setVideo(Boolean hasVideo){mVideo = hasVideo;}
 
-        public void setPosterImage(Bitmap image){mPosterImage = image;}
+/**************************************************************************************************/
+
     }
 
-    public MovieJSON(){
-        //MovieModel constructor
-    }
+/**************************************************************************************************/
 
-    public MovieDetail getMovie(int index){
-        return mList.get(index);
-    }
-
-    public void addMovie(MovieDetail detail){
-        //this inserts app at the end of the list
-        mList.add(detail);
-    }
-
-    public void addMovie(MovieDetail detail, int index){
-        //this inserts app at the index and moves everything ahead of it one position
-        mList.add(index, detail);
-    }
-
-    public void updateMovie(int index, MovieDetail detail){
-        //this replaces the old app at the index with an updated version
-        mList.set(index, detail);
-    }
-
-    public void removeMovie(MovieDetail detail){
-        //removes app object from list
-        mList.remove(detail);
-    }
-
-    public void removeMovie(int index){
-        //removes app object from list using the index value
-        mList.remove(index);
-    }
-
-    public void clearMovies(){
-        if(mList != null){
-            mList.clear();
-            mList = null;
-        }
-    }
-
-    public boolean checkForMovie(MovieDetail detail){
-        return mList.contains(detail);
-    }
-
-    public int getMovieCount(){
-        return mList.size();
-    }
 }
