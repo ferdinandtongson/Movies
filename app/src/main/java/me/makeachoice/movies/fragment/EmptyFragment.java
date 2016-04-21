@@ -11,18 +11,17 @@ import me.makeachoice.movies.controller.Boss;
 
 /**************************************************************************************************/
 /**
- * EmptyFragment is a Fragment with a TextView child and is used when a simple fragment with either
- * a GridView or ListView child ONLY is empty.
+ * EmptyFragment is a Fragment that will be displayed if the PosterFragment is empty
  *
  * Variables from MyFragment:
- *      String KEY_SERVICE_NAME
+ *      String KEY_MAID_ID
  *
  *      Bridge mBridge
  *      View mLayout
- *      String mServiceName
+ *      Integer mMaidId
  *
  * Methods from MyFragment:
- *      void setServiceName(String)
+ *      void setMaidId(Integer)
  *
  * Bridge Interface from MyFragment:
  *      View createView(LayoutInflater, ViewGroup, Bundle)
@@ -72,8 +71,8 @@ public class EmptyFragment extends MyFragment {
 
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
-            //get name of servers up-keeping this fragment
-            mMaidId = savedInstanceState.getInt(KEY_SERVICE_NAME);
+            //get id number of maid maintaining this fragment
+            mMaidId = savedInstanceState.getInt(KEY_MAID_ID);
         }
 
         //get application context, the Boss
@@ -115,8 +114,8 @@ public class EmptyFragment extends MyFragment {
  */
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
-        //save name of server maintaining this fragment
-        saveState.putInt(KEY_SERVICE_NAME, mMaidId);
+        //save id of Maid maintaining this fragment
+        saveState.putInt(KEY_MAID_ID, mMaidId);
     }
 
 /**************************************************************************************************/

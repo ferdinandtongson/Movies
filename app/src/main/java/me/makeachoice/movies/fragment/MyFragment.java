@@ -15,19 +15,19 @@ public abstract class MyFragment extends Fragment{
 /**************************************************************************************************/
 /**
  * Class Variables
- *      String KEY_SERVICE_NAME - key value used to store service name into Bundle
+ *      String KEY_MAID_ID - key value used to store maid id into Bundle
  *
  *      View mLayout - View layout of the fragment
  *      Bridge mBridge - class implementing Bridge interface
- *      String mServiceName - name of the Maid class taking care of the fragment
+ *      Integer mMaidId - id number of the Maid class taking care of the fragment
  *
  * Interface:
  *      Bridge
  */
 /**************************************************************************************************/
 
-    //KEY_SERVICE_NAME - key value used to store the service into Bundle
-    protected String KEY_SERVICE_NAME = "ServiceName";
+    //KEY_MAID_ID - key value used to store the maid id into Bundle
+    protected String KEY_MAID_ID = "MaidId";
 
     //mLayout - View layout of the fragment
     protected View mLayout;
@@ -52,7 +52,7 @@ public abstract class MyFragment extends Fragment{
 /**************************************************************************************************/
 /**
  * Abstract Methods:
- *      setServiceName
+ *      setMaidId
  */
 /**************************************************************************************************/
     /**

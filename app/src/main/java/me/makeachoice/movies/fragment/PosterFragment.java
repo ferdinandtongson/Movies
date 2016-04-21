@@ -14,14 +14,14 @@ import me.makeachoice.movies.controller.Boss;
  * PosterFragment is a fragment that will display a grid of posters (images)
  *
  * Variables from MyFragment:
- *      String KEY_SERVICE_NAME
+ *      String KEY_MAID_ID
  *
  *      Bridge mBridge
  *      View mLayout
- *      String mServiceName
+ *      Integer mMaidId
  *
  * Methods from MyFragment:
- *      void setServiceName(String)
+ *      void setMaidId(Integer)
  *
  * Bridge Interface from MyFragment:
  *      View createView(LayoutInflater, ViewGroup, Bundle)
@@ -74,8 +74,8 @@ public class PosterFragment extends MyFragment {
 
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
-            //get name of server maintaining this fragment
-            mMaidId = savedInstanceState.getInt(KEY_SERVICE_NAME);
+            //get id number of Maid maintaining this fragment
+            mMaidId = savedInstanceState.getInt(KEY_MAID_ID);
         }
 
         //get Application context, the Boss
@@ -117,8 +117,8 @@ public class PosterFragment extends MyFragment {
  */
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
-        //save name of server maintaining this fragment
-        saveState.putInt(KEY_SERVICE_NAME, mMaidId);
+        //save id number of Maid maintaining this fragment
+        saveState.putInt(KEY_MAID_ID, mMaidId);
 
     }
 
