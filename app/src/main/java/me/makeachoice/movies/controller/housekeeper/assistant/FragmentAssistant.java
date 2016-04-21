@@ -5,9 +5,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 /**
- * MainFragmentAssistant is to assist in managing fragment transitions for HouseKeeper
+ * FragmentAssistant is to assist in managing fragment transitions for HouseKeeper
  */
-public class MainFragmentAssistant {
+public class FragmentAssistant {
 
 /**************************************************************************************************/
 /**
