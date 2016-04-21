@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:orientation="vertical"
     android:weightSum="7">
 
 
@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_margin="10sp"
+        android:layout_margin="10dp"
         android:text="Title"
         android:textSize="20sp"
         android:textColor="@color/white"
@@ -24,8 +24,8 @@
         android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
         android:layout_weight="6"
-        android:layout_marginLeft="10sp"
-        android:layout_marginBottom="10sp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
         android:weightSum="3"
         android:orientation="horizontal">
 
@@ -41,15 +41,15 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:layout_marginLeft="10sp"
-            android:layout_marginRight="10sp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:baselineAligned="false">
 
             <TextView android:id="@+id/txt_release"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="10sp"
+                android:layout_marginRight="10dp"
                 android:text="1999"
                 android:textSize="20sp"
                 android:textColor="@color/white"
@@ -71,16 +71,16 @@
                     android:textColor="@color/white"
                     android:padding="10sp"
                     android:layout_marginRight="10sp"
-                    android:layout_marginTop="15sp"
-                    android:layout_marginBottom="15sp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
                     android:background="@color/powderBlueish_20"/>
             </ScrollView>
 
             <TextView android:id="@+id/txt_cast"
                 android:layout_width="match_parent"
-                android:layout_height="0sp"
-                android:layout_marginTop="7sp"
-                android:padding="5sp"
+                android:layout_height="0dp"
+                android:layout_marginTop="7dp"
+                android:padding="5dp"
                 android:text="Cast info placeholder"
                 android:textSize="12sp"
                 android:textColor="@color/white"
@@ -108,8 +108,8 @@
                 android:textSize="12sp"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/white"
-                android:paddingRight="10sp"
-                android:paddingLeft="10sp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
                 android:background="@color/powderBlueish_20"/>
 
 
