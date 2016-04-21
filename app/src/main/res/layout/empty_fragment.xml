@@ -13,6 +13,7 @@
         android:textAlignment="center"
         android:text="Empty"
         android:textSize="30sp"
-        android:background="@color/powderBlueish"/>
+        android:background="@color/powderBlueish"
+        android:visibility="invisible"/>
 
 </LinearLayout>
