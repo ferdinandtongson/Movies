@@ -11,4 +11,6 @@
     <string name="dia_btn_retry">Retry</string>
     <string name="dia_btn_close">Close App</string>
 
+    <string name="str_user_rating">User Rating</string>
+
 </resources>

@@ -58,6 +58,8 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
     //mViewHolder - holds all the child views of the fragment
     private InfoHelper.ViewHolder mViewHolder;
 
+    private String mStrRating;
+
     //mBridge - class implementing Bridge, typically a MyHouseKeeper class
     private Bridge mBridge;
 
@@ -80,6 +82,9 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 
         //class implementing Bridge interface
         mBridge = bridge;
+
+        //get string value
+        mStrRating = bridge.getActivityContext().getString(InfoHelper.STR_USER_RATING_ID);
 
         //initialize fragment to be maintained
         mFragment = initFragment();
@@ -180,7 +185,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         mViewHolder.title.setText(mItem.getOriginalTitle());
         mViewHolder.release.setText(mItem.getReleaseDate());
         mViewHolder.cast.setText("Placeholder for cast");
-        mViewHolder.rating.setText(mItem.getVoteAverage().toString());
+        mViewHolder.rating.setText(mStrRating + ": " + mItem.getVoteAverage().toString());
         mViewHolder.overview.setText(mItem.getOverview());
     }
 

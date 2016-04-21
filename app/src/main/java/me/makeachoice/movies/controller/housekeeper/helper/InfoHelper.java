@@ -53,6 +53,9 @@ public class InfoHelper {
     //INFO_ERROR_IMG_ID is the error image displayed if there is no movie poster image
     public static final int INFO_ERROR_IMG_ID = R.drawable.placeholder_error;
 
+    //STR_USER_RATING_ID is the "User Rating" string id
+    public static final int STR_USER_RATING_ID = R.string.str_user_rating;
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
