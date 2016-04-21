@@ -6,4 +6,9 @@
     <string name="action_bar_rated">Highest Rated</string>
 
     <string name="msg_no_network">No Network Connection!</string>
+    <string name="msg_enable_network">Enable Network then press Retry</string>
+
+    <string name="dia_btn_retry">Retry</string>
+    <string name="dia_btn_close">Close App</string>
+
 </resources>
