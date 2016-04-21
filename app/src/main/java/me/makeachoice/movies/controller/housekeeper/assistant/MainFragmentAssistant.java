@@ -5,105 +5,68 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 /**
- * MainFragmentAssistant is to assist in managing Fragments for HouseKeeper class
+ * MainFragmentAssistant is to assist in managing fragment transitions for HouseKeeper
  */
-
-//TODO - look at MainFragmentAssistant, feels slightly twisted....
 public class MainFragmentAssistant {
 
-    private int mContainerId;
-    private boolean mHasFragment;
-    private boolean mHasInfoFragment;
-    private boolean mIsSafeToCommit;
-
-    public MainFragmentAssistant(int containerId){
-
-        mContainerId = containerId;
-        mHasFragment = false;
-        mHasInfoFragment = false;
-    }
-
-    public void setHasInfoFragment(Boolean hasFragment){
-        mHasInfoFragment = hasFragment;
-    }
-
-    public Boolean getHasInfoFragment(){
-        return mHasInfoFragment;
-    }
-
-
 /**************************************************************************************************/
-
-/**************************************************************************************************/
-
-    public void requestDetailFragment(FragmentManager manager, Fragment fragment,
-                                      String oldFrag, String newFrag){
-
-        mHasInfoFragment = true;
-
-        FragmentTransaction ft = manager.beginTransaction();
-        ft.addToBackStack(oldFrag);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.replace(mContainerId, fragment, newFrag);
-
-        if(mIsSafeToCommit){
-            //commit fragment to activity
-            ft.commit();
-        }
-    }
-
-
-    public void requestFragment(FragmentManager manager, Fragment fragment, String name){
-
-        if(mHasFragment){
-            replaceFragment(manager, fragment, name);
-        }
-        else{
-
-            mHasFragment = true;
-            addFragment(manager, fragment, name);
-        }
-    }
-
 /**
- * void addFragmentToManager(Fragment) - adds fragment to FragmentManager and commit to activity
- * @param fragment - fragment object to be added
+ * public methods:
+ *      void changeFragment(FragmentManager, int, Fragment)
+ *      void changeFragmentWithBackStack(FragmentManager, int, Fragment, boolean)
  */
-    private void addFragment(FragmentManager manager, Fragment fragment, String name){
+/**************************************************************************************************/
+/**
+ * void changeFragment(FragmentManager, int, Fragment) - simply removes the current fragment
+ * being viewed and adds the new fragment to be viewed
+ * @param manager - FragmentManager to handle the fragment transaction
+ * @param containerId - layout id that acts as a container for the fragment
+ * @param fragment - new fragment to be viewed
+ */
+    public void changeFragment(FragmentManager manager, int containerId, Fragment fragment){
         //begin fragment transaction
         FragmentTransaction ft = manager.beginTransaction();
 
-        //add fragment to the fragment container
-        ft.add(mContainerId, fragment, name);
+        //replace fragment to the fragment container
+        ft.replace(containerId, fragment);
 
-        if(mIsSafeToCommit){
-            //commit fragment to activity
-            ft.commit();
-        }
+        //commit transaction
+        ft.commit();
     }
 
 /**
- * void replaceFragmentInManager(int) - replaces a fragment object held by the FragmentManager
+ * void changeFragmentWithBackStack(FragmentManager, int, Fragment, boolean) - adds a new fragment
+ * to be viewed and pushes the old fragment to the back. If popBackStack is true, will pop the top
+ * of the stack first before adding the new fragment.
+ *
+ * Example: currently viewing frag01 and add frag02, popBackStack false
+ *      stack{frag01} --> stack{frag01,frag02}
+ * Example: currently viewing frag02 with frag01 in back stack, add frag03, popBackStack true
+ *      stack{frag01,frag02} --> (popBackStack) stack{frag01} --> stack{frag01, frag03}
  * and commit to activity
  */
-    private void replaceFragment(FragmentManager manager, Fragment fragment, String name){
+    public void changeFragmentWithBackStack(FragmentManager manager, int containerId,
+                                             Fragment fragment, boolean popBackStack){
 
         //begin fragment transaction
         FragmentTransaction ft = manager.beginTransaction();
 
-        //replace fragment held by the FragmentManager
-        ft.replace(mContainerId, fragment, name);
-
-        if(mIsSafeToCommit){
-            //commit fragment to activity
-            ft.commit();
+        //check if stack needs to be popped
+        if(popBackStack){
+            //pop top fragment from top
+            manager.popBackStackImmediate();
         }
+
+        //replace fragment to the fragment container
+        ft.replace(containerId, fragment);
+
+        //put old fragment to back stack
+        ft.addToBackStack(null);
+
+        //commit transaction
+        ft.commit();
     }
 
 /**************************************************************************************************/
-
-    public void setSafeToCommitFragment(boolean isSafe){
-        mIsSafeToCommit = isSafe;
-    }
 
 }
