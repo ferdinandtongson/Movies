@@ -10,6 +10,9 @@ import me.makeachoice.movies.R;
  */
 public class EmptyHelper {
 
+    //NAME_ID - unique name of instantiated Maid class
+    public final static int NAME_ID = R.string.maid_empty;
+
 /**************************************************************************************************/
 /**
  * Fragment layout ids used to display an empty fragment, from empty_fragment.xml

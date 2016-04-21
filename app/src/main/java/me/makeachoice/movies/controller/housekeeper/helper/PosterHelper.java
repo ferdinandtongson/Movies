@@ -10,6 +10,9 @@ import me.makeachoice.movies.R;
  */
 public class PosterHelper {
 
+    //NAME_ID - unique name of instantiated Maid class
+    public final static int NAME_ID = R.string.maid_poster;
+
 /**************************************************************************************************/
 // Card Item layout ids used in a RecyclerView, from poster_card.xml
 
