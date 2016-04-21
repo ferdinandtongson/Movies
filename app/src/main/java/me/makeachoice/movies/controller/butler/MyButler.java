@@ -9,12 +9,11 @@ import me.makeachoice.movies.controller.Boss;
  * consumption
  */
 public abstract class MyButler {
-    Boss mBoss;
-    Context mActivityContext;
 
-    public Context getActivityContext(){
-        return mActivityContext;
-    }
+    //mBoss - application context that acts as a bridge between the Model and View
+    Boss mBoss;
+
+    abstract public Context getActivityContext();
 
     abstract public void workComplete(Boolean result);
 }

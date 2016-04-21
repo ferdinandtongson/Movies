@@ -16,8 +16,6 @@ public class MovieButler extends MyButler{
 
 /**************************************************************************************************/
 
-    //mBoss - application context that acts as a bridge between the Model and View
-    private Boss mBoss;
     //mApiKey - the key used to access for TheMovieDB api
     private String mApiKey;
     //mMovieWorker - AsyncTask class that connect to the internet to get Movie details
@@ -43,20 +41,12 @@ public class MovieButler extends MyButler{
         //flag to check if work is being done in the background
         mWorking = false;
 
-    }
-
-    public void setActivityContext(Context ctx){
-        mActivityContext = ctx;
-
         //get TheMovieDB api key from resource file
-        mApiKey = mActivityContext.getString(R.string.api_key_tmdb);
+        mApiKey = mBoss.getString(R.string.api_key_tmdb);
     }
 
-    public void stopWorking(){
-        if(mWorking){
-            mWorking = false;
-            mMovieWorker.cancel(true);
-        }
+    public Context getActivityContext(){
+        return mBoss.getActivityContext();
     }
 
 /**************************************************************************************************/
@@ -113,7 +103,7 @@ public class MovieButler extends MyButler{
 
         if(result){
             //message the Boss that the download of movie info is complete
-            mBoss.downloadMovieDataComplete();
+            mBoss.updateMainActivity();
         }
         else{
             //TODO - need to handle event of a download failure
@@ -130,11 +120,6 @@ public class MovieButler extends MyButler{
  */
     public MovieJSON getModel( ){
         return mMovieModel;
-    }
-
-    public void clearModel(){
-        mMovieModel = null;
-        mMovieWorker.getMovies().clearMovies();
     }
 
 /**************************************************************************************************/
