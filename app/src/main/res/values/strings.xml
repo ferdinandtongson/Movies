@@ -4,4 +4,6 @@
 
     <string name="action_bar_popular">Most Popular</string>
     <string name="action_bar_rated">Highest Rated</string>
+
+    <string name="msg_no_network">No Network Connection!</string>
 </resources>
