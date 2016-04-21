@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.fragment.InfoFragment;
-import me.makeachoice.movies.model.json.MovieJSON;
+import me.makeachoice.movies.model.MovieJSON;
 
 /**
  * InfoMaid initializes and takes care of communicating with the Fragment that will display the

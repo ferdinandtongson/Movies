@@ -19,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import me.makeachoice.movies.controller.butler.MyButler;
-import me.makeachoice.movies.model.json.MovieJSON;
+import me.makeachoice.movies.model.MovieJSON;
 
 /**************************************************************************************************/
 /**

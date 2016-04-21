@@ -6,7 +6,7 @@ import android.util.Log;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.worker.MovieWorker;
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.model.json.MovieJSON;
+import me.makeachoice.movies.model.MovieJSON;
 
 /**
  * MovieButler handles the creation of the Movie model, taking resources from a flat file,

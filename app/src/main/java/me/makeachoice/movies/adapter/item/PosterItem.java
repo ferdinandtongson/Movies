@@ -3,8 +3,7 @@ package me.makeachoice.movies.adapter.item;
 import android.graphics.Bitmap;
 
 /**
- * PosterItem extends MyItem base class and will be used by a BaseAdapter. This class is
- * associated with item_poster.xml layout resource file.
+ * PosterItem extends MyItem base class and will be used by a BaseAdapter.
  *
  * PosterItem will contain the title and source image of the poster
  *

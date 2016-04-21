@@ -26,7 +26,7 @@ import me.makeachoice.movies.controller.housekeeper.maid.EmptyMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.model.json.MovieJSON;
+import me.makeachoice.movies.model.MovieJSON;
 
 /**
  * MainKeeper is the HouseKeeper for MainActivity. It is responsible for the Activity and all of

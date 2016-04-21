@@ -12,7 +12,7 @@ import me.makeachoice.movies.controller.housekeeper.MainKeeper;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
-import me.makeachoice.movies.model.json.MovieJSON;
+import me.makeachoice.movies.model.MovieJSON;
 
 /**
  * Boss is the "boss", main controller of the app and interfaces with the View and Model. Boss

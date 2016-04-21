@@ -3,7 +3,7 @@ package me.makeachoice.movies.controller.housekeeper.maid.staff;
 import java.util.ArrayList;
 
 import me.makeachoice.movies.adapter.item.PosterItem;
-import me.makeachoice.movies.model.json.MovieJSON;
+import me.makeachoice.movies.model.MovieJSON;
 
 /**
  * PosterStaff takes Poster Model data and prepares the data to be consumed by the HouseKeeping

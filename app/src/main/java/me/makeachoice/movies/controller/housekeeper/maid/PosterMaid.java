@@ -14,7 +14,7 @@ import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.staff.PosterStaff;
 import me.makeachoice.movies.controller.housekeeper.recycler.PosterRecycler;
 import me.makeachoice.movies.fragment.PosterFragment;
-import me.makeachoice.movies.model.json.MovieJSON;
+import me.makeachoice.movies.model.MovieJSON;
 
 /**
  * PosterMaid initializes and takes care of communicating with the Fragment that hold the

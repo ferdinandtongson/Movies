@@ -1,4 +1,4 @@
-package me.makeachoice.movies.model.json;
+package me.makeachoice.movies.model;
 
 import java.util.ArrayList;
 
