@@ -1,28 +1,33 @@
 package me.makeachoice.movies.controller.housekeeper;
 
-import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.Boss;
+import me.makeachoice.movies.controller.housekeeper.assistant.FragmentAssistant;
+import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
 
 /**
- * MyHouseKeeper abstract class - used to directly communicate with Activities and MyMaid classes that
- * maintain Fragment classes and the Boss
+ * MyHouseKeeper abstract class - used to directly communicate with Activities, MyMaid classes and
+ * the Boss
  *
  */
 public abstract class MyHouseKeeper {
     //mBoss - application context object
-    Boss mBoss;
-
-    //mActivityContext - context object that follows the Activity lifecycle
-    Context mActivityContext;
+    protected Boss mBoss;
 
     //mFragmentManager - manages fragments for the MyHouseKeeper
-    FragmentManager mFragmentManager;
+    protected FragmentManager mFragmentManager;
 
-    //mMapFragmentType - hashmap used to hold different fragments types and their type variations
-    HashMap<String, Integer> mMapFragmentType;
+    //mMaidAssistant - initializes and registers all Maids used by the HouseKeeper
+    protected MaidAssistant mMaidAssistant;
+
+    //mFragAssistant - assists in the transitions between fragments
+    protected FragmentAssistant mFragAssistant;
+
+    //mFragmentRegistry - registered fragments used by the HouseKeeper
+    protected HashMap<Integer, Fragment> mFragmentRegistry;
 
 }
