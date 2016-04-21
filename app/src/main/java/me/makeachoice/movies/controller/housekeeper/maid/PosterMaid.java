@@ -9,7 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import me.makeachoice.movies.controller.housekeeper.GridAutofitLayoutManager;
+import me.makeachoice.movies.controller.housekeeper.recycler.RecyclerItemClickListener;
+import me.makeachoice.movies.util.GridAutofitLayoutManager;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.staff.PosterStaff;
 import me.makeachoice.movies.controller.housekeeper.recycler.PosterRecycler;
