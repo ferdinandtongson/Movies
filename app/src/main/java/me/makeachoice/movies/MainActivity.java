@@ -49,7 +49,7 @@ public class MainActivity extends MyActivity {
         Boss boss = (Boss)getApplicationContext();
 
         //register Activity context with Boss
-        boss.setActivityContext(this);
+        boss.activityCreated(this);
 
         try{
             //check if HouseKeeper is implementing interface
