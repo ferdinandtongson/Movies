@@ -1,397 +1,282 @@
 package me.makeachoice.movies.controller.housekeeper;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import java.util.HashMap;
 
 import me.makeachoice.movies.MainActivity;
-import me.makeachoice.movies.R;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
-import me.makeachoice.movies.controller.housekeeper.assistant.MainFragmentAssistant;
+import me.makeachoice.movies.controller.housekeeper.assistant.FragmentAssistant;
+import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
+import me.makeachoice.movies.controller.housekeeper.helper.EmptyHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.EmptyMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
-import me.makeachoice.movies.controller.housekeeper.maid.staff.PosterStaff;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.model.json.MovieJSON;
 
 /**
- * MainKeeper is the MyHouseKeeper class for MainActivity. It's primary responsibility is to
- * initializes and takes care of the MainActivity resource details.
+ * MainKeeper is the HouseKeeper for MainActivity. It is responsible for the Activity and all of
+ * the Fragments contained within this activity. It communicates directly with Boss to get data
+ * needed by the Activity and Fragments as well as the Activity and Fragments.
  *
- * //TODO - need to dynamically set the Menus in the ActionBar, now currently hardcoded in xml file
+ * The HouseKeeper is only aware of the Activity, its' child views, and fragments contained within
+ * the Activity. It is Not aware of the details of the fragments it contains, the details are taken
+ * care of by the Maid classes.
  *
- * It also handles the loading and unloading of Fragments and manages the MyMaid classes responsible
- * for the upkeep of the Fragments and the communication between the Maids, Activity and Boss.
+ * It uses other classes to assist in the upkeep of the Activity:
+ *      MaidAssistant - initializes and registers all the Maids used by this HouseKeeper
+ *      PosterMaid - maintains the PosterFragment
+ *      EmptyMaid - maintains the EmptyFragment
+ *      InfoMaid - maintains the InfoFragment
  *
- * Finally, it directly communicates with the Boss to get all the necessary data for the Views.
- */
-public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
-        PosterMaid.Bridge, EmptyMaid.Bridge, InfoMaid.Bridge{
-/**
- * MainKeeper will be able to display the following fragments:
- *      AppList
- *      AppListIcon
- *      AppGrid
- *      AppGridInfo
- *      AppInfo
+ *      FragmentAssistant - assists in the transitions between fragments
+ *      MainHelper - holds all static resources (layout id, view ids, etc)
  *
  * Variables from MyHouseKeeper:
  *      Boss mBoss
+ *      FragmentManager mFragmentManager
+ *      MaidAssistant mMaidAssistant
+ *      FragmentAssistant mFragAssistant
+ *      HashMap<Integer, Fragment> mFragmentRegistry
  *
- * Implements Boss.xxxBridge Methods:
+ * Methods from MyHouseKeeper
+ *      - None -
  *
+ * Implements MainActivity.Bridge
+ *      void create(Bundle savedInstanceState)
+ *      void postResume()
+ *      void backPressed()
+ *      void createOptionsMenu(Menu menu)
+ *      void optionsItemSelected(MenuItem item)
  *
- * Implements MainActivity.Bridge Methods:
- *      int getActivityLayoutId();
- *      int getFragmentContainerId();
- *      int getToolbarId();
- *      int getFloatingActionButtonId();
- *
- *      void createFragment(Boolean);
- *      void setFragmentManager(FragmentManager manager)
- *
- *      void onOptionsItemSelected(MenuItem item);
- *      void setFABOnClickListener();
+ * Implements Maid.Bridge
+ *      Context getActivityContext() [All Maid classes]
+ *      void registerFragment(Integer key, Fragment fragment) [All Maid classes]
+ *      void onSelectedPoster(int position) [PosterMaid only]
  *
  */
-/**************************************************************************************************/
-    //NAME - unique name of the MyHouseKeeper
-    public final static String NAME = "MainKeeper";
-
-    //mMovieSelectType - type of movie selection fragment
-    public final static String FRAG_MOVIE_SELECT = "MovieSelectFragment";
-
-    public final static int SELECT_TYPE_GRID = 0;
-   // public final static int SELECT_TYPE_LIST = 1;
-    public final static int DEFAULT_SELECT_TYPE = SELECT_TYPE_GRID;
-
-    //mMovieInfoType - type of information fragments
-    private int mMovieInfoType;
-    public final static String FRAG_MOVIE_INFO = "MovieInfoFragment";
-
-    public final static int INFO_TYPE_SIMPLE = 0;
-
+public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
+        PosterMaid.Bridge, EmptyMaid.Bridge, InfoMaid.Bridge{
 
 /**************************************************************************************************/
-//TODO - this HouseKeeper is NOT very clean
-//TODO - move Maid initialization to an Assistant
-//TODO - move fragment transitioning logic all to mFragAssitant
-//TODO - Fix Bridge interfaces for Maids/HouseKeeper/Activities
-//TODO - Update HouseKeeper comments
-    private MainFragmentAssistant mFragAssistant;
-    private String mCurrentFragName;
+/**
+ * Class Variables:
+ *      int mCurrentFragId - current fragment id being seen by the user
+ *      int mMovieRequest - current list of movies requested
+ *      MovieJSON.MovieDetail mMovie - current movie selected
+ */
+/**************************************************************************************************/
+
+    //mCurrentFragId - current fragment id being seen by the user
+    private int mCurrentFragId;
+
+    //mMovieRequest - type of movies requested
+    private int mMovieRequest;
+
+    //mMovie - current movie selected
+    private MovieJSON.MovieDetail mMovie;
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * MainKeeper - constructor, registers to Boss, initialize Maid and Fragment Assistant classes and
+ * sets default values for current fragment and movie request
+ * @param boss - Boss class
+ */
     public MainKeeper(Boss boss){
+
+        //set Boss
         mBoss = boss;
 
-        mBoss.registerHouseKeeper(NAME, this);
+        //register HouseKeeper to Boss
+        mBoss.registerHouseKeeper(MainHelper.NAME_ID, this);
 
-        mCurrentFragName = NAME_POSTER;
-        mSortBy = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
+        mFragmentRegistry = new HashMap<>();
 
-        initHouseKeeping();
+        //initialize MaidAssistant
+        mMaidAssistant = new MaidAssistant();
 
-        mFragAssistant = new MainFragmentAssistant(LAYOUT_MAIN_CONTAINER);
-        mInfoFragCount = 0;
+        //initialize all Maids used by the HouseKeeper
+        mMaidAssistant.hireMainMaids(mBoss, this);
 
+        //initialize FragmentAssistant
+        mFragAssistant = new FragmentAssistant();
+
+        //set fragment id
+        mCurrentFragId = PosterHelper.NAME_ID;
+
+        //set movie request type
+        mMovieRequest = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
     }
 
-    public void setFragmentManager(FragmentManager manager){
-        mFragmentManager = manager;
-    }
-
-    public void setActivity(Context ctx){
-        mActivityContext = ctx;
-    }
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * PosterMaid is in charge of taking care of displaying thumbnail icon images of movies in a
- * grid fragment. It will maintain all events or requests called by the fragment and will push
- * these events or requests up to the MyHouseKeeper if the MyMaid cannot handle it.
+ * Getters:
+ *      Context getActivityContext() - required as part of PosterRecycler.Bridge interface
  *
- * EmptyMaid is in charge of displaying and "Empty" message if the gridView in the PosterFragment
- * is empty.
- *
- * MovieInfoMaid is in charge of displaying information about a particular movie selected by the
- * user. It will maintain all events or requests called by the fragment and will push these events
- * or requests up to the MyHouseKeeper if the MyMaid cannot handle it.
+ * Setters:
+ *      - None -
  */
 /**************************************************************************************************/
+/**
+ * Context getActivityContext() - get current Activity context, implemented for Maid.Bridge [All]
+ * @return - current Activity context
+ */
+    public Context getActivityContext(){
+        return mBoss.getActivityContext();
+    }
 
-    //NAME_POSTER_MAID - name registered to the Boss for PosterMaid
-    private final static String NAME_POSTER = "PosterName";
-    //mPosterMaid - maid in charge of the PosterFragment
-    private PosterMaid mPosterMaid;
-    //mPosterStaff - needed by PosterMaid, handles creating the PosterAdapter
-    private PosterStaff mPosterStaff;
-
-    //NAME_EMPTY_MAID - name registered to the Boss for EmptyMaid
-    private final static String NAME_EMPTY = "EmptyName";
-    //mEmptyMaid - maid in charge of the EmptyFragment
-    private EmptyMaid mEmptyMaid;
-
-    //NAME_INFO_MAID - name registered to the Boss for InfoMaid
-    private final static String NAME_INFO = "InfoName";
-    //mInfoMaid - maid in charge of the InfoFragment
-    private InfoMaid mInfoMaid;
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * void initHouseKeeping() - initializes the Maids that will take care of the fragments that
- * will be added to MainKeepers' Activity.
- *
- * HouseKeeping:
- *      PosterMaid
- *      EmptyMaid
+ * Maid.Bridge implementations:
+ *      void registerFragment(Integer, Fragment) [All] - register Fragments maintained by Maid class
+ *      void onSelectedPoster(int position) [PosterMaid] - onSelectPoster event
  */
-    private void initHouseKeeping(){
-        //initialize Maid and Staff in charge of the poster fragment (grid fragment)
-        initPosterMaid();
-        initEmptyMaid();
-        initInfoMaid();
-    }
-
 /**************************************************************************************************/
 /**
- * void initPosterMaid() - initialize PosterMaid and Staff needed by PosterMaid and register
- * Maid to Boss.
- *
- * Staff:
- *      PosterStaff
- *
- * Implements PosterMaid.Bridge methods:
- *      ListAdapter requestPosterAdapter();
- *      void onItemClick(ListView l, View v, int position, long id);
+ * void registerFragment(Integer, Fragment) - register Fragments maintained by Maid classes
+ * @param key - id number of Maid
+ * @param fragment - fragment maintained by Maid
  */
-    private void initPosterMaid(){
-        //initialize and register PosterMaid
-        mPosterMaid = new PosterMaid(this, NAME_POSTER);
-        mBoss.registerMaid(NAME_POSTER, mPosterMaid);
-
-    }
-
-    private void initEmptyMaid(){
-        //initialize and register EmptyMaid
-        mEmptyMaid = new EmptyMaid(this, NAME_EMPTY);
-        mBoss.registerMaid(NAME_EMPTY, mEmptyMaid);
-    }
-
-    private void initInfoMaid(){
-        //initialize and register InfoMaid
-        mInfoMaid = new InfoMaid(this, NAME_INFO);
-        mBoss.registerMaid(NAME_INFO, mInfoMaid);
-    }
-
-    private HashMap<String, Fragment> mFragmentRegistry = new HashMap<>();
-    public void registerFragment(String key, Fragment fragment){
+    public void registerFragment(Integer key, Fragment fragment){
+        //put fragment into hash map registry
         mFragmentRegistry.put(key, fragment);
     }
 
-
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
 /**
- * Variables used for MainActivity
+ * void onSelectedPoster(int) - event called when a poster is selected in PosterFragment
+ * @param position - position of poster
  */
-    //Activity Layout Id
-    private int LAYOUT_MAIN = R.layout.activity_main;
-    //Fragment Container Id found in activity_main.xml layout file
-    private int LAYOUT_MAIN_CONTAINER = R.id.fragment_container;
+    public void onSelectedPoster(int position){
+        //get movie data from movie list
+        mMovie = mBoss.getMovies(mMovieRequest).getMovie(position);
 
-    //Toolbar Id found in toolbar.xml layout file
-    private int TOOLBAR_MAIN = R.id.toolbar;
-    //Menu for Toolbar found in menu_main menu file
-    private int MENU_MAIN = R.menu.menu_main;
-    //Item id from Menu
-    private int MENU_ITEM01 = R.id.action_bar_item01;
-    private int MENU_ITEM02 = R.id.action_bar_item02;
+        //get InfoMaid
+        InfoMaid maid = ((InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID));
 
+        //send movie data to InfoFragment
+        maid.setMovie(mMovie);
 
-    //mSortType - holds sort type
-    private int mSortBy;
+        //update current fragment to InfoFragment
+        mCurrentFragId = InfoHelper.NAME_ID;
 
-    //FloatingActionButton Id found in float_button.xml layout file
-    private int FLOATING_ACTION_BUTTON = R.id.fab;
+        //get InfoFragment and display, save back stack, do NOT pop stack
+        mFragAssistant.changeFragmentWithBackStack(mFragmentManager, MainHelper.MAIN_CONTAINER_ID,
+                mFragmentRegistry.get(InfoHelper.NAME_ID), false);
 
-    //OnClickListener used with FloatingActionButton
-    private View.OnClickListener mFABOnClickListener =
-        new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
-                onFABOnClickListener(view);
-        }
-    };
+    }
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * Implements MainActivity.Bridge Methods:
- *      int getActivityLayoutId();
- *      int getToolbarId();
- *      int getMenuId();
- *      int getFloatingActionButtonId();
- *
- *      int getFragmentType(String);
- *      void setFragmentType(String, int);
- *
- *      OnClickListener getFABOnClickListener();
- *      void onOptionsItemSelected(MenuItem item)
+ * Implements Bridge Interface from MainActivity:
+ *      void create(Bundle savedInstanceState) - create activity layout
+ *      void createOptionsMenu(Menu menu) - create menu for toolbar
+ *      void postResume() - both activity and fragments have resumed
+ *      void backPressed() - back button has been pressed
+ *      void optionsItemSelected(MenuItem item) - menu item has been selected
  *
  */
 /**************************************************************************************************/
 /**
- * int getActivityLayoutId() - get layout id used for Main Activity
- * @return int - layout id value
+ * void create(Bundle) - called when onCreate is called in the activity. Sets the activity layout,
+ * fragmentManager and toolbar for the activity as well as checks for network connectivity.
+ *
+ * NOTE: Both FragmentManager and Toolbar are context sensitive and need to be recreated every time
+ * onCreate() is called in the Activity
+ * @param savedInstanceState - instant state values
  */
-    public int getActivityLayoutId(){
-        return LAYOUT_MAIN;
-    }
-
-
-/**
- * int getToolbarId() - get the toolbar id, a toolbar object found inside the xml layout file used
- * by the Activity.
- * @return int - toolbar id
- */
-    public int getToolbarId(){
-        return TOOLBAR_MAIN;
-    }
-
-/**
- * int getMenuId - get Id of menu file from res/menu to be used in the Toolbar
- * @return int - xml menu id
- */
-    public int getMenuId(){
-        return MENU_MAIN;
-    }
-
-/**
- * int getFloatingActionButtonId() - get the floating action button id found inside the xml
- * layoutfile used by the Activity
- * @return int - floating action button id
- */
-    public int getFloatingActionButtonId(){
-        return FLOATING_ACTION_BUTTON;
-    }
-
-/**
- * void prepareFragment - createFragment to be displayed
- */
-    public void prepareFragment(){
-        Log.d("Movies", "MainKeeper.prepareFragment");
-        //TODO - you've created a beautiful forest of code, please trim!!!!
-        //TODO - drink less coffee!!!
-        if(mCurrentFragName.equals(NAME_POSTER) || mCurrentFragName.equals(NAME_EMPTY)){
-            if(mBoss.getMovies(mSortBy) != null){
-                if(mPosterStaff == null){
-                    mPosterStaff = new PosterStaff(mBoss.getMovies(mSortBy));
-                    mPosterStaff.setActivityContext(mActivityContext);
-                }
-
-                //set list
-                mPosterMaid.setListAdapter(mPosterStaff.getPosterAdapter(mPosterListener));
-
-                mCurrentFragName = NAME_POSTER;
-                //get PosterFragment and display
-                mFragAssistant.requestFragment(mFragmentManager,
-                        mFragmentRegistry.get(NAME_POSTER), NAME_POSTER);
-            }
-            else{
-                mCurrentFragName = NAME_EMPTY;
-                //get EmptyFragment and display
-                mFragAssistant.requestFragment(mFragmentManager,
-                        mFragmentRegistry.get(NAME_EMPTY), NAME_EMPTY);
-            }
+    public void create(Bundle savedInstanceState){
+        if(savedInstanceState != null){
+            //TODO - need to save instances. Movie request type maybe?
         }
-        else if(mCurrentFragName.equals(NAME_INFO)){
 
-            MovieJSON.MovieDetail item = mBoss.getMovies(mSortBy).getMovie(mMovieIndex);
+        //set activity layout
+        ((MainActivity)mBoss.getActivityContext()).setContentView(MainHelper.MAIN_LAYOUT_ID);
 
-            mInfoMaid.setMovie(item);
+        //fragmentManager is context sensitive, need to recreate every time onCreate() is called
+        mFragmentManager = ((MainActivity)mBoss.getActivityContext()).getSupportFragmentManager();
 
-            mFragAssistant.requestDetailFragment(mFragmentManager,
-                    mFragmentRegistry.get(NAME_INFO), NAME_POSTER, NAME_INFO);
-        }
-    }
+        //Create toolbar with creation of Activity
+        initToolbar();
 
-    private int mInfoFragCount;
-    public void onBackPressed(){
-        if(mCurrentFragName.equals(NAME_POSTER)){
-            ((MainActivity)mActivityContext).closeApp();
+        //check for connectivity
+        if (mBoss.hasConnectivity()){
+            //TODO - do something here??
         }
         else{
-            mCurrentFragName = NAME_POSTER;
-            mFragAssistant.setHasInfoFragment(false);
-            prepareFragment();
-        }
-    }
-
-    public void onActivityPostResume(){
-        mFragAssistant.setSafeToCommitFragment(true);
-
-        //Create fragment, will be automatically added to fragment manager
-        prepareFragment();
-    }
-
-    public void isSafeToCommitFragment(boolean isSafe){
-        mFragAssistant.setSafeToCommitFragment(isSafe);
-    }
-
-/**************************************************************************************************/
-    /**
-     * ListAdapter requestPosterAdapter() - returns a reference of the ListAdapter used by the Poster
-     * Fragment
-     * @return ListAdapter - PosterAdapter
-     */
-    public ListAdapter requestPosterAdapter(){
-        //return PosterAdapter for consumption from PosterStaff
-        //mPosterAdapter =
-        return mPosterStaff.getPosterAdapter(mPosterListener);
-    }
-
-    private int mMovieIndex;
-    private View.OnClickListener mPosterListener = new View.OnClickListener(){
-
-        private int mPosition;
-        public void setPosition(int position){
-            mPosition = position;
+            //TODO - need to code here
         }
 
-        @Override
-        public void onClick(View v) {
-            mMovieIndex = (int)v.getTag();
-            MovieJSON.MovieDetail item = mBoss.getMovies(mSortBy).getMovie(mMovieIndex);
-
-            mInfoMaid.setMovie(item);
-
-            mCurrentFragName = NAME_INFO;
-            //mInfoFragCount = mInfoFragCount + 1;
-
-            mFragAssistant.requestDetailFragment(mFragmentManager,
-                    mFragmentRegistry.get(NAME_INFO), NAME_POSTER, NAME_INFO);
-
-        }
-    };
+    }
 
 /**
- * OnClickListener getFABOnClickListener() - get the OnClick Listener for the Floating Action
- * Button object.
- * @return - View.OnClickListener object
+ * void createOptionsMenu(Menu) - called if a toolbar is present in the activity.
+ * @param menu - will hold menu items
  */
-    public View.OnClickListener getFABOnClickListener(){
-        return mFABOnClickListener;
+    public void createOptionsMenu(Menu menu){
+        // Inflate the menu; this adds items to the toolbar if it is present.
+        ((MainActivity)mBoss.getActivityContext()).
+                getMenuInflater().inflate(MainHelper.MAIN_MENU, menu);
+    }
+
+/**
+ * void postResume() - called when onPostResume() is called in the Activity signalling that
+ * both the Activity and Fragments have resumed and can now be manipulated.
+ */
+    public void postResume(){
+        //activity and fragment has been resumed, display fragment
+        displayFragment();
+    }
+
+/**
+ * void saveInstanceState(Bundle) - called when onSaveInstanceState is called in the Activity.
+ * @param inState - bundle to save instance states
+ */
+    public void saveInstanceState(Bundle inState){
+        //TODO - need to save instance state. Movie request type maybe?
+    }
+
+/**
+ * void backPressed() - called when onBackPressed() is called in the Activity. MainActivity has
+ * two Fragments (PosterFragment and InfoFragment). If InfoFragment is currently active, back
+ * press will send PosterFragment to the front. If PosterFragment is active, will close the
+ * application.
+ */
+    public void backPressed(){
+
+        //check current fragment being displayed
+        if(mCurrentFragId == PosterHelper.NAME_ID){
+            //if PosterFragment, shutdown app
+            ((MainActivity)mBoss.getActivityContext()).finishActivity();
+        }
+        else{
+            //if other than PosterFragment (InfoFragment), change to PosterFragment
+            mCurrentFragId = PosterHelper.NAME_ID;
+
+            //display PosterFragment
+            displayFragment();
+        }
     }
 
 /**
@@ -402,75 +287,183 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  *
  * @param item - menu item selected in the toolbar
  */
-    public void onOptionsItemSelected(MenuItem item){
+    public void optionsItemSelected(MenuItem item){
         //get id of item selected from ActionBar
         int id = item.getItemId();
 
-        //create variable to hold sort type
-        int sortBy;
+        //type of movie requested
+        int movieRequest;
 
-        //get fragment type selected
-        if (id == MENU_ITEM01) {
-            //simple fragment list display
-            sortBy = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
-        }
-        else if (id == MENU_ITEM02) {
-            //fragment list display with icons
-            sortBy = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
-        }
-        else {
-            sortBy = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
-        }
-
-        //TODO - clean up logic structure (overly complicated)
-        if(mSortBy != sortBy){
-           mSortBy = sortBy;
-            mPosterStaff.clearAdapter();
-            mPosterStaff = null;
-
-            mBoss.clearMovies();
-            if(mCurrentFragName.equals(NAME_INFO)){
-                ((MainActivity)mActivityContext).onBackPressed();
-            }
-            else{
-                prepareFragment();
-            }
-
+        //identify menu selection
+        if (id == MainHelper.MENU_ITEM01) {
+            //requested most popular movies
+            movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
         else{
-            //currently looking at InfoFrag but return to PosterFrag
-            //mFragmentManager.popBackStack();
-            if(mCurrentFragName.equals(NAME_INFO)){
-                ((MainActivity)mActivityContext).onBackPressed();
-                prepareFragment();
+            //requested highest rated movies
+            movieRequest = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
+        }
+
+        //check movie request type and where it occurred
+        checkMovieRequest(movieRequest);
+
+    }
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Class Methods:
+ *      void checkMovieRequest(int) - checks the movie request initiated by a menu selection
+ *      void displayFragment() - display fragment being requested
+ */
+/**************************************************************************************************/
+/**
+ * void checkMovieRequest(int) - checks the movie request initiated by a menu selection.
+ *
+ * If the menu selection occurred while InfoFragment is being displayed, an onBackPressed() will
+ * be called to go back to the PosterFragment.
+ *
+ * If the menu selection occurred while PosterFragment is being displayed, will check if the
+ * selection is a new selection. If it is, the fragment will be prepared to display then new
+ * list of movie posters.
+ *
+ * @param movieRequest - type of movies requested
+ */
+    private void checkMovieRequest(int movieRequest){
+        //check if movie request happened while displaying InfoFragment
+        if(mCurrentFragId == InfoHelper.NAME_ID){
+            //movie request happened in InfoFragment, update movie request
+            mMovieRequest = movieRequest;
+
+            //call Activity.onBackPressed(),
+            ((MainActivity)mBoss.getActivityContext()).onBackPressed();
+        }
+        else{
+            //movie request happened in PosterFragment
+            if(mMovieRequest != movieRequest){
+                //is a new movie request
+                mMovieRequest = movieRequest;
+                //update fragment with new data
+                displayFragment();
             }
         }
 
     }
 
+    /**
+     * void displayFragment - createFragment to be displayed. If current fragment is set to
+     * PosterFragment or EmptyFragment, check Boss if we have movie data to present. If we have
+     * data, present PosterFragment. If not, present EmptyFragment.
+     *
+     * If current fragment is set to InfoFragment, display InfoFragment. In this case, this method
+     * was called due to an orientation change so mCurrentFragId does NOT need to be updated but
+     * the back stack needs to be popped.
+     */
+    public void displayFragment(){
+
+        //get layout container for fragments
+        int containerId = MainHelper.MAIN_CONTAINER_ID;
+
+        //get movie data from Boss, if null will start AsyncTask to get data
+        MovieJSON movies = mBoss.getMovies(mMovieRequest);
+
+        if(mCurrentFragId == PosterHelper.NAME_ID || mCurrentFragId == EmptyHelper.NAME_ID){
+            if(movies != null){
+                //movie data is available, get PosterMaid
+                PosterMaid maid = ((PosterMaid)mBoss.getMaid(PosterHelper.NAME_ID));
+
+                //update posters
+                maid.updatePosters(movies);
+
+                //update current fragment to PosterFragment
+                mCurrentFragId = PosterHelper.NAME_ID;
+
+                //get PosterFragment and display
+                mFragAssistant.changeFragment(mFragmentManager,
+                        containerId, mFragmentRegistry.get(PosterHelper.NAME_ID));
+            }
+            else{
+                //update current fragment to EmptyFragment
+                mCurrentFragId = EmptyHelper.NAME_ID;
+
+                //get EmptyFragment and display
+                mFragAssistant.changeFragment(mFragmentManager,
+                        containerId, mFragmentRegistry.get(EmptyHelper.NAME_ID));
+            }
+        }
+        else if(mCurrentFragId == InfoHelper.NAME_ID){
+            //do NOT need to set current fragment
+
+            //get InfoMaid
+            InfoMaid maid = ((InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID));
+
+            //send movie details to fragment
+            maid.setMovie(mMovie);
+
+            //get InfoFragment and display, pop back stack
+            mFragAssistant.changeFragmentWithBackStack(mFragmentManager, containerId,
+                    mFragmentRegistry.get(InfoHelper.NAME_ID), true);
+        }
+    }
+
+/**************************************************************************************************/
 /**
- * void onFABOnClickListener(View) - listens for an onClick event happening with the Floating
- * Action Button object.
- * @param view - floating action button view that registered the onClick event
+ * void initToolbar() inflates the toolbar from the layout and then sets it into the Activity.
  */
+    public void initToolbar(){
+
+        //toolbar is context sensitive, need to recreate every time Activity.onCreate is called
+        Toolbar toolbar = (Toolbar)((MainActivity)mBoss.getActivityContext()).
+                findViewById(MainHelper.MAIN_TOOLBAR_ID);
+
+        //set support for toolbar, onCreateOptionsMenu() will be called
+        ((MainActivity)mBoss.getActivityContext()).setSupportActionBar(toolbar);
+
+    }
+
+    /**
+     * void initFloatButton() inflates the floating action button layout and sets Event Listeners
+     */
+    public void initFloatButton(){
+
+        //TODO - check if fab is context sensitive like toolbar
+        FloatingActionButton fab = (FloatingActionButton)((Activity)mBoss.getActivityContext()).
+                findViewById(MainHelper.MAIN_FAB_ID);
+
+        fab.setOnClickListener(mFABOnClickListener);
+
+    }
+
+
+
+
+/**************************************************************************************************/
+
+    /**
+     * void onFABOnClickListener(View) - listens for an onClick event happening with the Floating
+     * Action Button object.
+     * @param view - floating action button view that registered the onClick event
+     */
     private void onFABOnClickListener(View view){
         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
     }
+    //OnClickListener used with FloatingActionButton
+    private View.OnClickListener mFABOnClickListener =
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View view){
+                    onFABOnClickListener(view);
+                }
+            };
+
+
+
 
 /**************************************************************************************************/
-    /**
-     * void onItemClick(int) - event listener call by the fragment when an app item has been clicked
-     * @param position - list position of item clicked
-     */
-    public void onItemClick(ListView l, View v, int position, long id){
-        //empty
-    }
 
-    public void onItemClick(){
-        //TODO - this is a workaround for zombie Empty PosterFragment bug
-        mFragmentRegistry.put(NAME_POSTER, mPosterMaid.getFragment());
-    }
+
 
 }
