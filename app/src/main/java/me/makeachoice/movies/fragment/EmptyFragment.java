@@ -73,7 +73,7 @@ public class EmptyFragment extends MyFragment {
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
             //get name of servers up-keeping this fragment
-            mServiceName = savedInstanceState.getString(KEY_SERVICE_NAME);
+            mMaidId = savedInstanceState.getInt(KEY_SERVICE_NAME);
         }
 
         //get application context, the Boss
@@ -81,7 +81,7 @@ public class EmptyFragment extends MyFragment {
 
         try{
             //make sure Maid is implementing the Bridge interface
-            mBridge = (Bridge)boss.getMaid(mServiceName);
+            mBridge = (Bridge)boss.getMaid(mMaidId);
         }catch(ClassCastException e){
             throw new ClassCastException(boss.toString() +
                     " must implement Bridge interface");
@@ -116,7 +116,7 @@ public class EmptyFragment extends MyFragment {
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
         //save name of server maintaining this fragment
-        saveState.putString(KEY_SERVICE_NAME, mServiceName);
+        saveState.putInt(KEY_SERVICE_NAME, mMaidId);
     }
 
 /**************************************************************************************************/
@@ -124,14 +124,14 @@ public class EmptyFragment extends MyFragment {
 /**************************************************************************************************/
 /**
  * Implemented abstract methods from MyFragment:
- *      void setServiceName(String)
+ *      void setMaidId(Integer)
  */
 /**************************************************************************************************/
     /**
-     * void setServiceName(String) - sets the name of the server taking care of the fragment
+     * void setMaidId(Integer) - sets the id number of the Maid taking care of the fragment
      */
-    public void setServiceName(String name){
-        mServiceName = name;
+    public void setMaidId(Integer id){
+        mMaidId = id;
     }
 
 /**************************************************************************************************/

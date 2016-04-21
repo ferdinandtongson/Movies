@@ -35,8 +35,8 @@ public abstract class MyFragment extends Fragment{
     //mBridge - class implementing Bridge interface
     protected Bridge mBridge;
 
-    //mServiceName - name of the Maid class taking care of the fragment
-    protected String mServiceName;
+    //mMaidId - id number of the Maid class taking care of the fragment
+    protected Integer mMaidId;
 
 
     //Implemented communication line, usually implemented by a Maid class
@@ -56,10 +56,10 @@ public abstract class MyFragment extends Fragment{
  */
 /**************************************************************************************************/
     /**
-     * void setServiceName(String) sets the name of the server taking care of this Fragment
-     * @param name - name of server, usually a Maid class
+     * void setMaidId(Integer) sets the id number of the Maid taking care of this Fragment
+     * @param id - name of server, usually a Maid class
      */
-    abstract public void setServiceName(String name);
+    abstract public void setMaidId(Integer id);
 
 /**************************************************************************************************/
 
