@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.worker.MovieWorker;
+import me.makeachoice.movies.controller.butler.worker.MovieWorker;
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.model.MovieJSON;
 
