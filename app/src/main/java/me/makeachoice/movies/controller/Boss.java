@@ -10,7 +10,7 @@ import me.makeachoice.movies.controller.housekeeper.MainKeeper;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
-import me.makeachoice.movies.controller.valet.NetworkValet;
+import me.makeachoice.movies.controller.butler.valet.NetworkValet;
 import me.makeachoice.movies.model.MovieJSON;
 
 /**
