@@ -285,7 +285,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * void onOptionsItemSelected(MenuItem) - listens for an onOptionsItemSelected event from the
  * menu list contained in the toolbar view
  *
- * Menu will sort movies by most popular or by highest rated
+ * Menu will list movies by most popular, highest rated, now playing, upcoming
  *
  * @param item - menu item selected in the toolbar
  */
@@ -301,9 +301,17 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
             //requested most popular movies
             movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
+        if (id == MainHelper.MENU_ITEM02) {
+            //requested most popular movies
+            movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
+        }
+        if (id == MainHelper.MENU_ITEM03) {
+            //requested now playing movies
+            movieRequest = MovieButler.MOVIE_REQUEST_NOW_PLAYING;
+        }
         else{
-            //requested highest rated movies
-            movieRequest = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
+            //requested upcoming movies
+            movieRequest = MovieButler.MOVIE_REQUEST_UPCOMING;
         }
 
         //check movie request type and where it occurred
@@ -418,6 +426,9 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         //toolbar is context sensitive, need to recreate every time Activity.onCreate is called
         Toolbar toolbar = (Toolbar)((MainActivity)mBoss.getActivityContext()).
                 findViewById(MainHelper.MAIN_TOOLBAR_ID);
+
+        //TODO - set toolbar name here
+        //toolbar.setTitle("");
 
         //set support for toolbar, onCreateOptionsMenu() will be called
         ((MainActivity)mBoss.getActivityContext()).setSupportActionBar(toolbar);

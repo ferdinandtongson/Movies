@@ -45,6 +45,8 @@ public class MainHelper {
     //Item id from Menu
     public static final  int MENU_ITEM01 = R.id.action_bar_item01;
     public static final  int MENU_ITEM02 = R.id.action_bar_item02;
+    public static final  int MENU_ITEM03 = R.id.action_bar_item03;
+    public static final  int MENU_ITEM04 = R.id.action_bar_item04;
 
 
 /**************************************************************************************************/

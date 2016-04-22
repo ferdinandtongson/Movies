@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import me.makeachoice.movies.controller.Boss;
+import me.makeachoice.movies.controller.butler.uri.TMDBUri;
 import me.makeachoice.movies.controller.butler.worker.MovieWorker;
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.model.MovieJSON;
@@ -18,6 +19,10 @@ public class MovieButler extends MyButler{
 
     //mApiKey - the key used to access for TheMovieDB api
     private String mApiKey;
+
+    //mUri - class that builds TMDB api uri strings
+    private TMDBUri mUri;
+
     //mMovieWorker - AsyncTask class that connect to the internet to get Movie details
     MovieWorker mMovieWorker;
 
@@ -25,6 +30,9 @@ public class MovieButler extends MyButler{
     public static int MOVIE_REQUEST_MOST_POPULAR = 0;
     //MOVIE_REQUEST_HIGHEST_RATED - value used when a list of highest rated movies are requested
     public static int MOVIE_REQUEST_HIGHEST_RATED = 1;
+
+    public final static int MOVIE_REQUEST_NOW_PLAYING = 2;
+    public final static int MOVIE_REQUEST_UPCOMING = 3;
 
     //mMovieModel - a ListArray of data taken from a JSON response
     MovieJSON mMovieModel;
@@ -37,6 +45,9 @@ public class MovieButler extends MyButler{
     public MovieButler(Boss boss){
         //Application context
         mBoss = boss;
+
+        //builds TMDB api uri strings
+        mUri = new TMDBUri();
 
         //flag to check if work is being done in the background
         mWorking = false;
@@ -53,10 +64,10 @@ public class MovieButler extends MyButler{
 
 /**
  * void requestMovies(int) - used to execute and api request for a list of movies
- * @param request - type of request (most popular or highest rated)
+ * @param request - type of request (most popular, highest rated, now playing, upcoming)
  */
     public void requestMovies(int request){
-        Log.d("Movies", "MovieButler.requestMovies");
+        Log.d("Movies", "MovieButler.requestMovies - " + request);
         if(mWorking){
             Log.d("Movies", "     thread cancelled");
             mMovieWorker.cancel(true);
@@ -70,15 +81,25 @@ public class MovieButler extends MyButler{
         if(request == MOVIE_REQUEST_MOST_POPULAR){
             //most popular movies are requested
             mMovieWorker.execute(
-                    mMovieWorker.TMDB_URL_POPULAR,
-                    mMovieWorker.TMDB_API_KEY + mApiKey
+                    mUri.getMovieList(TMDBUri.MOVIES_POPULAR, mApiKey)
             );
         }
         else if(request == MOVIE_REQUEST_HIGHEST_RATED){
             //highest rated movies are requested
             mMovieWorker.execute(
-                    mMovieWorker.TMDB_URL_TOP_RATED,
-                    mMovieWorker.TMDB_API_KEY + mApiKey
+                    mUri.getMovieList(TMDBUri.MOVIES_TOP_RATED, mApiKey)
+            );
+        }
+        else if(request == MOVIE_REQUEST_NOW_PLAYING){
+            //highest rated movies are requested
+            mMovieWorker.execute(
+                    mUri.getMovieList(TMDBUri.MOVIES_NOW_PLAYING, mApiKey)
+            );
+        }
+        else if(request == MOVIE_REQUEST_UPCOMING){
+            //highest rated movies are requested
+            mMovieWorker.execute(
+                    mUri.getMovieList(TMDBUri.MOVIES_UPCOMING, mApiKey)
             );
         }
         else{
