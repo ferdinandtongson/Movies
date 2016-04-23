@@ -62,6 +62,9 @@ public class InfoFragment extends MyFragment {
  *
  * This is called between onCreate(...) and onActivityCreated(...). If you return a View from
  * here, you will later be called in onDestroyView() when the view is being released.
+ *
+ * Remember setRetainInstance(true) if you want to retain fragment values during an orientation
+ * change event.
  */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,6 +92,9 @@ public class InfoFragment extends MyFragment {
             //mLayout = inflater.inflate(mLayoutId, container, false);
             mLayout = mBridge.createView(inflater, container, savedInstanceState);
         }
+
+        //fragment if some kind of configuration change occurs (like an orientation change)
+        setRetainInstance(true);
 
         return mLayout;
     }
