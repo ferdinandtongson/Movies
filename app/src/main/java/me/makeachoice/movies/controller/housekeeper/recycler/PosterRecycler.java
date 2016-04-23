@@ -139,7 +139,7 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
         Picasso.with(mBridge.getActivityContext())
                 .load(mPosters.get(position).getPosterPath())
                 .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
-                .error(PosterHelper.POSTER_ERROR_IMG_ID)
+                .error(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
                 .into(holder.mImgPoster);
     }
 
