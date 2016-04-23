@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import me.makeachoice.movies.controller.Boss;
+
 /**
  * MyActivity abstract class extends AppCompatActivity.
  *
@@ -25,6 +27,7 @@ public abstract class MyActivity extends AppCompatActivity {
 /**
  * Class Variables
  *      Bridge mBridge - class implementing Bridge interface
+ *      int mOrientation - holds orientation status
  *
  * Interface:
  *      Bridge
@@ -34,6 +37,8 @@ public abstract class MyActivity extends AppCompatActivity {
     //mBridge - class implementing Bridge interface
     protected Bridge mBridge;
 
+    //mOrientation - static variable, holds orientation status
+    protected static int mOrientation;
 
     //Implemented communication line, usually implemented by a HouseKeeper class
     public interface Bridge{
@@ -71,5 +76,43 @@ public abstract class MyActivity extends AppCompatActivity {
 
 /**************************************************************************************************/
 
+/**************************************************************************************************/
+/**
+ * Abstract Methods:
+ *      void setOrientationChangeFlag(Boss) - sets the orientation change flag for Boss
+ */
+/**************************************************************************************************/
+    /**
+     * void setOrientationChangeFlag(Boss) - sets the orientation change flag for Boss. This flag
+     * is used to handle issues with the double calling of onCreateView() method in Fragments
+     * @param boss - Boss class
+     */
+    protected void setOrientationChangeFlag(Boss boss){
+        //get current orientation of phone (portrait = 1, landscape = 2)
+        int orientation = getResources().getConfiguration().orientation;
+
+        //check previous orientation value
+        if(mOrientation == 0){
+            //activity just started, orientation has not been set, save new orientation
+            mOrientation = orientation;
+
+            //orientation flag is set false, activity just started
+            boss.setOnOrientationChange(false);
+        }
+        else if(mOrientation != orientation){
+            //orientation has changed, save new orientation
+            mOrientation = orientation;
+
+            //orientation flag is set true, orientation has changed
+            boss.setOnOrientationChange(true);
+        }
+        else{
+            //orientation has Not changed, another configuration event has happened
+            boss.setOnOrientationChange(false);
+        }
+
+    }
+
+/**************************************************************************************************/
 
 }

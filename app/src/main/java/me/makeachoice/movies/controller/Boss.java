@@ -31,6 +31,8 @@ public class Boss extends Application{
  *      int mMovieRequest - current list of movies requested
  *      HashMap<Integer,MyHouseKeeper> mHouseKeeperRegistry - registered HouseKeepers
  *      HashMap<Integer,MyMaid> mMaidRegistry - registered Maids
+ *
+ *      boolean mOrientationChange - status flag on whether the phone orientation has changed
  */
 /**************************************************************************************************/
 
@@ -52,6 +54,9 @@ public class Boss extends Application{
     //mMaidRegistry - HashMap of instantiated Maid classes being used by HouseKeepers
     private HashMap<Integer, MyMaid> mMaidRegistry = new HashMap<>();
 
+    //mOrientationChange - status flag on whether the phone orientation has changed
+    boolean mOrientationChange;
+
 
 /**************************************************************************************************/
 
@@ -64,7 +69,7 @@ public class Boss extends Application{
  *      MyMaid getMaid(Integer) - get Maid from registry
  *
  * Setters:
- *      - None -
+ *      void setOnOrientationChange(boolean) - saves orientation change status of Activity
  */
 /**************************************************************************************************/
 /**
@@ -128,6 +133,15 @@ public class Boss extends Application{
         return mMaidRegistry.get(key);
     }
 
+    /**
+     * void setOnOrientationChange(boolean) - saves orientation change status of Activity
+     * @param changed - boolean value on whether the orientation of phone has changed or not
+     */
+    public void setOnOrientationChange(boolean changed){
+        //orientation change flag
+        mOrientationChange = changed;
+    }
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -137,7 +151,8 @@ public class Boss extends Application{
  *      void registerMaid(int,MyMaid) - adds Maid to registry
  *      void activityCreated(Context) - notifies Boss that onCreate() has been called in Activity
  *      boolean checkNetwork() - checks network connection of phone
- *      void downloadComplete() - called by Butler when network download has completed
+ *      void updateMainActivity() - called by Butler when network download has completed
+ *      boolean onOrientationChange() - checks orientation change status of phone
  */
 /**************************************************************************************************/
 /**
@@ -205,6 +220,14 @@ public class Boss extends Application{
         keeper.displayFragment();
     }
 
+/**
+ * boolean onOrientationChange() - check orientation change status of phone
+ * @return - boolean status of phone orientation change
+ */
+    public boolean onOrientationChange(){
+        return mOrientationChange;
+    }
+
 
 
 /**************************************************************************************************/
@@ -232,6 +255,7 @@ public class Boss extends Application{
         return null;
     }
 
+/**************************************************************************************************/
 
 
 }

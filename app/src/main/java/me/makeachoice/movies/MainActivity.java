@@ -59,6 +59,9 @@ public class MainActivity extends MyActivity {
                     " must implement Bridge interface");
         }
 
+        //set orientation flag in Boss class
+        setOrientationChangeFlag(boss);
+
         //use HouseKeeper class to create activity
         mBridge.create(savedInstanceState);
     }
@@ -141,6 +144,5 @@ public class MainActivity extends MyActivity {
 
 
 /**************************************************************************************************/
-
 
 }

@@ -95,6 +95,7 @@ public class PosterFragment extends MyFragment {
             mLayout = mBridge.createView(inflater, container, savedInstanceState);
         }
 
+        setRetainInstance(true);
         return mLayout;
     }
 
@@ -107,6 +108,7 @@ public class PosterFragment extends MyFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        Log.d("Movies", "PosterFragment.onActivityCreated");
         mBridge.createActivity(savedInstanceState, mLayout);
     }
 
