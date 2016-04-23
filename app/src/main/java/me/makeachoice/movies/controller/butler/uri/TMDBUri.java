@@ -20,15 +20,15 @@ public class TMDBUri {
     private final int PATH_SEARCH = R.string.tmdb_path_search;
     private final int PATH_LIST = R.string.tmdb_path_list;
 
-    private final static int PATH_NOW_PLAYING = R.string.tmdb_path_now_playing;
-    private final static int PATH_POPULAR = R.string.tmdb_path_popular;
-    private final static int PATH_TOP_RATED = R.string.tmdb_path_top_rated;
-    private final static int PATH_UPCOMING = R.string.tmdb_path_upcoming;
+    public final static int PATH_NOW_PLAYING = R.string.tmdb_path_now_playing;
+    public final static int PATH_POPULAR = R.string.tmdb_path_popular;
+    public final static int PATH_TOP_RATED = R.string.tmdb_path_top_rated;
+    public final static int PATH_UPCOMING = R.string.tmdb_path_upcoming;
 
-    private final static int PATH_VIDEOS = R.string.tmdb_path_videos;
-    private final static int PATH_SIMILAR = R.string.tmdb_path_similar;
-    private final static int PATH_REVIEWS = R.string.tmdb_path_reviews;
-    private final static int PATH_CREDITS = R.string.tmdb_path_credits;
+    public final static int PATH_VIDEOS = R.string.tmdb_path_videos;
+    public final static int PATH_SIMILAR = R.string.tmdb_path_similar;
+    public final static int PATH_REVIEWS = R.string.tmdb_path_reviews;
+    public final static int PATH_CREDITS = R.string.tmdb_path_credits;
 
 
     private final static int QUERY_API_KEY = R.string.tmdb_query_api_key;
@@ -48,11 +48,11 @@ public class TMDBUri {
         return builder;
     }
 
-    public String getMovieList(String listType, String apiKey){
+    public String getMovieList(int listType, String apiKey){
         // movie/listType?api_key=apiKey
         Uri.Builder builder = createUriBase();
         builder.appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
-                .appendPath(listType)
+                .appendPath(mButler.getActivityContext().getString(listType))
                 .appendQueryParameter(
                         mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
 
@@ -83,12 +83,12 @@ public class TMDBUri {
         return builder.build().toString();
     }
 
-    public String getMovieDetail(String movieId, String detailType, String apiKey){
+    public String getMovieDetail(String movieId, int detailType, String apiKey){
         // movie/movieId/detailType?api_key=apiKey
         Uri.Builder builder = createUriBase();
         builder.appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
                 .appendPath(movieId)
-                .appendPath(detailType)
+                .appendPath(mButler.getActivityContext().getString(detailType))
                 .appendQueryParameter(
                         mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
 
