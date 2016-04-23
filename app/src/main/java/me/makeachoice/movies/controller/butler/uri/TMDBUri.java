@@ -50,6 +50,7 @@ public class TMDBUri {
 
     public String getMovieList(int listType, String apiKey){
         // movie/listType?api_key=apiKey
+        //use MoviesResponse
         Uri.Builder builder = createUriBase();
         builder.appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
                 .appendPath(mButler.getActivityContext().getString(listType))
@@ -61,6 +62,7 @@ public class TMDBUri {
 
     public String getMovieListByGenre(String genreId, String apiKey){
         // genre/genreId/movies?api_key=apiKey
+        //use MoviesResponse
         Uri.Builder builder = createUriBase();
         builder.appendPath(mButler.getActivityContext().getString(PATH_GENRE))
                 .appendPath(genreId)
@@ -85,6 +87,10 @@ public class TMDBUri {
 
     public String getMovieDetail(String movieId, int detailType, String apiKey){
         // movie/movieId/detailType?api_key=apiKey
+        //credits: use CreditsResponse
+        //reviews: use ReviewsResponse
+        //videos: use VideosResponse
+        //similar: use MoviesResponse
         Uri.Builder builder = createUriBase();
         builder.appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
                 .appendPath(movieId)
@@ -97,6 +103,7 @@ public class TMDBUri {
 
     public String getGenreList(String apiKey){
         // genre/movie/list?api_key=apiKey
+        //use GenreResponse
         Uri.Builder builder = createUriBase();
         builder.appendPath(mButler.getActivityContext().getString(PATH_GENRE))
                 .appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
@@ -119,6 +126,7 @@ public class TMDBUri {
 
     http://api.themoviedb.org/3/search/movie (by movie title)
 
+    http://api.themoviedb.org/3/genre/28/movies?api_key=ec1c9e77ea098584409c2b2309c4f287
     http://api.themoviedb.org/3/movie/209112?api_key=ec1c9e77ea098584409c2b2309c4f287
     */
 
