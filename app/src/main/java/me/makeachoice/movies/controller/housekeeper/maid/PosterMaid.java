@@ -9,13 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import me.makeachoice.movies.controller.housekeeper.recycler.RecyclerItemClickListener;
+import me.makeachoice.movies.model.response.tmdb.MovieModel;
 import me.makeachoice.movies.util.GridAutofitLayoutManager;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.staff.PosterStaff;
 import me.makeachoice.movies.controller.housekeeper.recycler.PosterRecycler;
 import me.makeachoice.movies.fragment.PosterFragment;
-import me.makeachoice.movies.model.MovieJSON;
 
 /**
  * PosterMaid initializes and takes care of communicating with the Fragment that hold the
@@ -233,13 +235,14 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  */
 /**************************************************************************************************/
 /**
- * void updatePosters(MovieJSON) - called by HouseKeep to inform Maid that changes to the data
+ * void updatePosters(MovieModel) - called by HouseKeep to inform Maid that changes to the data
  * being displayed in the fragment has occurred.
- * @param model - MovieJSON data model
+ * @param models - list of MovieModel data
  */
-    public void updatePosters(MovieJSON model){
+    public void updatePosters(ArrayList<MovieModel> models){
 
-        mStaff.consumeModel(model);
+        //TODO - need to look at moving Staff to Butler side....maybe
+        mStaff.consumeModels(mBridge.getActivityContext(), models);
 
         mRecycler.setPosters(mStaff.getPosterItems());
     }

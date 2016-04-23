@@ -3,6 +3,7 @@ package me.makeachoice.movies.controller;
 import android.app.Application;
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
@@ -11,7 +12,7 @@ import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.controller.butler.valet.NetworkValet;
-import me.makeachoice.movies.model.MovieJSON;
+import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
  * Boss is the "boss", main controller of the app and interfaces with the View and Model. Boss
@@ -80,9 +81,11 @@ public class Boss extends Application{
  * @param request - type of movie data requested (most popular or highest rated)
  * @return - an array list of movie data
  */
-    public MovieJSON getMovies(int request){
+    public ArrayList<MovieModel> getMovies(int request){
+
         //check if there is data or if it is a new request
         if(mButler.getModel() == null || mMovieRequest != request){
+
             //record current movie request
             mMovieRequest = request;
             //request Butler to get data (will activate an AsyncTask execute
@@ -91,7 +94,7 @@ public class Boss extends Application{
             return null;
         }
 
-        //return movie data
+        //return movie data list
         return mButler.getModel();
     }
 

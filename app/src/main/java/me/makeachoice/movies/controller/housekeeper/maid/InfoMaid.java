@@ -12,9 +12,11 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import me.makeachoice.movies.R;
+import me.makeachoice.movies.controller.butler.uri.TMDBUri;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.fragment.InfoFragment;
-import me.makeachoice.movies.model.MovieJSON;
+import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
  * InfoMaid initializes and takes care of communicating with the Fragment that will display the
@@ -185,15 +187,22 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         mViewHolder.title.setText(mItem.getOriginalTitle());
         mViewHolder.release.setText(mItem.getReleaseDate());
         mViewHolder.cast.setText("Placeholder for cast");
-        mViewHolder.rating.setText(mStrRating + ": " + mItem.getVoteAverage().toString());
+        mViewHolder.rating.setText(mStrRating + ": " + mItem.getVoteAverage());
         mViewHolder.overview.setText(mItem.getOverview());
     }
 
 
     private void updatePoster(){
+        //TODO - need to move to resource file
+        String posterPath = mBridge.getActivityContext().getString(R.string.tmdb_image_base_request) +
+                mItem.getPosterPath() + "?" +
+                mBridge.getActivityContext().getString(R.string.tmdb_query_api_key) + "=" +
+                mBridge.getActivityContext().getString(R.string.api_key_tmdb);
+
+
         //add poster image, placeholder image and error image
         Picasso.with(mBridge.getActivityContext())
-                .load(mItem.getPosterPath())
+                .load(posterPath)
                 .placeholder(InfoHelper.INFO_PLACEHOLDER_IMG_ID)
                 .error(InfoHelper.INFO_ERROR_IMG_ID)
                 .into(mViewHolder.poster);
@@ -212,14 +221,14 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 /**************************************************************************************************/
 
 //TODO - methods in InfoMaid are a bit rough
-    public MovieJSON.MovieDetail getMovie(){
+    public MovieModel getMovie(){
         return mItem;
     }
 
 //TODO - using MovieJSON.MovieDetail is breaking MVP design!!
 //TODO - String values are hardcode here - move to resource file
-    private MovieJSON.MovieDetail mItem;
-    public void setMovie(MovieJSON.MovieDetail item){
+    private MovieModel mItem;
+    public void setMovie(MovieModel item){
         mItem = item;
     }
 

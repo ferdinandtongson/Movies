@@ -3,11 +3,13 @@ package me.makeachoice.movies.controller.butler;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.butler.uri.TMDBUri;
 import me.makeachoice.movies.controller.butler.worker.MovieWorker;
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.model.MovieJSON;
+import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
  * MovieButler handles the creation of the Movie model, taking resources from a flat file,
@@ -35,7 +37,7 @@ public class MovieButler extends MyButler{
     public final static int MOVIE_REQUEST_UPCOMING = 3;
 
     //mMovieModel - a ListArray of data taken from a JSON response
-    MovieJSON mMovieModel;
+    ArrayList<MovieModel> mMovieModel;
 
     //mWorking - boolean value to check if a Worker is working in the background
     Boolean mWorking;
@@ -47,7 +49,7 @@ public class MovieButler extends MyButler{
         mBoss = boss;
 
         //builds TMDB api uri strings
-        mUri = new TMDBUri();
+        mUri = new TMDBUri(this);
 
         //flag to check if work is being done in the background
         mWorking = false;
@@ -67,9 +69,9 @@ public class MovieButler extends MyButler{
  * @param request - type of request (most popular, highest rated, now playing, upcoming)
  */
     public void requestMovies(int request){
-        Log.d("Movies", "MovieButler.requestMovies - " + request);
+
         if(mWorking){
-            Log.d("Movies", "     thread cancelled");
+
             mMovieWorker.cancel(true);
         }
 
@@ -80,36 +82,23 @@ public class MovieButler extends MyButler{
         //worker executes the url request
         if(request == MOVIE_REQUEST_MOST_POPULAR){
             //most popular movies are requested
-            mMovieWorker.execute(
-                    mUri.getMovieList(TMDBUri.MOVIES_POPULAR, mApiKey)
-            );
+            mMovieWorker.execute(mUri.getMovieList(TMDBUri.PATH_POPULAR, mApiKey));
         }
         else if(request == MOVIE_REQUEST_HIGHEST_RATED){
             //highest rated movies are requested
-            mMovieWorker.execute(
-                    mUri.getMovieList(TMDBUri.MOVIES_TOP_RATED, mApiKey)
-            );
+            mMovieWorker.execute(mUri.getMovieList(TMDBUri.PATH_TOP_RATED, mApiKey));
         }
         else if(request == MOVIE_REQUEST_NOW_PLAYING){
             //highest rated movies are requested
-            mMovieWorker.execute(
-                    mUri.getMovieList(TMDBUri.MOVIES_NOW_PLAYING, mApiKey)
-            );
+            mMovieWorker.execute(mUri.getMovieList(TMDBUri.PATH_NOW_PLAYING, mApiKey));
         }
         else if(request == MOVIE_REQUEST_UPCOMING){
             //highest rated movies are requested
-            mMovieWorker.execute(
-                    mUri.getMovieList(TMDBUri.MOVIES_UPCOMING, mApiKey)
-            );
+            mMovieWorker.execute(mUri.getMovieList(TMDBUri.PATH_UPCOMING, mApiKey));
         }
         else{
             //most popular movies are requested using old DISCOVER api call
-            mMovieWorker.execute(
-                    mMovieWorker.TMDB_URL_DISCOVER_MOVIE,
-                    mMovieWorker.TMDB_API_KEY + mApiKey,
-                    mMovieWorker.TMDB_SORT,
-                    mMovieWorker.SORT_POPULARITY_DESC
-            );
+            mMovieWorker.execute(mUri.getMovieList(TMDBUri.PATH_UPCOMING, mApiKey));
         }
 
     }
@@ -139,7 +128,7 @@ public class MovieButler extends MyButler{
  * MovieJSON getModel() - allows access to the data received
  * @return - MovieJSON, an array of objects containing movie details
  */
-    public MovieJSON getModel( ){
+    public ArrayList<MovieModel> getModel( ){
         return mMovieModel;
     }
 

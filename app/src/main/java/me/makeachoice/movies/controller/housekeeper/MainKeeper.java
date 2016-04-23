@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.makeachoice.movies.MainActivity;
@@ -26,7 +27,7 @@ import me.makeachoice.movies.controller.housekeeper.maid.EmptyMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.model.MovieJSON;
+import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
  * MainKeeper is the HouseKeeper for MainActivity. It is responsible for the Activity and all of
@@ -88,7 +89,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
     private int mMovieRequest;
 
     //mMovie - current movie selected
-    private MovieJSON.MovieDetail mMovie;
+    private MovieModel mMovie;
 
 /**************************************************************************************************/
 
@@ -167,8 +168,9 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * @param position - position of poster
  */
     public void onSelectedPoster(int position){
+
         //get movie data from movie list
-        mMovie = mBoss.getMovies(mMovieRequest).getMovie(position);
+        mMovie = mBoss.getMovies(mMovieRequest).get(position);
 
         //get InfoMaid
         InfoMaid maid = ((InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID));
@@ -376,7 +378,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         int containerId = MainHelper.MAIN_CONTAINER_ID;
 
         //get movie data from Boss, if null will start AsyncTask to get data
-        MovieJSON movies = mBoss.getMovies(mMovieRequest);
+        ArrayList<MovieModel> movies = mBoss.getMovies(mMovieRequest);
 
         if(mCurrentFragId == PosterHelper.NAME_ID || mCurrentFragId == EmptyHelper.NAME_ID){
             if(movies != null){
