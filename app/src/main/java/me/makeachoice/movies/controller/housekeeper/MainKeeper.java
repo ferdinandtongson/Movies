@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -183,7 +184,9 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
         //get InfoFragment and display, save back stack, do NOT pop stack
         mFragAssistant.changeFragmentWithBackStack(mFragmentManager, MainHelper.MAIN_CONTAINER_ID,
-                mFragmentRegistry.get(InfoHelper.NAME_ID), false);
+                mFragmentRegistry.get(InfoHelper.NAME_ID),
+                mBoss.getActivityContext().getString(InfoHelper.NAME_ID),
+                false);
 
     }
 
@@ -229,7 +232,8 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
             //get EmptyFragment and display
             mFragAssistant.changeFragment(mFragmentManager, MainHelper.MAIN_CONTAINER_ID,
-                    mFragmentRegistry.get(EmptyHelper.NAME_ID));
+                    mFragmentRegistry.get(EmptyHelper.NAME_ID),
+                    mBoss.getActivityContext().getString(EmptyHelper.NAME_ID));
         }
 
     }
@@ -247,10 +251,18 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 /**
  * void postResume() - called when onPostResume() is called in the Activity signalling that
  * both the Activity and Fragments have resumed and can now be manipulated.
+ *
+ * If orientation change has occurred, old fragment will automatically be added. No need to commit
+ * the fragment again. This stops the double calling of onCreateView() method in Fragment classes.
+ * Remember to setRetainInstance(true) in Fragment to retain data!!
  */
     public void postResume(){
-        //activity and fragment has been resumed, display fragment
-        displayFragment();
+
+        //check orientation change status
+        if(!mBoss.onOrientationChange()){
+            //NOT an orientation change event, update fragment view
+            displayFragment();
+        }
     }
 
 /**
@@ -393,7 +405,8 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
                 //get PosterFragment and display
                 mFragAssistant.changeFragment(mFragmentManager,
-                        containerId, mFragmentRegistry.get(PosterHelper.NAME_ID));
+                        containerId, mFragmentRegistry.get(PosterHelper.NAME_ID),
+                        mBoss.getActivityContext().getString(PosterHelper.NAME_ID));
             }
             else{
                 //update current fragment to EmptyFragment
@@ -401,7 +414,8 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
                 //get EmptyFragment and display
                 mFragAssistant.changeFragment(mFragmentManager,
-                        containerId, mFragmentRegistry.get(EmptyHelper.NAME_ID));
+                        containerId, mFragmentRegistry.get(EmptyHelper.NAME_ID),
+                        mBoss.getActivityContext().getString(EmptyHelper.NAME_ID));
             }
         }
         else if(mCurrentFragId == InfoHelper.NAME_ID){
@@ -415,7 +429,9 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
             //get InfoFragment and display, pop back stack
             mFragAssistant.changeFragmentWithBackStack(mFragmentManager, containerId,
-                    mFragmentRegistry.get(InfoHelper.NAME_ID), true);
+                    mFragmentRegistry.get(InfoHelper.NAME_ID),
+                    mBoss.getActivityContext().getString(InfoHelper.NAME_ID),
+                    true);
         }
     }
 
@@ -425,6 +441,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  */
     public void initToolbar(){
 
+        Log.d("Movies", "MainKeeper.initToolbar");
         //toolbar is context sensitive, need to recreate every time Activity.onCreate is called
         Toolbar toolbar = (Toolbar)((MainActivity)mBoss.getActivityContext()).
                 findViewById(MainHelper.MAIN_TOOLBAR_ID);
