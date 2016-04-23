@@ -13,4 +13,8 @@ public class VideosResponse {
     @SerializedName("results")
     public ArrayList<VideoModel> videos;
 
+    public VideosResponse(){
+        videos = new ArrayList<>();
+    }
+
 }
