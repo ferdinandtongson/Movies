@@ -23,12 +23,13 @@ public class FragmentAssistant {
  * @param containerId - layout id that acts as a container for the fragment
  * @param fragment - new fragment to be viewed
  */
-    public void changeFragment(FragmentManager manager, int containerId, Fragment fragment){
+    public void changeFragment(FragmentManager manager, int containerId, Fragment fragment,
+                               String tag){
         //begin fragment transaction
         FragmentTransaction ft = manager.beginTransaction();
 
         //replace fragment to the fragment container
-        ft.replace(containerId, fragment);
+        ft.replace(containerId, fragment, tag);
 
         //commit transaction
         ft.commit();
@@ -46,7 +47,7 @@ public class FragmentAssistant {
  * and commit to activity
  */
     public void changeFragmentWithBackStack(FragmentManager manager, int containerId,
-                                             Fragment fragment, boolean popBackStack){
+                                             Fragment fragment, String tag, boolean popBackStack){
 
         //begin fragment transaction
         FragmentTransaction ft = manager.beginTransaction();
@@ -58,7 +59,7 @@ public class FragmentAssistant {
         }
 
         //replace fragment to the fragment container
-        ft.replace(containerId, fragment);
+        ft.replace(containerId, fragment, tag);
 
         //put old fragment to back stack
         ft.addToBackStack(null);
