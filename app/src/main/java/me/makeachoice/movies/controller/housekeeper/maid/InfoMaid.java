@@ -7,13 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.controller.butler.uri.TMDBUri;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.fragment.InfoFragment;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
@@ -94,9 +92,6 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         //initialize ViewHolder
         mViewHolder = new InfoHelper.ViewHolder();
 
-        //ViewHolder is empty
-        mViewHolder.isEmpty = true;
-
         //registers fragment PosterMaid is assigned to maintain
         mBridge.registerFragment(InfoHelper.NAME_ID, mFragment);
 
@@ -146,6 +141,8 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
     public View createView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState){
 
+        //TODO - see if this can be put into ViewHolder
+        //TODO - see if layoutID changes, for example when on portrait or landscape (if two files)
         //inflate fragment from the xml fragment layout resource file
         View v = inflater.inflate(InfoHelper.INFO_FRAGMENT_LAYOUT_ID, container, false);
 
@@ -161,38 +158,30 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
      */
     public void createActivity(Bundle savedInstanceState, View layout){
 
-        //get child view for fragment
-        if(mViewHolder.isEmpty){
-            //get textView children
-            mViewHolder.title = (TextView)layout.findViewById(InfoHelper.INFO_TXT_TITLE);
-            mViewHolder.release = (TextView)layout.findViewById(InfoHelper.INFO_TXT_RELEASE);
-            mViewHolder.cast = (TextView)layout.findViewById(InfoHelper.INFO_TXT_CAST);
-            mViewHolder.rating = (TextView)layout.findViewById(InfoHelper.INFO_TXT_RATING);
-            mViewHolder.overview = (TextView)layout.findViewById(InfoHelper.INFO_TXT_OVERVIEW);
-
-            //get imageView and ratingBar child
-            mViewHolder.poster = (ImageView)layout.findViewById(InfoHelper.INFO_IMG_POSTER);
-            mViewHolder.stars = (RatingBar)layout.findViewById(InfoHelper.INFO_RTB_RATING);
-
-            //ViewHolder no longer empty
-            mViewHolder.isEmpty = false;
-        }
-
-        updateTextViews();
-        updatePoster();
+        updateTextViews(layout);
+        updatePoster(layout);
     }
 
-    private void updateTextViews(){
+    private void updateTextViews(View layout){
+        //get textView children
+        TextView txtTitle = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_TITLE);
+        TextView txtRelease = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RELEASE);
+        TextView txtCast = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_CAST);
+        TextView txtRating = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RATING);
+        TextView txtOverview = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_OVERVIEW);
 
-        mViewHolder.title.setText(mItem.getOriginalTitle());
-        mViewHolder.release.setText(mItem.getReleaseDate());
-        mViewHolder.cast.setText("Placeholder for cast");
-        mViewHolder.rating.setText(mStrRating + ": " + mItem.getVoteAverage());
-        mViewHolder.overview.setText(mItem.getOverview());
+        txtTitle.setText(mItem.getOriginalTitle());
+        txtRelease.setText(mItem.getReleaseDate());
+        txtCast.setText("Placeholder for cast");
+        txtRating.setText(mStrRating + ": " + mItem.getVoteAverage());
+        txtOverview.setText(mItem.getOverview());
     }
 
 
-    private void updatePoster(){
+    private void updatePoster(View layout){
+
+        ImageView imgPoster = (ImageView)mViewHolder.getView(layout, InfoHelper.INFO_IMG_POSTER);
+
         //TODO - need to move to resource file
         String posterPath = mBridge.getActivityContext().getString(R.string.tmdb_image_base_request) +
                 mItem.getPosterPath() + "?" +
@@ -205,7 +194,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
                 .load(posterPath)
                 .placeholder(InfoHelper.INFO_PLACEHOLDER_IMG_ID)
                 .error(InfoHelper.INFO_ERROR_IMG_ID)
-                .into(mViewHolder.poster);
+                .into(imgPoster);
     }
 
 /**************************************************************************************************/

@@ -114,9 +114,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         //initialize ViewHolder
         mViewHolder = new PosterHelper.ViewHolder();
 
-        //ViewHolder is empty
-        mViewHolder.isEmpty = true;
-
         //registers fragment PosterMaid is assigned to maintain
         mBridge.registerFragment(PosterHelper.NAME_ID, mFragment);
 
@@ -175,6 +172,8 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
     public View createView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState){
 
+        //TODO - see if this can be put into ViewHolder
+        //TODO - see if layoutID changes, for example when on portrait or landscape (if two files)
         //inflate fragment from the xml fragment layout resource file
         View v = inflater.inflate(PosterHelper.POSTER_FRAGMENT_LAYOUT_ID, container, false);
 
@@ -189,20 +188,17 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  * @param layout - layout where child views reside
  */
     public void createActivity(Bundle savedInstanceState, View layout){
-        if(mViewHolder.isEmpty){
-            //get RecyclerView
-            mViewHolder.recycler = (RecyclerView)layout.findViewById(PosterHelper.POSTER_REC_ID);
 
-            //ViewHolder is no longer empty
-            mViewHolder.isEmpty = false;
-        }
+        //get RecyclerView from ViewHolder
+        RecyclerView recycler = (RecyclerView)mViewHolder.getView(layout,
+                PosterHelper.POSTER_REC_ID);
 
         //setHasFixedSize to true because 1)is true and 2)for optimization
-        mViewHolder.recycler.setHasFixedSize(true);
+        recycler.setHasFixedSize(true);
 
         //set onItemTouchListener for items in RecyclerView
         //TODO - need to fix and relocate onItemClick event logic
-        mViewHolder.recycler.addOnItemTouchListener(
+       recycler.addOnItemTouchListener(
                 new RecyclerItemClickListener(mBridge.getActivityContext(),
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
@@ -219,10 +215,10 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
                 new GridAutofitLayoutManager(mBridge.getActivityContext(), 240);
 
         //set layout manager of RecyclerView
-        mViewHolder.recycler.setLayoutManager(manager);
+        recycler.setLayoutManager(manager);
 
         //set RecyclerAdapter of RecyclerView
-        mViewHolder.recycler.setAdapter(mRecycler);
+        recycler.setAdapter(mRecycler);
     }
 
 /**************************************************************************************************/

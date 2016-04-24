@@ -83,9 +83,6 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
         //initialize ViewHolder
         mViewHolder = new EmptyHelper.ViewHolder();
 
-        //ViewHolder is empty
-        mViewHolder.isEmpty = true;
-
         //registers fragment EmptyMaid is assigned to maintain
         mBridge.registerFragment(EmptyHelper.NAME_ID, mFragment);
 
@@ -135,6 +132,8 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
     public View createView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState){
 
+        //TODO - see if this can be put into ViewHolder
+        //TODO - see if layoutID changes, for example when on portrait or landscape (if two files)
         //inflate fragment from the xml fragment layout resource file
         View v = inflater.inflate(EmptyHelper.EMPTY_FRAGMENT_LAYOUT_ID, container, false);
 
@@ -150,16 +149,12 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
      */
     public void createActivity(Bundle savedInstanceState, View layout){
 
-        if(mViewHolder.isEmpty){
-            //create the textView that will display a message
-            mViewHolder.message = (TextView)layout.findViewById(EmptyHelper.EMPTY_TXT_ID);
-
-            //ViewHolder is no longer empty
-            mViewHolder.isEmpty = false;
-        }
+        //get RecyclerView from ViewHolder
+        TextView txtMessage = (TextView)mViewHolder.getView(layout,
+                EmptyHelper.EMPTY_TXT_ID);
 
         //set textView message
-        mViewHolder.message.setText(layout.getResources().
+        txtMessage.setText(layout.getResources().
                 getString(EmptyHelper.EMPTY_MSG_NO_NETWORK_ID));
     }
 
