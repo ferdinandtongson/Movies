@@ -36,10 +36,15 @@ import me.makeachoice.movies.fragment.PosterFragment;
  *      PosterStaff - prepares data model for consumption for the Poster View
  *
  * Variables from MyMaid:
+ *      Bridge mBridge
  *      Fragment mFragment
  *
  * Methods from MyMaid:
  *      void initFragment()
+ *
+ * Bridge Interface from MyMaid:
+ *      Context getActivityContext()
+ *      void registerFragment(String, Fragment)
  *
  * Implements PosterFragment.Bridge
  *      View createView(LayoutInflater, ViewGroup, Bundle);
@@ -47,10 +52,6 @@ import me.makeachoice.movies.fragment.PosterFragment;
  *
  * Implements PosterRecycler.Bridge
  *      Context getActivityContext()
- *
- * Bridge Interface:
- *      Context getActivityContext()
- *      void registerFragment(String, Fragment)
  *
  */
 public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterRecycler.Bridge{
@@ -63,8 +64,8 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  *      PosterRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
  *      PosterStaff mStaff - processes data to be consumed by the Fragment
  *
- * Interface:
- *      Bridge
+ * Extends Bridge Interface:
+ *      void onSelectedPoster(int)
  */
 /**************************************************************************************************/
 
@@ -80,13 +81,8 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
     //mStaff - processes data to be consumed by the Fragment
     private PosterStaff mStaff;
 
-
     //Implemented communication line to any MyHouseKeeper class
-    public interface Bridge{
-        //get Context of current Activity
-        Context getActivityContext();
-        //registers the Fragment the Maid class is responsible for
-        void registerFragment(Integer key, Fragment fragment);
+    public interface Bridge extends MyMaid.Bridge{
         //notify HouseKeeper a poster has been selected
         void onSelectedPoster(int position);
     }

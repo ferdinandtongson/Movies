@@ -28,18 +28,19 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
  *      InfoHelper - holds all static resources (layout id, view ids, etc)
  *
  * Variables from MyMaid:
+ *      Bridge mBridge
  *      Fragment mFragment
  *
  * Methods from MyMaid:
  *      void initFragment()
  *
+ * Bridge Interface from MyMaid:
+ *      Context getActivityContext()
+ *      void registerFragment(String, Fragment)
+ *
  * Implements InfoFragment.Bridge
  *      View createView(LayoutInflater, ViewGroup, Bundle);
  *      void createActivity(Bundle, View);
- *
- * Bridge Interface:
- *      Context getActivityContext()
- *      void registerFragment(String, Fragment)
  *
  */
 public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
@@ -48,18 +49,17 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 /**
  * Class Variables
  *      InfoHelper.ViewHolder mViewHolder - holds all the child views of the fragment
- *      Bridge mBridge - class implementing Bridge interface
- *
- * Interface:
- *      Bridge
+ *      String mStarRating
  */
 /**************************************************************************************************/
 
     //mViewHolder - holds all the child views of the fragment
     private InfoHelper.ViewHolder mViewHolder;
 
+    //TODO - need to comment
     private String mStrRating;
 
+    /*
     //mBridge - class implementing Bridge, typically a MyHouseKeeper class
     private Bridge mBridge;
 
@@ -69,7 +69,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         Context getActivityContext();
         //register fragment to the HouseKeeper
         void registerFragment(Integer key, Fragment fragment);
-    }
+    }*/
 
 /**************************************************************************************************/
 

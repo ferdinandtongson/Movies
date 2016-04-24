@@ -1,6 +1,5 @@
 package me.makeachoice.movies.controller.housekeeper.maid;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,18 +23,19 @@ import me.makeachoice.movies.fragment.EmptyFragment;
  *      EmptyFragment - handles the Fragment lifecycle
  *
  * Variables from MyMaid:
+ *      Bridge mBridge
  *      Fragment mFragment
  *
  * Methods from MyMaid:
- *      void initFragment()
+ *      abstract void initFragment()
+ *
+ * Bridge Interface from MyMaid:
+ *      Context getActivityContext()
+ *      void registerFragment(String, Fragment)
  *
  * Implements EmptyFragment.Bridge
  *      View createView(LayoutInflater, ViewGroup, Bundle);
  *      void createActivity(Bundle, View);
- *
- * Bridge Interface:
- *      Context getActivityContext()
- *      void registerFragment(String, Fragment)
  *
  */
 public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
@@ -55,15 +55,15 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
     private EmptyHelper.ViewHolder mViewHolder;
 
     //mBridge - class implementing Bridge, typically a MyHouseKeeper class
-    private Bridge mBridge;
+    //private Bridge mBridge;
 
     //Implemented communication line to any MyHouseKeeper class
-    public interface Bridge{
+    /*public interface Bridge{
         //get Context of current Activity
         Context getActivityContext();
         //Interface methods needed to be implemented by the instantiating class
         void registerFragment(Integer key, Fragment fragment);
-    }
+    }*/
 
 /**************************************************************************************************/
 
