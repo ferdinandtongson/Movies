@@ -16,9 +16,11 @@ import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
  * Toolbar use.
  *
  * Variables from MyActivity:
- *      mBridge
+ *      static int mOrientation
+ *      Bridge mBridge
  *
  * Methods from MyActivity:
+ *      void setOrientationChangeFlag(Boss)
  *      void finishActivity()
  *
  * Bridge Interface from MyActivity:

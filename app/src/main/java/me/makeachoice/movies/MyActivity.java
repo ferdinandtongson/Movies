@@ -37,7 +37,7 @@ public abstract class MyActivity extends AppCompatActivity {
     //mBridge - class implementing Bridge interface
     protected Bridge mBridge;
 
-    //mOrientation - static variable, holds orientation status
+    //mOrientation - holds orientation status
     protected static int mOrientation;
 
     //Implemented communication line, usually implemented by a HouseKeeper class
@@ -107,7 +107,7 @@ public abstract class MyActivity extends AppCompatActivity {
             boss.setOnOrientationChange(true);
         }
         else{
-            //orientation has Not changed, another configuration event has happened
+            //orientation has Not changed, another
             boss.setOnOrientationChange(false);
         }
 
