@@ -1,17 +1,39 @@
 package me.makeachoice.movies.controller.housekeeper.helper;
 
-import android.support.v7.widget.RecyclerView;
-
 import me.makeachoice.movies.R;
 
 /**
  * PosterHelper contains constant definitions for all the resources used by any of the "Poster"
  * classes underneath the housekeeper.
+ *
+ * Variables from MyHelper:
+ *      - None -
+ *
+ * Methods from MyHelper:
+ *      - None -
+ *
+ * Inner class from MyHelper:
+ *      static class ViewHolder
+ *          HashMap<Integer, View> mHolderMap
+ *          public View getView(View layout, int id)
+ *
  */
-public class PosterHelper {
+public class PosterHelper extends MyHelper {
 
     //NAME_ID - unique name of instantiated Maid class
     public final static int NAME_ID = R.string.maid_poster;
+
+
+/**************************************************************************************************/
+// Fragment layout ids used to display a grid of movie posters, from poster_fragment.xml
+
+    //POSTER_FRAGMENT_LAYOUT_ID is the fragment layout used to display a bunch of movie posters
+    public static final int POSTER_FRAGMENT_LAYOUT_ID = R.layout.poster_fragment;
+
+    //POSTER_REC_ID is the RecyclerView id used poster fragment
+    public static final int POSTER_REC_ID = R.id.rec_poster;
+
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 // Card Item layout ids used in a RecyclerView, from poster_card.xml
@@ -31,17 +53,6 @@ public class PosterHelper {
 /**************************************************************************************************/
 
 /**************************************************************************************************/
-// Fragment layout ids used to display a grid of movie posters, from poster_fragment.xml
-
-    //POSTER_FRAGMENT_LAYOUT_ID is the fragment layout used to display a bunch of movie posters
-    public static final int POSTER_FRAGMENT_LAYOUT_ID = R.layout.poster_fragment;
-
-    //POSTER_REC_ID is the RecyclerView id used poster fragment
-    public static final int POSTER_REC_ID = R.id.rec_poster;
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
 // Drawable resource ids used as image placeholders for the movie posters
 
     //POSTER_PLACEHOLDER_IMG_ID is the placeholder image displayed before the poster image
@@ -49,19 +60,6 @@ public class PosterHelper {
 
     //POSTER_ERROR_IMG_ID is the error image displayed if there is no movie poster image
     public static final int POSTER_ERROR_IMG_ID = R.drawable.placeholder_error;
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * ViewHolder class used to hold the child views of PosterFragment
- */
-/**************************************************************************************************/
-
-    public static class ViewHolder{
-        public boolean isEmpty;
-        public RecyclerView recycler;
-    }
 
 /**************************************************************************************************/
 

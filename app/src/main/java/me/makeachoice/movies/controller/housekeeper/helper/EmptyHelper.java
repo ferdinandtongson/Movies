@@ -1,14 +1,24 @@
 package me.makeachoice.movies.controller.housekeeper.helper;
 
-import android.widget.TextView;
-
 import me.makeachoice.movies.R;
 
 /**
  * EmptyHelper contains constant definitions for all the resources used by any of the "Empty"
  * classes underneath the housekeeper.
+ *
+ * Variables from MyHelper:
+ *      - None -
+ *
+ * Methods from MyHelper:
+ *      - None -
+ *
+ * Inner class from MyHelper:
+ *      static class ViewHolder
+ *          HashMap<Integer, View> mHolderMap
+ *          public View getView(View layout, int id)
+ *
  */
-public class EmptyHelper {
+public class EmptyHelper extends MyHelper {
 
     //NAME_ID - unique name of instantiated Maid class
     public final static int NAME_ID = R.string.maid_empty;
@@ -35,19 +45,6 @@ public class EmptyHelper {
 
     //EMPTY_MSG_NO_NETWORK_ID is a "no network" error message
     public static final int EMPTY_MSG_NO_NETWORK_ID = R.string.msg_no_network;
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * ViewHolder class used to hold the child views of EmptyFragment
- */
-/**************************************************************************************************/
-
-    public static class ViewHolder{
-        public boolean isEmpty;
-        public TextView message;
-    }
 
 /**************************************************************************************************/
 

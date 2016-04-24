@@ -1,16 +1,24 @@
 package me.makeachoice.movies.controller.housekeeper.helper;
 
-import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.TextView;
-
 import me.makeachoice.movies.R;
 
 /**
  * InfoHelper contains constant definitions for all the resources used by any of the "Info"
  * classes underneath the housekeeper.
+ *
+ * Variables from MyHelper:
+ *      - None -
+ *
+ * Methods from MyHelper:
+ *      - None -
+ *
+ * Inner class from MyHelper:
+ *      static class ViewHolder
+ *          HashMap<Integer, View> mHolderMap
+ *          public View getView(View layout, int id)
+ *
  */
-public class InfoHelper {
+public class InfoHelper extends MyHelper{
 
     //NAME_ID - unique name of instantiated Maid class
     public final static int NAME_ID = R.string.maid_info;
@@ -55,25 +63,6 @@ public class InfoHelper {
 
     //STR_USER_RATING_ID is the "User Rating" string id
     public static final int STR_USER_RATING_ID = R.string.str_user_rating;
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * ViewHolder class used to hold the child views of InfoFragment
- */
-/**************************************************************************************************/
-
-    public static class ViewHolder{
-        public boolean isEmpty;
-        public TextView title;
-        public ImageView poster;
-        public TextView release;
-        public TextView cast;
-        public TextView rating;
-        public TextView overview;
-        public RatingBar stars;
-    }
 
 /**************************************************************************************************/
 
