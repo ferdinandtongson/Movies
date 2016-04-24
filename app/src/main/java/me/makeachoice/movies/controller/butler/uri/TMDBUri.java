@@ -128,6 +128,15 @@ public class TMDBUri {
 
     http://api.themoviedb.org/3/genre/28/movies?api_key=ec1c9e77ea098584409c2b2309c4f287
     http://api.themoviedb.org/3/movie/209112?api_key=ec1c9e77ea098584409c2b2309c4f287
+
+    //get movie details plus videos
+    http://api.themoviedb.org/3/movie/157336?api_key=ec1c9e77ea098584409c2b2309c4f287&append_to_response=videos
+    //same as above plus videos, similar movies, reviews and credits
+    http://......?api_key=[id]&append_to_response=videos,similar,reviews,credits
+
+
+    //get video with key
+    https://www.youtube.com/watch?v=SUXWAEX2jlg
     */
 
 }
