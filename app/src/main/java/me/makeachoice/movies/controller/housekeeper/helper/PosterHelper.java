@@ -17,7 +17,7 @@ public class PosterHelper {
 // Card Item layout ids used in a RecyclerView, from poster_card.xml
 
     //POSTER_CARD_LAYOUT_ID is the layout used for each item in the Poster RecyclerView
-    public static final int POSTER_CARD_LAYOUT_ID = R.layout.card_poster;
+    public static final int POSTER_CARD_LAYOUT_ID = R.layout.poster_card;
 
     //POSTER_ITEM_CRD_ID is the cardView id used to display the cardView
     public static final int POSTER_ITEM_CRD_ID = R.id.crd_poster;
