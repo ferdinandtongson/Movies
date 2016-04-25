@@ -18,6 +18,7 @@ import me.makeachoice.movies.controller.Boss;
  *      Bridge mBridge
  *      View mLayout
  *      Integer mMaidId
+ *      boolean mOrientationChange
  *
  * Methods from MyFragment:
  *      void setMaidId(Integer)
@@ -54,6 +55,11 @@ public class InfoFragment extends MyFragment {
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
+        //get Application context Boss
+        Boss boss = (Boss)context.getApplicationContext();
+
+        //check if phone orientation change has occured
+        mOrientationChange = boss.onOrientationChange();
     }
 
 /** onCreateView(...) is called when it's time for the fragment to draw its UI for the first

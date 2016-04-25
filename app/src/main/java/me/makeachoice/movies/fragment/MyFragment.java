@@ -20,6 +20,7 @@ public abstract class MyFragment extends Fragment{
  *      View mLayout - View layout of the fragment
  *      Bridge mBridge - class implementing Bridge interface
  *      Integer mMaidId - id number of the Maid class taking care of the fragment
+ *      boolean mOrientationChange - flag used to check if an orientation change event has occurred
  *
  * Interface:
  *      Bridge
@@ -37,6 +38,9 @@ public abstract class MyFragment extends Fragment{
 
     //mMaidId - id number of the Maid class taking care of the fragment
     protected Integer mMaidId;
+
+    //mOrientationChange - flag used to check if an orientation change event has occurred
+    protected boolean mOrientationChange;
 
 
     //Implemented communication line, usually implemented by a Maid class

@@ -19,6 +19,7 @@ import me.makeachoice.movies.controller.Boss;
  *      Bridge mBridge
  *      View mLayout
  *      Integer mMaidId
+ *      boolean mOrientationChange
  *
  * Methods from MyFragment:
  *      void setMaidId(Integer)
@@ -29,13 +30,14 @@ import me.makeachoice.movies.controller.Boss;
  *
  */
 public class EmptyFragment extends MyFragment {
-/*
-    Fragment subclasses require an empty default constructor. If you don't provide one but
-    specify a non-empty constructor, Lint will give you an error.
-    Android may destroy and later re-create an activity and all its associated fragments when
-    the app goes into the background. When the activity comes back, its FragmentManager starts
-    re-creating fragments by using the empty default constructor. If it cannot find one, you
-    get an exception
+/**
+ * Fragment subclasses require an empty default constructor. If you don't provide one but
+ * specify a non-empty constructor, Lint will give you an error.
+ *
+ * Android may destroy and later re-create an activity and all its associated fragments when
+ * the app goes into the background. When the activity comes back, its FragmentManager starts
+ * re-creating fragments by using the empty default constructor. If it cannot find one, you
+ * get an exception
  */
     public static EmptyFragment newInstance(){
         return new EmptyFragment();
@@ -55,7 +57,11 @@ public class EmptyFragment extends MyFragment {
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        //empty
+        //get Application context Boss
+        Boss boss = (Boss)context.getApplicationContext();
+
+        //check if phone orientation change has occured
+        mOrientationChange = boss.onOrientationChange();
     }
 
 /** onCreateView(...) is called when it's time for the fragment to draw its UI for the first
