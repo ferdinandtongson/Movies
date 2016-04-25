@@ -1,13 +1,8 @@
 package me.makeachoice.movies.controller.housekeeper;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +12,7 @@ import java.util.HashMap;
 
 import me.makeachoice.movies.MainActivity;
 
+import me.makeachoice.movies.MyActivity;
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.assistant.FragmentAssistant;
 import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
@@ -24,8 +20,8 @@ import me.makeachoice.movies.controller.housekeeper.helper.EmptyHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
-import me.makeachoice.movies.controller.housekeeper.maid.EmptyMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
+import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
@@ -54,9 +50,14 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
  *      MaidAssistant mMaidAssistant
  *      FragmentAssistant mFragAssistant
  *      HashMap<Integer, Fragment> mFragmentRegistry
+ *      Toolbar mToolbar
+ *      FloatingActionButton mFab
  *
  * Methods from MyHouseKeeper
- *      - None -
+ *      Context getActivityContext()
+ *      void registerFragment(Integer, Fragment)
+ *      Toolbar getToolbar(MyActivity, int)
+ *      FloatingActionButton getFloatButton(MyActivity, int, View.OnClickListener)
  *
  * Implements MainActivity.Bridge
  *      void create(Bundle savedInstanceState)
@@ -66,20 +67,20 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
  *      void optionsItemSelected(MenuItem item)
  *
  * Implements Maid.Bridge
- *      Context getActivityContext() [All Maid classes]
- *      void registerFragment(Integer key, Fragment fragment) [All Maid classes]
+ *      Context getActivityContext() - implemented by MyHouseKeeper
+ *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
  *      void onSelectedPoster(int position) [PosterMaid only]
  *
  */
 public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
-        PosterMaid.Bridge, EmptyMaid.Bridge, InfoMaid.Bridge{
+        PosterMaid.Bridge, MyMaid.Bridge{
 
 /**************************************************************************************************/
 /**
  * Class Variables:
  *      int mCurrentFragId - current fragment id being seen by the user
  *      int mMovieRequest - current list of movies requested
- *      MovieJSON.MovieDetail mMovie - current movie selected
+ *      MovieModel mMovie - current movie selected
  */
 /**************************************************************************************************/
 
@@ -131,39 +132,21 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 /**************************************************************************************************/
 /**
  * Getters:
- *      Context getActivityContext() - required as part of PosterRecycler.Bridge interface
+ *      - None -
  *
  * Setters:
  *      - None -
  */
 /**************************************************************************************************/
-/**
- * Context getActivityContext() - get current Activity context, implemented for Maid.Bridge [All]
- * @return - current Activity context
- */
-    public Context getActivityContext(){
-        return mBoss.getActivityContext();
-    }
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
  * Maid.Bridge implementations:
- *      void registerFragment(Integer, Fragment) [All] - register Fragments maintained by Maid class
  *      void onSelectedPoster(int position) [PosterMaid] - onSelectPoster event
  */
 /**************************************************************************************************/
-/**
- * void registerFragment(Integer, Fragment) - register Fragments maintained by Maid classes
- * @param key - id number of Maid
- * @param fragment - fragment maintained by Maid
- */
-    public void registerFragment(Integer key, Fragment fragment){
-        //put fragment into hash map registry
-        mFragmentRegistry.put(key, fragment);
-    }
-
 /**
  * void onSelectedPoster(int) - event called when a poster is selected in PosterFragment
  * @param position - position of poster
@@ -203,27 +186,27 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  *
  */
 /**************************************************************************************************/
-/**
- * void create(Bundle) - called when onCreate is called in the activity. Sets the activity layout,
- * fragmentManager and toolbar for the activity as well as checks for network connectivity.
- *
- * NOTE: Both FragmentManager and Toolbar are context sensitive and need to be recreated every time
- * onCreate() is called in the Activity
- * @param savedInstanceState - instant state values
- */
-    public void create(Bundle savedInstanceState){
+    /**
+     * void create(Bundle) - called when onCreate is called in the activity. Sets the activity layout,
+     * fragmentManager and toolbar for the activity as well as checks for network connectivity.
+     *
+     * NOTE: Both FragmentManager and Toolbar are context sensitive and need to be recreated every time
+     * onCreate() is called in the Activity
+     * @param savedInstanceState - instant state values
+     */
+    public void create(MyActivity activity, Bundle savedInstanceState){
         if(savedInstanceState != null){
             //TODO - need to save instances. Movie request type maybe?
         }
 
         //set activity layout
-        ((MainActivity)mBoss.getActivityContext()).setContentView(MainHelper.MAIN_LAYOUT_ID);
+        activity.setContentView(MainHelper.MAIN_LAYOUT_ID);
 
         //fragmentManager is context sensitive, need to recreate every time onCreate() is called
-        mFragmentManager = ((MainActivity)mBoss.getActivityContext()).getSupportFragmentManager();
+        mFragmentManager = activity.getSupportFragmentManager();
 
         //Create toolbar with creation of Activity
-        initToolbar();
+        mToolbar = getToolbar(activity, MainHelper.MAIN_TOOLBAR_ID);
 
         //check for connectivity
         if(!mBoss.hasNetworkConnection()){
@@ -238,24 +221,23 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
     }
 
-/**
- * void createOptionsMenu(Menu) - called if a toolbar is present in the activity.
- * @param menu - will hold menu items
- */
-    public void createOptionsMenu(Menu menu){
+    /**
+     * void createOptionsMenu(Menu) - called if a toolbar is present in the activity.
+     * @param menu - will hold menu items
+     */
+    public void createOptionsMenu(MyActivity activity, Menu menu){
         // Inflate the menu; this adds items to the toolbar if it is present.
-        ((MainActivity)mBoss.getActivityContext()).
-                getMenuInflater().inflate(MainHelper.MAIN_MENU, menu);
+        activity.getMenuInflater().inflate(MainHelper.MAIN_MENU, menu);
     }
 
-/**
- * void postResume() - called when onPostResume() is called in the Activity signalling that
- * both the Activity and Fragments have resumed and can now be manipulated.
- *
- * If orientation change has occurred, old fragment will automatically be added. No need to commit
- * the fragment again. This stops the double calling of onCreateView() method in Fragment classes.
- * Remember to setRetainInstance(true) in Fragment to retain data!!
- */
+    /**
+     * void postResume() - called when onPostResume() is called in the Activity signalling that
+     * both the Activity and Fragments have resumed and can now be manipulated.
+     *
+     * If orientation change has occurred, old fragment will automatically be added. No need to commit
+     * the fragment again. This stops the double calling of onCreateView() method in Fragment classes.
+     * Remember to setRetainInstance(true) in Fragment to retain data!!
+     */
     public void postResume(){
 
         //check orientation change status
@@ -265,26 +247,26 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         }
     }
 
-/**
- * void saveInstanceState(Bundle) - called when onSaveInstanceState is called in the Activity.
- * @param inState - bundle to save instance states
- */
+    /**
+     * void saveInstanceState(Bundle) - called when onSaveInstanceState is called in the Activity.
+     * @param inState - bundle to save instance states
+     */
     public void saveInstanceState(Bundle inState){
         //TODO - need to save instance state. Movie request type maybe?
     }
 
-/**
- * void backPressed() - called when onBackPressed() is called in the Activity. MainActivity has
- * two Fragments (PosterFragment and InfoFragment). If InfoFragment is currently active, back
- * press will send PosterFragment to the front. If PosterFragment is active, will close the
- * application.
- */
-    public void backPressed(){
+    /**
+     * void backPressed() - called when onBackPressed() is called in the Activity. MainActivity has
+     * two Fragments (PosterFragment and InfoFragment). If InfoFragment is currently active, back
+     * press will send PosterFragment to the front. If PosterFragment is active, will close the
+     * application.
+     */
+    public void backPressed(MyActivity activity){
 
         //check current fragment being displayed
         if(mCurrentFragId == PosterHelper.NAME_ID){
             //if PosterFragment, shutdown app
-            ((MainActivity)mBoss.getActivityContext()).finishActivity();
+            activity.finishActivity();
         }
         else{
             //if other than PosterFragment (InfoFragment), change to PosterFragment
@@ -295,15 +277,15 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         }
     }
 
-/**
- * void onOptionsItemSelected(MenuItem) - listens for an onOptionsItemSelected event from the
- * menu list contained in the toolbar view
- *
- * Menu will list movies by most popular, highest rated, now playing, upcoming
- *
- * @param item - menu item selected in the toolbar
- */
-    public void optionsItemSelected(MenuItem item){
+    /**
+     * void onOptionsItemSelected(MenuItem) - listens for an onOptionsItemSelected event from the
+     * menu list contained in the toolbar view
+     *
+     * Menu will list movies by most popular, highest rated, now playing, upcoming
+     *
+     * @param item - menu item selected in the toolbar
+     */
+    public void optionsItemSelected(MyActivity activity, MenuItem item){
         //get id of item selected from ActionBar
         int id = item.getItemId();
 
@@ -315,11 +297,11 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
             //requested most popular movies
             movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
-        if (id == MainHelper.MENU_ITEM02) {
+        else if (id == MainHelper.MENU_ITEM02) {
             //requested most popular movies
-            movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
+            movieRequest = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
         }
-        if (id == MainHelper.MENU_ITEM03) {
+        else if (id == MainHelper.MENU_ITEM03) {
             //requested now playing movies
             movieRequest = MovieButler.MOVIE_REQUEST_NOW_PLAYING;
         }
@@ -329,7 +311,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         }
 
         //check movie request type and where it occurred
-        checkMovieRequest(movieRequest);
+        checkMovieRequest(activity, movieRequest);
 
     }
 
@@ -354,14 +336,14 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  *
  * @param movieRequest - type of movies requested
  */
-    private void checkMovieRequest(int movieRequest){
+    private void checkMovieRequest(MyActivity activity, int movieRequest){
         //check if movie request happened while displaying InfoFragment
         if(mCurrentFragId == InfoHelper.NAME_ID){
             //movie request happened in InfoFragment, update movie request
             mMovieRequest = movieRequest;
 
             //call Activity.onBackPressed(),
-            ((MainActivity)mBoss.getActivityContext()).onBackPressed();
+            activity.onBackPressed();
         }
         else{
             //movie request happened in PosterFragment
@@ -434,41 +416,6 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
                     true);
         }
     }
-
-/**************************************************************************************************/
-/**
- * void initToolbar() inflates the toolbar from the layout and then sets it into the Activity.
- */
-    public void initToolbar(){
-
-        Log.d("Movies", "MainKeeper.initToolbar");
-        //toolbar is context sensitive, need to recreate every time Activity.onCreate is called
-        Toolbar toolbar = (Toolbar)((MainActivity)mBoss.getActivityContext()).
-                findViewById(MainHelper.MAIN_TOOLBAR_ID);
-
-        //TODO - set toolbar name here
-        //toolbar.setTitle("");
-
-        //set support for toolbar, onCreateOptionsMenu() will be called
-        ((MainActivity)mBoss.getActivityContext()).setSupportActionBar(toolbar);
-
-    }
-
-    /**
-     * void initFloatButton() inflates the floating action button layout and sets Event Listeners
-     */
-    public void initFloatButton(){
-
-        //TODO - check if fab is context sensitive like toolbar
-        FloatingActionButton fab = (FloatingActionButton)((Activity)mBoss.getActivityContext()).
-                findViewById(MainHelper.MAIN_FAB_ID);
-
-        fab.setOnClickListener(mFABOnClickListener);
-
-    }
-
-
-
 
 /**************************************************************************************************/
 
