@@ -54,17 +54,6 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
     //mViewHolder - holds all the child views of the fragment
     private EmptyHelper.ViewHolder mViewHolder;
 
-    //mBridge - class implementing Bridge, typically a MyHouseKeeper class
-    //private Bridge mBridge;
-
-    //Implemented communication line to any MyHouseKeeper class
-    /*public interface Bridge{
-        //get Context of current Activity
-        Context getActivityContext();
-        //Interface methods needed to be implemented by the instantiating class
-        void registerFragment(Integer key, Fragment fragment);
-    }*/
-
 /**************************************************************************************************/
 
 /**************************************************************************************************/

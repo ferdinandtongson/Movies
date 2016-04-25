@@ -127,7 +127,8 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  */
 /**************************************************************************************************/
 /**
- * Context getActivityContext() - get current Activity context
+ * Context getActivityContext() - get current Activity context, implemented for
+ * PosterRecycler.Bridge
  * @return - current Activity context
  */
     public Context getActivityContext(){

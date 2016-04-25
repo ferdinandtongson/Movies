@@ -59,18 +59,6 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
     //TODO - need to comment
     private String mStrRating;
 
-    /*
-    //mBridge - class implementing Bridge, typically a MyHouseKeeper class
-    private Bridge mBridge;
-
-    //Implemented communication line to any MyHouseKeeper class
-    public interface Bridge{
-        //get Context of current Activity
-        Context getActivityContext();
-        //register fragment to the HouseKeeper
-        void registerFragment(Integer key, Fragment fragment);
-    }*/
-
 /**************************************************************************************************/
 
 /**************************************************************************************************/
