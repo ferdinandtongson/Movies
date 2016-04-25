@@ -65,7 +65,7 @@ public class MainActivity extends MyActivity {
         setOrientationChangeFlag(boss);
 
         //use HouseKeeper class to create activity
-        mBridge.create(savedInstanceState);
+        mBridge.create(this, savedInstanceState);
     }
 
 /**
@@ -97,7 +97,7 @@ public class MainActivity extends MyActivity {
     @Override
     public void onBackPressed(){
         super.onBackPressed();
-        mBridge.backPressed();
+        mBridge.backPressed(this);
     }
 
 /**************************************************************************************************/
@@ -111,7 +111,7 @@ public class MainActivity extends MyActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //send to HouseKeeper to manage creation of toolbar
-        mBridge.createOptionsMenu(menu);
+        mBridge.createOptionsMenu(this, menu);
         return true;
     }
 
@@ -124,7 +124,7 @@ public class MainActivity extends MyActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         //send to HouseKeeper to manage event
-        mBridge.optionsItemSelected(item);
+        mBridge.optionsItemSelected(this, item);
 
         return super.onOptionsItemSelected(item);
     }

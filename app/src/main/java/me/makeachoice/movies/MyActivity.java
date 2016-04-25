@@ -43,19 +43,19 @@ public abstract class MyActivity extends AppCompatActivity {
     //Implemented communication line, usually implemented by a HouseKeeper class
     public interface Bridge{
         //Bridge is called when onCreate(...) is called in the activity
-        void create(Bundle savedInstanceState);
+        void create(MyActivity activity, Bundle savedInstanceState);
 
         //Bridge is called when onPostResume() is called in the activity
         void postResume();
 
         //Bridge is called when onBackPressed() is called in the activity
-        void backPressed();
+        void backPressed(MyActivity activity);
 
         //Bridge is called when onCreateOptionsMenu(...) is called in the activity
-        void createOptionsMenu(Menu menu);
+        void createOptionsMenu(MyActivity activity, Menu menu);
 
         //Bridge is called when onOptionsItemSelected(...) is called in the activity
-        void optionsItemSelected(MenuItem item);
+        void optionsItemSelected(MyActivity activity, MenuItem item);
 
         //Bridge is called when onSaveInstanceState(...) is called in the activity
         void saveInstanceState(Bundle saveState);
