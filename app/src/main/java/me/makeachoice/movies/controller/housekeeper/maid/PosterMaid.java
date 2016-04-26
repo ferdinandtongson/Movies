@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.housekeeper.recycler.RecyclerItemClickListener;
-import me.makeachoice.movies.model.response.tmdb.MovieModel;
 import me.makeachoice.movies.util.GridAutofitLayoutManager;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.staff.PosterStaff;
@@ -33,7 +33,6 @@ import me.makeachoice.movies.fragment.PosterFragment;
  *      PosterFragment - handles the Fragment lifecycle
  *      PosterRecycler - RecyclerView adapter used to display the list of movie posters
  *      PosterHelper - holds all static resources (layout id, view ids, etc)
- *      PosterStaff - prepares data model for consumption for the Poster View
  *
  * Variables from MyMaid:
  *      Bridge mBridge
@@ -62,7 +61,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  *      PosterHelper.ViewHolder mViewHolder - holds all the child views of the fragment
  *      Bridge mBridge - class implementing Bridge interface
  *      PosterRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
- *      PosterStaff mStaff - processes data to be consumed by the Fragment
  *
  * Extends Bridge Interface:
  *      void onSelectedPoster(int)
@@ -77,9 +75,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 
     //mRecycler - manages item views for the RecyclerView used in the Fragment
     private PosterRecycler mRecycler;
-
-    //mStaff - processes data to be consumed by the Fragment
-    private PosterStaff mStaff;
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
@@ -100,9 +95,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 
         //initialize fragment to be maintained
         mFragment = initFragment(id);
-
-        //initialize Staff
-        mStaff = new PosterStaff();
 
         //initialize RecyclerView Adapter
         mRecycler = new PosterRecycler(this);
@@ -228,16 +220,17 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  */
 /**************************************************************************************************/
 /**
- * void updatePosters(MovieModel) - called by HouseKeep to inform Maid that changes to the data
+ * void updatePosters(PosterItem) - called by HouseKeep to inform Maid that changes to the data
  * being displayed in the fragment has occurred.
- * @param models - list of MovieModel data
+ * @param posters - list of PosterItem data
  */
-    public void updatePosters(ArrayList<MovieModel> models){
+    public void updatePosters(ArrayList<PosterItem> posters){
 
-        //TODO - need to look at moving Staff to Butler side....maybe
-        mStaff.consumeModels(mBridge.getActivityContext(), models);
+        //change movie posters being displayed
+        mRecycler.setPosters(posters);
 
-        mRecycler.setPosters(mStaff.getPosterItems());
+        //notify adapter that data has changed
+        mRecycler.notifyDataSetChanged();
     }
 
 /**************************************************************************************************/
