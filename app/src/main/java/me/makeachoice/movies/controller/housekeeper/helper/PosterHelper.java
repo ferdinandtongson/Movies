@@ -22,6 +22,11 @@ public class PosterHelper extends MyHelper {
 
     //NAME_ID - unique name of instantiated Maid class
     public final static int NAME_ID = R.string.maid_poster;
+    public final static int NAME_ID_POPULAR = R.string.maid_poster_popular;
+    public final static int NAME_ID_HIGHEST_RATED = R.string.maid_poster_highest_rated;
+    public final static int NAME_ID_PLAYING = R.string.maid_poster_now_playing;
+    public final static int NAME_ID_UPCOMING = R.string.maid_poster_upcoming;
+    public final static int NAME_ID_FAVORITE = R.string.maid_poster_favorite;
 
 
 /**************************************************************************************************/
