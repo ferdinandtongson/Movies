@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="keeper_main">Main Keeper</string>
-        <string name="maid_poster">Poster Maid</string>
-        <string name="maid_poster_popular">Popular Maid</string>
-        <string name="maid_poster_highest_rated">Rated Maid</string>
-        <string name="maid_poster_now_playing">Playing Maid</string>
-        <string name="maid_poster_upcoming">Upcoming Maid</string>
-        <string name="maid_poster_favorite">Favorite Maid</string>
+        <string name="maid_poster">Poster</string>
+        <string name="maid_poster_most_popular">Most Popular</string>
+        <string name="maid_poster_top_rated">Top Rated</string>
+        <string name="maid_poster_now_playing">Now Playing</string>
+        <string name="maid_poster_upcoming">Upcoming</string>
+        <string name="maid_poster_favorite">Favorite</string>
 
-        <string name="maid_info">Info Maid</string>
-        <string name="maid_empty">Empty Maid</string>
+        <string name="maid_info">Info</string>
+        <string name="maid_empty">Empty</string>
 
     <string name="keeper_swipe">Swipe Keeper</string>
 </resources>
