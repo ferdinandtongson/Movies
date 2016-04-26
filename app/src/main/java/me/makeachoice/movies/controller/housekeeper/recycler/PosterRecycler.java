@@ -135,12 +135,20 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
         //add poster title
         holder.mTxtTitle.setText(mPosters.get(position).getTitle());
 
-        //add poster image, placeholder image and error image
-        Picasso.with(mBridge.getActivityContext())
-                .load(mPosters.get(position).getPosterPath())
-                .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
-                .error(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
-                .into(holder.mImgPoster);
+        //TODO - need to get bitmap from Picasso use Picasso.with(context).load(url).get();
+        if(mPosters.get(position).getPosterPath().equals("")){
+            //add poster image, placeholder image and error image
+            Picasso.with(mBridge.getActivityContext())
+                    .load(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
+                    .into(holder.mImgPoster);
+        }
+        else{
+            Picasso.with(mBridge.getActivityContext())
+                    .load(mPosters.get(position).getPosterPath())
+                    .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
+                    .error(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
+                    .into(holder.mImgPoster);
+        }
     }
 
 /**************************************************************************************************/
