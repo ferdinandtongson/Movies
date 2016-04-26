@@ -61,19 +61,19 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
  * EmptyMaid - constructor
  * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
  */
-    public EmptyMaid(Bridge bridge){
+    public EmptyMaid(Bridge bridge, int id){
 
         //class implementing Bridge interface
         mBridge = bridge;
 
         //initialize fragment to be maintained
-        mFragment = initFragment();
+        mFragment = initFragment(id);
 
         //initialize ViewHolder
         mViewHolder = new EmptyHelper.ViewHolder();
 
         //registers fragment EmptyMaid is assigned to maintain
-        mBridge.registerFragment(EmptyHelper.NAME_ID, mFragment);
+        mBridge.registerFragment(id, mFragment);
 
     }
 
@@ -99,12 +99,12 @@ public class EmptyMaid extends MyMaid implements EmptyFragment.Bridge{
 /**
  * void initFragment() - initialize Fragment, give name of Maid to fragment
  */
-    protected Fragment initFragment(){
+    protected Fragment initFragment(int id){
         //create PosterFragment
         EmptyFragment fragment = new EmptyFragment();
 
         //send Maid name to fragment
-        fragment.setMaidId(EmptyHelper.NAME_ID);
+        fragment.setMaidId(id);
 
         //return fragment
         return fragment;

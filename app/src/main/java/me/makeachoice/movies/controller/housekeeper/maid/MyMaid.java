@@ -3,9 +3,6 @@ package me.makeachoice.movies.controller.housekeeper.maid;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 
-import me.makeachoice.movies.controller.housekeeper.helper.EmptyHelper;
-
-
 /**
  * MyMaid abstract class used to directly communicate with Fragments and with the managing
  * MyHouseKeeper class
@@ -31,7 +28,7 @@ public abstract class MyMaid {
 /**
  * void initFragment - initialize fragment class
  */
-    protected abstract Fragment initFragment();
+    protected abstract Fragment initFragment(int id);
 
 /**************************************************************************************************/
 

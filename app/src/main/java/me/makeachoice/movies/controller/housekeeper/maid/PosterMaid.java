@@ -94,12 +94,12 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  * PosterMaid - constructor
  * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
  */
-    public PosterMaid(Bridge bridge){
+    public PosterMaid(Bridge bridge, int id){
         //class implementing Bridge interface
         mBridge = bridge;
 
         //initialize fragment to be maintained
-        mFragment = initFragment();
+        mFragment = initFragment(id);
 
         //initialize Staff
         mStaff = new PosterStaff();
@@ -111,7 +111,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         mViewHolder = new PosterHelper.ViewHolder();
 
         //registers fragment PosterMaid is assigned to maintain
-        mBridge.registerFragment(PosterHelper.NAME_ID, mFragment);
+        mBridge.registerFragment(id, mFragment);
 
     }
 
@@ -147,12 +147,12 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 /**
  * void initFragment() - initialize Fragment, give name of Maid to fragment
  */
-    protected Fragment initFragment(){
+    protected Fragment initFragment(int id){
         //create PosterFragment
         PosterFragment fragment = new PosterFragment();
 
         //send Maid id number to fragment
-        fragment.setMaidId(PosterHelper.NAME_ID);
+        fragment.setMaidId(id);
 
         //return fragment
         return fragment;

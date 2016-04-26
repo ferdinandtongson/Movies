@@ -1,6 +1,5 @@
 package me.makeachoice.movies.controller.housekeeper.maid;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -66,7 +65,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
      * InfoMaid - constructor
      * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
      */
-    public InfoMaid(Bridge bridge){
+    public InfoMaid(Bridge bridge, int id){
 
         //class implementing Bridge interface
         mBridge = bridge;
@@ -75,13 +74,13 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         mStrRating = bridge.getActivityContext().getString(InfoHelper.STR_USER_RATING_ID);
 
         //initialize fragment to be maintained
-        mFragment = initFragment();
+        mFragment = initFragment(id);
 
         //initialize ViewHolder
         mViewHolder = new InfoHelper.ViewHolder();
 
         //registers fragment PosterMaid is assigned to maintain
-        mBridge.registerFragment(InfoHelper.NAME_ID, mFragment);
+        mBridge.registerFragment(id, mFragment);
 
     }
 
@@ -107,12 +106,12 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 /**
  * void initFragment() - initialize Fragment; set layout and child view ids and maid name
  */
-    protected Fragment initFragment(){
+    protected Fragment initFragment(int id){
         //create InfoFragment
         InfoFragment fragment = new InfoFragment();
 
         //send Maid name to fragment
-        fragment.setMaidId(InfoHelper.NAME_ID);
+        fragment.setMaidId(id);
 
         //return fragment
         return fragment;
