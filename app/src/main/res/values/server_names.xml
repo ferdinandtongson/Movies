@@ -2,6 +2,14 @@
 <resources>
     <string name="keeper_main">Main Keeper</string>
         <string name="maid_poster">Poster Maid</string>
+        <string name="maid_poster_popular">Popular Maid</string>
+        <string name="maid_poster_highest_rated">Rated Maid</string>
+        <string name="maid_poster_now_playing">Playing Maid</string>
+        <string name="maid_poster_upcoming">Upcoming Maid</string>
+        <string name="maid_poster_favorite">Favorite Maid</string>
+
         <string name="maid_info">Info Maid</string>
         <string name="maid_empty">Empty Maid</string>
+
+    <string name="keeper_swipe">Swipe Keeper</string>
 </resources>
