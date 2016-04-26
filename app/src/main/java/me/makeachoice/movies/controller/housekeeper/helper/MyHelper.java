@@ -4,6 +4,8 @@ import android.view.View;
 
 import java.util.HashMap;
 
+import me.makeachoice.movies.MyActivity;
+
 /**
  * Abstract base Helper class. Used to manage resource ids and act as a ViewHolder.
  */
@@ -39,7 +41,24 @@ public abstract class MyHelper {
             }
         }
 
-    }
+        public View getView(MyActivity activity, int id){
+            //check if view has already been created
+            if(mHolderMap.containsKey(id)){
+                //already been created, return view
+                return mHolderMap.get(id);
+            }
+            else {
+                //view no created, create view
+                View view = activity.findViewById(id);
+                //add view to HashMap
+                mHolderMap.put(id, view);
+
+                //return view
+                return view;
+            }
+        }
+
+}
 
 /**************************************************************************************************/
 
