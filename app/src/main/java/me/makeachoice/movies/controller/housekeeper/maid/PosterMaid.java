@@ -78,7 +78,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
         //notify HouseKeeper a poster has been selected
-        void onSelectedPoster(int position);
+        void onSelectedPoster(int id, int position);
     }
 
 /**************************************************************************************************/
@@ -89,6 +89,9 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
  */
     public PosterMaid(Bridge bridge, int id){
+        //get id number for maid instance
+        mMaidId = id;
+
         //class implementing Bridge interface
         mBridge = bridge;
 
@@ -192,7 +195,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
                             @Override
                             public void onItemClick(View view, int position) {
                                 Log.d("Movies", "PosterFragment.onItemClick: " + position);
-                                mBridge.onSelectedPoster(position);
+                                mBridge.onSelectedPoster(mMaidId, position);
                             }
                         })
         );
