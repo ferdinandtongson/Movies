@@ -12,12 +12,20 @@ public abstract class MyMaid {
 /**************************************************************************************************/
 /**
  * Class Variables
+ *      int mMaidId - id number of instance Maid
+ *      Bridge mBridge - class implementing Bridge, typically a HouseKeeper class
  *      Fragment mFragment - fragment being maintained by the Maid
  *
 /**************************************************************************************************/
 
+    //mMaidId - id number of instance Maid
+    protected int mMaidId;
+
+    //mBridge - class implementing Bridge, typically a MyHouseKeeper class
+    protected Bridge mBridge;
+
     //mFragment - fragment being maintained by the Maid
-    Fragment mFragment;
+    protected Fragment mFragment;
 
 /**************************************************************************************************/
 /**
@@ -39,9 +47,6 @@ public abstract class MyMaid {
  *      void registerFragment(Integer, Fragment) - register fragment Maid is maintaining
  */
 /**************************************************************************************************/
-
-    //mBridge - class implementing Bridge, typically a MyHouseKeeper class
-    protected Bridge mBridge;
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge{
