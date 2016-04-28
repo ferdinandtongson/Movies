@@ -13,7 +13,7 @@ import java.util.HashMap;
 import me.makeachoice.movies.MainActivity;
 
 import me.makeachoice.movies.MyActivity;
-import me.makeachoice.movies.controller.butler.MovieButler;
+import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.housekeeper.assistant.FragmentAssistant;
 import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
 import me.makeachoice.movies.controller.housekeeper.helper.EmptyHelper;
@@ -124,7 +124,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         mCurrentFragId = PosterHelper.NAME_ID;
 
         //set movie request type
-        mMovieRequest = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
+        mMovieRequest = PosterHelper.NAME_ID_MOST_POPULAR;
     }
 
 /**************************************************************************************************/
@@ -143,7 +143,7 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
 
 /**************************************************************************************************/
 /**
- * Maid.Bridge implementations:
+ * PosterMaid.Bridge implementations:
  *      void onSelectedPoster(int position) [PosterMaid] - onSelectPoster event
  */
 /**************************************************************************************************/
@@ -151,10 +151,10 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
  * void onSelectedPoster(int) - event called when a poster is selected in PosterFragment
  * @param position - position of poster
  */
-    public void onSelectedPoster(int position){
+    public void onSelectedPoster(int id, int position){
 
         //get movie data from movie list
-        mMovie = mBoss.getMovies(mMovieRequest).get(position);
+        mMovie = mBoss.getMovie(mMovieRequest, position);
 
         //get InfoMaid
         InfoMaid maid = ((InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID));
@@ -295,19 +295,19 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
         //identify menu selection
         if (id == MainHelper.MENU_ITEM01) {
             //requested most popular movies
-            movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
+            movieRequest = PosterHelper.NAME_ID_MOST_POPULAR;
         }
         else if (id == MainHelper.MENU_ITEM02) {
             //requested most popular movies
-            movieRequest = MovieButler.MOVIE_REQUEST_HIGHEST_RATED;
+            movieRequest = PosterHelper.NAME_ID_TOP_RATED;
         }
         else if (id == MainHelper.MENU_ITEM03) {
             //requested now playing movies
-            movieRequest = MovieButler.MOVIE_REQUEST_NOW_PLAYING;
+            movieRequest = PosterHelper.NAME_ID_NOW_PLAYING;
         }
         else{
             //requested upcoming movies
-            movieRequest = MovieButler.MOVIE_REQUEST_UPCOMING;
+            movieRequest = PosterHelper.NAME_ID_UPCOMING;
         }
 
         //check movie request type and where it occurred
@@ -367,20 +367,19 @@ public class MainKeeper extends MyHouseKeeper implements MainActivity.Bridge,
      * the back stack needs to be popped.
      */
     public void displayFragment(){
-
         //get layout container for fragments
         int containerId = MainHelper.MAIN_CONTAINER_ID;
 
         //get movie data from Boss, if null will start AsyncTask to get data
-        ArrayList<MovieModel> movies = mBoss.getMovies(mMovieRequest);
+        ArrayList<PosterItem> posters = mBoss.getPosters(mMovieRequest);
 
         if(mCurrentFragId == PosterHelper.NAME_ID || mCurrentFragId == EmptyHelper.NAME_ID){
-            if(movies != null){
+            if(posters != null){
                 //movie data is available, get PosterMaid
                 PosterMaid maid = ((PosterMaid)mBoss.getMaid(PosterHelper.NAME_ID));
 
                 //update posters
-                maid.updatePosters(movies);
+                maid.updatePosters(posters);
 
                 //update current fragment to PosterFragment
                 mCurrentFragId = PosterHelper.NAME_ID;
