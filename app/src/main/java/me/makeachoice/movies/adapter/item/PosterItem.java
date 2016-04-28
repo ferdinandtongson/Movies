@@ -23,6 +23,8 @@ public class PosterItem extends MyItem {
 
 /**************************************************************************************************/
 
+    //mTMDBId - holds the TheMovieDB id number of the movie
+    protected int mTMDBId;
     //mTitle - holds the title of the movie
     protected String mTitle;
     //mPosterPath - holds the path to the poster image
@@ -41,7 +43,9 @@ public class PosterItem extends MyItem {
      * @param title - title of poster
      * @param path - path to image of poster
      */
-    public PosterItem(String title, String path){
+    public PosterItem(int id, String title, String path){
+        //TheMovieDB id of the movie
+        mTMDBId = id;
         //title of poster
         mTitle = title;
         //path to poster image
@@ -53,19 +57,22 @@ public class PosterItem extends MyItem {
 /**************************************************************************************************/
 /**
  * Getter and Setter for the image id of the movie poster thumbnail
+ * int getTMDBId() returns TheMovieDB id number of the movie
  * String getTitle() returns title of poster
  * int getPosterPath() returns the poster id
  *
+ * void setTMDBId(int) sets TheMovieDB id number of the movie
  * void setTitle(String) sets title value of poster
  * void setPoster(int) sets the int value of the poster source id
  */
+    public int getTMDBId(){ return mTMDBId; }
     public String getTitle() { return mTitle; }
     public String getPosterPath(){
         return mPosterPath;
     }
     public Bitmap getImage(){ return mImage; }
 
-
+    public void setTMDBId(int id){ mTMDBId = id; }
     public void setTitle(String title) { mTitle = title; }
     public void setPosterPath(String path){
         mPosterPath = path;
