@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">Movies</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Movie Night</string>
 
     <string name="action_bar_popular">Most Popular</string>
     <string name="action_bar_rated">Highest Rated</string>
