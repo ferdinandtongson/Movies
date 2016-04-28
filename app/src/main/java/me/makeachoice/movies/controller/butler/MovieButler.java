@@ -10,6 +10,7 @@ import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.butler.uri.TMDBUri;
 import me.makeachoice.movies.controller.butler.worker.MovieWorker;
 import me.makeachoice.movies.R;
+import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
@@ -29,16 +30,8 @@ public class MovieButler extends MyButler{
     //mMovieWorker - AsyncTask class that connect to the internet to get Movie details
     MovieWorker mMovieWorker;
 
-    //MOVIE_REQUEST_MOST_POPULAR - value used when a list of most popular movies are requested
-    public static int MOVIE_REQUEST_MOST_POPULAR = 0;
-    //MOVIE_REQUEST_HIGHEST_RATED - value used when a list of highest rated movies are requested
-    public static int MOVIE_REQUEST_TOP_RATED = 1;
-
-    public final static int MOVIE_REQUEST_NOW_PLAYING = 2;
-    public final static int MOVIE_REQUEST_UPCOMING = 3;
-
     //mMovieModel - a ListArray of data taken from a JSON response
-    ArrayList<MovieModel> mMovieModel;
+    //ArrayList<MovieModel> mMovieModel;
 
     //mWorking - boolean value to check if a Worker is working in the background
     Boolean mWorking;
@@ -68,7 +61,20 @@ public class MovieButler extends MyButler{
     ArrayList<PosterItem> mUpcomingPosters;
     ArrayList<PosterItem> mFavoritePosters;
 
+    ArrayList<MovieModel> mPopularModel;
+    ArrayList<MovieModel> mTopRatedModel;
+    ArrayList<MovieModel> mNowPlayingModel;
+    ArrayList<MovieModel> mUpcomingModel;
+    ArrayList<MovieModel> mFavoriteModel;
+
     private void initPosterItems(){
+        mPopularModel = new ArrayList<>();
+        mTopRatedModel = new ArrayList<>();
+        mNowPlayingModel = new ArrayList<>();
+        mUpcomingModel = new ArrayList<>();
+        mFavoriteModel = new ArrayList<>();
+
+
         mPopularPosters = new ArrayList<>();
         mTopRatedPosters = new ArrayList<>();
         mNowPlayingPosters = new ArrayList<>();
@@ -78,7 +84,7 @@ public class MovieButler extends MyButler{
         mEmptyPosters = new ArrayList<>();
         for(int i = 0; i < 20; i++){
             PosterItem item = new PosterItem();
-            item.setTitle("Empty");
+            item.setTitle(mBoss.getActivityContext().getString(PosterHelper.NAME_ID_EMPTY));
             item.setPosterPath("");
             item.setImage(null);
 
@@ -99,24 +105,64 @@ public class MovieButler extends MyButler{
  * @param result - returns boolean result of success of movie download
  */
     public void workComplete(Boolean result) {
+        //work has finished
+        mWorking = false;
+
         //get modeled data from the JSON response processed by the worker
-        mMovieModel = mMovieWorker.getMovies();
+        ArrayList<MovieModel> movieModel = mMovieWorker.getMovies();
 
         if(result){
-            preparePosterItems(mBoss.getActivityContext(), mMovieRequest, mMovieModel);
+            preparePosterItems(mBoss.getActivityContext(), mMovieRequest, movieModel);
+
+            ArrayList<PosterItem> itemList;
+            switch (mMovieRequest) {
+                case PosterHelper.NAME_ID_MOST_POPULAR:
+                    mPopularModel = new ArrayList<>(movieModel);
+                    itemList = mPopularPosters;
+                    break;
+                case PosterHelper.NAME_ID_TOP_RATED:
+                    mTopRatedModel = new ArrayList<>(movieModel);
+                    itemList = mTopRatedPosters;
+                    break;
+                case PosterHelper.NAME_ID_NOW_PLAYING:
+                    mNowPlayingModel = new ArrayList<>(movieModel);
+                    itemList = mNowPlayingPosters;
+                    break;
+                case PosterHelper.NAME_ID_UPCOMING:
+                    mUpcomingModel = new ArrayList<>(movieModel);
+                    itemList = mUpcomingPosters;
+                    break;
+                case PosterHelper.NAME_ID_FAVORITE:
+                    itemList = mEmptyPosters;
+                    break;
+                default:
+                    itemList = mEmptyPosters;
+                    break;
+            }
+
             //message the Boss that the download of movie info is complete
-            mBoss.updateMainActivity();
+            mBoss.updateSwipeActivity(itemList, mMovieRequest);
+            //mBoss.updateMainActivity();
+            checkBufferedRequest();
         }
         else{
             //TODO - need to handle event of a download failure
         }
 
-        //work has finished
-        mWorking = false;
     }
 
 
 
+    private void checkBufferedRequest(){
+        Log.d("Movies", "MovieButler.checkBufferedRequest: " + mBufferRequest.size());
+        if (mBufferRequest.size() > 0) {
+            Log.d("Movies", "     have buffered request");
+            int request = mBufferRequest.get(0);
+            mBufferRequest.remove(0);
+            getPosters(request);
+        }
+        Log.d("Movies", "          new buffer: " + mBufferRequest.size());
+    }
 
     private void preparePosterItems(Context ctx, int request,
                                                      ArrayList<MovieModel> models){
@@ -140,22 +186,27 @@ public class MovieButler extends MyButler{
             itemList.add(item);
         }
 
-        //worker executes the url request
-        if(request == MOVIE_REQUEST_MOST_POPULAR){
-            mPopularPosters = itemList;
-        }
-        else if(request == MOVIE_REQUEST_TOP_RATED){
-            mTopRatedPosters = itemList;
-        }
-        else if(request == MOVIE_REQUEST_NOW_PLAYING){
-            mNowPlayingPosters = itemList;
-        }
-        else if(request == MOVIE_REQUEST_UPCOMING){
-            mUpcomingPosters = itemList;
+        switch (request) {
+            case PosterHelper.NAME_ID_MOST_POPULAR:
+                mPopularPosters = itemList;
+                break;
+            case PosterHelper.NAME_ID_TOP_RATED:
+                mTopRatedPosters = itemList;
+                break;
+            case PosterHelper.NAME_ID_NOW_PLAYING:
+                mNowPlayingPosters = itemList;
+                break;
+            case PosterHelper.NAME_ID_UPCOMING:
+                mUpcomingPosters = itemList;
+                break;
+            case PosterHelper.NAME_ID_FAVORITE:
+                mFavoritePosters = itemList;
+                break;
         }
     }
 
 
+    private ArrayList<Integer> mBufferRequest = new ArrayList<>();
 
 /**
  * MovieJSON getModel() - allows access to the data received
@@ -163,46 +214,55 @@ public class MovieButler extends MyButler{
  */
     public ArrayList<PosterItem> getPosters(int request){
         Log.d("Movies", "MovieButler.getPosters: " + request);
-        mMovieRequest = request;
         if(mWorking){
-            mMovieWorker.cancel(true);
+            Log.d("Movies", "     buffer request");
+            mBufferRequest.add(request);
+            return mEmptyPosters;
+        }
+        else{
+            Log.d("Movies", "     execute request!!!!");
+            mMovieRequest = request;
         }
 
         //initializes the AsyncTask worker
         mMovieWorker = new MovieWorker(this);
 
         //worker executes the url request
-        if(request == MOVIE_REQUEST_MOST_POPULAR){
+        if(request == PosterHelper.NAME_ID_MOST_POPULAR){
             if(mPopularPosters.size() == 0){
                 //most popular movies are requested
                 mMovieWorker.execute(mUri.getMovieList(TMDBUri.PATH_POPULAR, mApiKey));
+                mWorking = true;
             }
             else{
                 return mPopularPosters;
             }
         }
-        else if(request == MOVIE_REQUEST_TOP_RATED){
+        else if(request == PosterHelper.NAME_ID_TOP_RATED){
             if(mTopRatedPosters.size() == 0){
                 //highest rated movies are requested
                 mMovieWorker.execute(mUri.getMovieList(TMDBUri.PATH_TOP_RATED, mApiKey));
+                mWorking = true;
             }
             else{
                 return mTopRatedPosters;
             }
         }
-        else if(request == MOVIE_REQUEST_NOW_PLAYING){
+        else if(request == PosterHelper.NAME_ID_NOW_PLAYING){
             if(mNowPlayingPosters.size() == 0){
                 //now playing movies are requested
                 mMovieWorker.execute(mUri.getMovieList(TMDBUri.PATH_NOW_PLAYING, mApiKey));
+                mWorking = true;
             }
             else{
                 return mNowPlayingPosters;
             }
         }
-        else if(request == MOVIE_REQUEST_UPCOMING){
+        else if(request == PosterHelper.NAME_ID_UPCOMING){
             if(mUpcomingPosters.size() == 0){
                 //upcoming movies are requested
                 mMovieWorker.execute(mUri.getMovieList(TMDBUri.PATH_UPCOMING, mApiKey));
+                mWorking = true;
             }
             else{
                 return mUpcomingPosters;
@@ -210,6 +270,39 @@ public class MovieButler extends MyButler{
         }
 
         return mEmptyPosters;
+    }
+
+    public MovieModel getMovie(int movieType, int position){
+        //TODO - need to prepare MovieItem data instead of passing MovieModel
+        MovieModel movie;
+        switch (movieType) {
+            case PosterHelper.NAME_ID_MOST_POPULAR:
+                movie = mPopularModel.get(position);
+                break;
+            case PosterHelper.NAME_ID_TOP_RATED:
+                movie = mTopRatedModel.get(position);
+                break;
+            case PosterHelper.NAME_ID_NOW_PLAYING:
+                movie = mNowPlayingModel.get(position);
+                break;
+            case PosterHelper.NAME_ID_UPCOMING:
+                movie = mUpcomingModel.get(position);
+                break;
+            case PosterHelper.NAME_ID_FAVORITE:
+                movie = null;
+                break;
+            default:
+                movie = null;
+        }
+
+        String posterPath = mBoss.getActivityContext().getString(R.string.tmdb_image_base_request) +
+                movie.getPosterPath() + "?" +
+                mBoss.getActivityContext().getString(R.string.tmdb_query_api_key) + "=" +
+                mBoss.getActivityContext().getString(R.string.api_key_tmdb);
+
+
+        return movie;
+
     }
 
 
