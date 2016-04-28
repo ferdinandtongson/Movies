@@ -1,9 +1,5 @@
 package me.makeachoice.movies.controller.butler.worker;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -44,11 +40,11 @@ import me.makeachoice.movies.model.response.tmdb.MoviesResponse;
  */
 public class MovieWorker extends MyWorker{
 
-    private ProgressDialog mDialog;
+    //private ProgressDialog mDialog;
     public MovieWorker(MyButler butler){
         //Butler in charge of MovieWorker
         mButler = butler;
-        mDialog = new ProgressDialog(mButler.getActivityContext());
+        //mDialog = new ProgressDialog(mButler.getActivityContext());
     }
 
 /**************************************************************************************************/
@@ -60,22 +56,6 @@ public class MovieWorker extends MyWorker{
  *
  *
  */
-    public boolean hasConnectivity(Context ctx){
-        //get Connectivity Manger
-        ConnectivityManager connMgr = (ConnectivityManager)
-                ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        //get access to network information from phone
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        //check if we have connection
-        if(networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
 
     public ArrayList<MovieModel> getMovies(){
         return mMovies;
@@ -85,8 +65,9 @@ public class MovieWorker extends MyWorker{
 
     @Override
     protected void onPreExecute(){
-        mDialog.setMessage("Doing something, please wait.");
-        mDialog.show();
+        //mDialog.setMessage("Doing something, please wait.");
+        //mDialog.setCancelable(true);
+        //mDialog.show();
     }
 
 /**
@@ -94,7 +75,7 @@ public class MovieWorker extends MyWorker{
  * XWorker.execute(String...). doInBackground runs on a background thread but is only meant for
  * short processing work, a couple seconds or so.
  *
- * Communicates with The Movie DB api, receives a JSON reponse and processes the response for
+ * Communicates with The Movie DB api, receives a JSON response and processes the response for
  * consumption by the Butler
  * @param params - a dynamic array of string varaible used to construct the url api call
  * @return - returns boolean value to onPostExecute
@@ -165,18 +146,18 @@ public class MovieWorker extends MyWorker{
  */
     protected void onPostExecute(Boolean result){
         //TODO - need to confirm success of background task
-        if(mDialog.isShowing()){
+        /*if(mDialog.isShowing()){
             mDialog.dismiss();
-        }
+        }*/
 
         mButler.workComplete(result);
     }
 
     @Override
     protected void onCancelled(){
-        if(mDialog.isShowing()){
+        /*(if(mDialog.isShowing()){
             mDialog.dismiss();
-        }
+        }*/
         //mButler.workComplete(false);
     }
 
