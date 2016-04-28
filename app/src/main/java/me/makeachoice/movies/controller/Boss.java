@@ -10,9 +10,11 @@ import java.util.HashMap;
 import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.MainKeeper;
+import me.makeachoice.movies.controller.housekeeper.MovieKeeper;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.MovieHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.controller.butler.valet.NetworkValet;
@@ -255,14 +257,17 @@ public class Boss extends Application{
                 MainKeeper mainKeeper = new MainKeeper(this);
 
                 keeper = mainKeeper;
-                mHouseKeeperRegistry.put(key, keeper);
             }
             else if(key == SwipeHelper.NAME_ID){
                 Log.d("Movies", "Boss.startHouseKeeper: Swipe");
                 SwipeKeeper swipeKeeper = new SwipeKeeper(this);
 
                 keeper = swipeKeeper;
-                mHouseKeeperRegistry.put(key, keeper);
+            }
+            else if(key == MovieHelper.NAME_ID){
+                MovieKeeper movieKeeper = new MovieKeeper(this);
+
+                keeper = movieKeeper;
             }
         }
 
