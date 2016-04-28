@@ -4,12 +4,10 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 
 /**
@@ -75,8 +73,6 @@ public class SwipeAdapter extends FragmentPagerAdapter {
         //get Bridge
         mBridge = bridge;
 
-
-        Log.d("Movies", "SwipeAdapter - frag count: " + fragmentMap.size());
         //initialize fragment array list
         mFragments = new ArrayList<>();
 
