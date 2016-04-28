@@ -12,4 +12,6 @@
         <string name="maid_empty">Empty</string>
 
     <string name="keeper_swipe">Swipe Keeper</string>
+
+    <string name="keeper_movie">Movie Keeper</string>
 </resources>
