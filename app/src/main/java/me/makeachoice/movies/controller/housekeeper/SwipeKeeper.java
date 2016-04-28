@@ -301,6 +301,8 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         }
 
         Intent intent = new Intent(mBoss.getActivityContext(), MovieActivity.class);
+        //intent.putExtra(EXTRA_MESSAGE, message);
+        mBoss.getActivityContext().startActivity(intent);
 
 
     }
