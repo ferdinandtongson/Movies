@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.makeachoice.movies.adapter.item.PosterItem;
-import me.makeachoice.movies.controller.butler.MovieButler;
+import me.makeachoice.movies.controller.butler.PosterButler;
 import me.makeachoice.movies.controller.housekeeper.MainKeeper;
 import me.makeachoice.movies.controller.housekeeper.MovieKeeper;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
@@ -32,7 +32,7 @@ public class Boss extends Application{
 /**
  * Class Variables:
  *      Context mActivityContext - current Activity Context on display
- *      MovieButler mButler - Butler class taking care of Movie data
+ *      PosterButler mButler - Butler class taking care of Poster data
  *      NetworkValet mNetworkValet - in charge of checking for network connectivity
  *      HashMap<Integer,MyHouseKeeper> mHouseKeeperRegistry - registered HouseKeepers
  *      HashMap<Integer,MyMaid> mMaidRegistry - registered Maids
@@ -45,7 +45,7 @@ public class Boss extends Application{
     Context mActivityContext;
 
     //mButler will take care of preparing Movie data for consumption
-    MovieButler mButler;
+    PosterButler mButler;
 
     //mNetworkValet is in charge of checking for network connectivity
     NetworkValet mNetworkValet;
@@ -181,8 +181,8 @@ public class Boss extends Application{
 
         //check if Butler is awake
         if(mButler == null){
-            //initialize MovieButler
-            mButler = new MovieButler(this);
+            //initialize PosterButler
+            mButler = new PosterButler(this);
         }
     }
 

@@ -24,7 +24,7 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
  *      abstract public Context getActivityContext()
  *      abstract public void workComplete(Boolean)
  */
-public class MovieButler extends MyButler{
+public class PosterButler extends MyButler{
 
 /**************************************************************************************************/
 /**
@@ -103,11 +103,11 @@ public class MovieButler extends MyButler{
 
 /**************************************************************************************************/
 /**
- * MovieButler - constructor, registers to Boss, initialize URI builder, get API key and initialize
+ * PosterButler - constructor, registers to Boss, initialize URI builder, get API key and initialize
  * data buffers.
  * @param boss - Boss class
  */
-    public MovieButler(Boss boss){
+    public PosterButler(Boss boss){
         //Application context
         mBoss = boss;
 

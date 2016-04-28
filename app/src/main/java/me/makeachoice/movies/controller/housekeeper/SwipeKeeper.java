@@ -257,19 +257,19 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         //identify menu selection
         /*if (id == MainHelper.MENU_ITEM01) {
             //requested most popular movies
-            //movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
+            //movieRequest = PosterButler.MOVIE_REQUEST_MOST_POPULAR;
         }
         else if (id == MainHelper.MENU_ITEM02) {
             //requested most popular movies
-            //movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
+            //movieRequest = PosterButler.MOVIE_REQUEST_MOST_POPULAR;
         }
         else if (id == MainHelper.MENU_ITEM03) {
             //requested now playing movies
-            //movieRequest = MovieButler.MOVIE_REQUEST_NOW_PLAYING;
+            //movieRequest = PosterButler.MOVIE_REQUEST_NOW_PLAYING;
         }
         else{
             //requested upcoming movies
-            movieRequest = MovieButler.MOVIE_REQUEST_UPCOMING;
+            movieRequest = PosterButler.MOVIE_REQUEST_UPCOMING;
         }*/
 
     }
