@@ -157,6 +157,8 @@ public class SwipeActivity extends MyActivity {
     public void finishActivity() {
         //close activity
         this.finish();
+        android.os.Process.killProcess(android.os.Process.myPid());
+        super.onDestroy();
     }
 
 
