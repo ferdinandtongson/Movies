@@ -2,14 +2,18 @@ package me.makeachoice.movies.controller;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.housekeeper.MainKeeper;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
+import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.controller.butler.valet.NetworkValet;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
@@ -28,7 +32,6 @@ public class Boss extends Application{
  *      Context mActivityContext - current Activity Context on display
  *      MovieButler mButler - Butler class taking care of Movie data
  *      NetworkValet mNetworkValet - in charge of checking for network connectivity
- *      int mMovieRequest - current list of movies requested
  *      HashMap<Integer,MyHouseKeeper> mHouseKeeperRegistry - registered HouseKeepers
  *      HashMap<Integer,MyMaid> mMaidRegistry - registered Maids
  *
@@ -44,9 +47,6 @@ public class Boss extends Application{
 
     //mNetworkValet is in charge of checking for network connectivity
     NetworkValet mNetworkValet;
-
-    //mMovieRequest - current list of movies requested
-    private int mMovieRequest;
 
     //mHouseKeeperRegistry - HashMap of instantiated HouseKeeper classes being used by the Boss
     private HashMap<Integer, MyHouseKeeper> mHouseKeeperRegistry = new HashMap<>();
@@ -86,21 +86,14 @@ public class Boss extends Application{
  * @param request - type of movie data requested (most popular or highest rated)
  * @return - an array list of movie data
  */
-    public ArrayList<MovieModel> getMovies(int request){
+    public ArrayList<PosterItem> getPosters(int request){
 
-        //check if there is data or if it is a new request
-        if(mButler.getModel() == null || mMovieRequest != request){
+        //return poster items
+        return mButler.getPosters(request);
+    }
 
-            //record current movie request
-            mMovieRequest = request;
-            //request Butler to get data (will activate an AsyncTask execute
-            mButler.requestMovies(request);
-            //let requester know there is not any data yet
-            return null;
-        }
-
-        //return movie data list
-        return mButler.getModel();
+    public MovieModel getMovie(int movieType, int position){
+        return mButler.getMovie(movieType, position);
     }
 
 /**
@@ -220,6 +213,14 @@ public class Boss extends Application{
         keeper.displayFragment();
     }
 
+    public void updateSwipeActivity(ArrayList<PosterItem> posters, int request){
+        //TODO - very rigid, need to massage
+        //instantiate HouseKeeper that will maintain the Main Activity
+        SwipeKeeper keeper = (SwipeKeeper)mHouseKeeperRegistry.get(SwipeHelper.NAME_ID);
+        //tells the HouseKeeper to prepare the fragments the Activity will use
+        keeper.updatePosters(posters, request);
+    }
+
 /**
  * boolean onOrientationChange() - check orientation change status of phone
  * @return - boolean status of phone orientation change
@@ -246,13 +247,26 @@ public class Boss extends Application{
  * @return - requested HouseKeeper or null
  */
     private MyHouseKeeper startHouseKeeper(Integer key){
-        if(key == MainHelper.NAME_ID){
-            MainKeeper keeper = new MainKeeper(this);
-            mHouseKeeperRegistry.put(key, keeper);
-            return keeper;
+
+        MyHouseKeeper keeper = mHouseKeeperRegistry.get(key);
+
+        if(keeper == null){
+            if(key == MainHelper.NAME_ID){
+                MainKeeper mainKeeper = new MainKeeper(this);
+
+                keeper = mainKeeper;
+                mHouseKeeperRegistry.put(key, keeper);
+            }
+            else if(key == SwipeHelper.NAME_ID){
+                Log.d("Movies", "Boss.startHouseKeeper: Swipe");
+                SwipeKeeper swipeKeeper = new SwipeKeeper(this);
+
+                keeper = swipeKeeper;
+                mHouseKeeperRegistry.put(key, keeper);
+            }
         }
 
-        return null;
+        return keeper;
     }
 
 /**************************************************************************************************/
