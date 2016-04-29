@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *      http://api.themoviedb.org/3/movie/157336/similar?api_key=xxx
  * JSON Response:
  *      root{1}
- *          array{2}
+ *          array{4}
  *              page:
  *              results[]
  *              total_pages:
