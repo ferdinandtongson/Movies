@@ -27,12 +27,13 @@ import me.makeachoice.movies.model.response.tmdb.MoviesResponse;
  * the request for consumption and passes the processed data up to the Butler.
  *
  * Variable from MyWorker:
- *      mButler;
+ *      mButler
  *
  * Methods from MyWorker:
  *      Boolean doInBackground(String... params)
  *      void onProgressUpdate(Integer... values)
  *      Boolean onPostExecute(Boolean result)
+ *      void onCancelled()
  *
  * Permissions needed in AndroidManifest file:
  *      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -40,34 +41,69 @@ import me.makeachoice.movies.model.response.tmdb.MoviesResponse;
  */
 public class MovieWorker extends MyWorker{
 
-    //private ProgressDialog mDialog;
-    public MovieWorker(MyButler butler){
-        //Butler in charge of MovieWorker
-        mButler = butler;
-        //mDialog = new ProgressDialog(mButler.getActivityContext());
-    }
+/**************************************************************************************************/
+/**
+ * Class Variables:
+ *      ArrayList<MovieModel> mMovies - list of movie model data received from the API call
+ */
+/**************************************************************************************************/
+
+    //mMovies - list of movie model data received from the API call
+    ArrayList<MovieModel> mMovies;
+
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * boolean hasConnectivity(Context) - check to see if the phone has network connection
- * @return boolean - true if we have network connect, false if not
- *
- * NOTE - need to have <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
- *
- *
+ * MovieWorker - constructor
+ * @param butler - butler class making the API request
  */
+    public MovieWorker(MyButler butler){
+        //Butler making the API request
+        mButler = butler;
+    }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Getters:
+ *      MovieModel getMovie() - get Movie model data received from the API call
+ *
+ * Setters:
+ *      - None -
+ */
+/**************************************************************************************************/
+/**
+ * ArrayList<MovieModel> getMovies() - get list of Movie model data received from the API call
+ * @return - list of movie model data received from the API call
+ */
     public ArrayList<MovieModel> getMovies(){
         return mMovies;
     }
 
 /**************************************************************************************************/
 
+/**************************************************************************************************/
+/**
+ * Implemented Abstract Class methods
+ *      void onPreExecute() - method from MyWorker inherited from AsyncTask; runs on UI Thread.
+ *      Boolean doInBackground(String...) - method from MyWorker inherited from AsyncTask; runs on
+ *          a background Thread. Makes an API call to get list of Movie data
+ *      void onProgressUpdate(Integer...) - method from MyWorker inherited from AsyncTask; runs on
+ *          UI Thread. Does nothing.
+ *      void onPostExecute(Boolean) - method from MyWorker inherited from AsyncTask; runs on UI
+ *          Thread. Informs the Butler class that the work has completed.
+ *      void onCancelled() - method from MyWorker inherited from AsyncTask; runs on UI Thread.
+ *          Called if the Task is canceled; does nothing.
+ */
+/**************************************************************************************************/
+/**
+ * void onPreExecute() - does nothing.
+ */
     @Override
     protected void onPreExecute(){
-        //mDialog.setMessage("Doing something, please wait.");
-        //mDialog.setCancelable(true);
-        //mDialog.show();
+        //does nothing
     }
 
 /**
@@ -77,7 +113,7 @@ public class MovieWorker extends MyWorker{
  *
  * Communicates with The Movie DB api, receives a JSON response and processes the response for
  * consumption by the Butler
- * @param params - a dynamic array of string varaible used to construct the url api call
+ * @param params - a dynamic array of string variable used to construct the url api call
  * @return - returns boolean value to onPostExecute
  */
     protected Boolean doInBackground(String... params){
@@ -94,7 +130,6 @@ public class MovieWorker extends MyWorker{
         //result of url call
         Boolean result;
         try {
-            //api_call = "http://api.themoviedb.org/3/genre/movie/list?api_key=ec1c9e77ea098584409c2b2309c4f287";
             //create url object with string variable
             URL url = new URL(api_call);
             //open http connection
@@ -140,53 +175,49 @@ public class MovieWorker extends MyWorker{
         //does nothing
     }
 
-    /**
+/**
  * void onPostExecute(Boolean) - runs on UI thread, called when doInBackground is completed
  * @param result - boolean value on whether the background task completed successfully or not
  */
     protected void onPostExecute(Boolean result){
         //TODO - need to confirm success of background task
-        /*if(mDialog.isShowing()){
-            mDialog.dismiss();
-        }*/
-
         mButler.workComplete(result);
     }
 
+/**
+ * void onCancelled() - called if the Task is canceled. Does nothing.
+ */
     @Override
     protected void onCancelled(){
-        /*(if(mDialog.isShowing()){
-            mDialog.dismiss();
-        }*/
-        //mButler.workComplete(false);
+        //does nothing
     }
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * JSON response variables received from TheMovie DB api call.
- * {
- *     "page":X
- *     "result":[{....}],
- * }
+ * Class methods
+ *      Boolean processJSON(StringBuilder) - process raw JSON data to MovieModel
  */
-
 /**************************************************************************************************/
-
-/**************************************************************************************************/
-
-    ArrayList<MovieModel> mMovies;
+/**
+ * Boolean processJSON(StringBuilder) - process raw JSON data to a list of MovieModel data
+ * @param builder - raw JSON data
+ * @return - result flag if JSON process was successful or not
+ */
     private Boolean processJSON(StringBuilder builder){
         mMovies = new ArrayList<>();
         try{
             //convert string to JSON Object
             JSONObject topLevel = new JSONObject(builder.toString());
 
+            //create Gson object
             Gson gson = new GsonBuilder().create();
 
+            //convert raw JSON data to a list of MovieModel data
             MoviesResponse response = gson.fromJson(topLevel.toString(), MoviesResponse.class);
 
+            //get list of MovieModel data from response
             mMovies = response.movies;
         }
         catch(JSONException e){
@@ -197,6 +228,8 @@ public class MovieWorker extends MyWorker{
         return true;
 
     }
+
+/**************************************************************************************************/
 
 
 }
