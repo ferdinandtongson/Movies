@@ -33,6 +33,7 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
  *      Boolean doInBackground(String... params)
  *      void onProgressUpdate(Integer... values)
  *      Boolean onPostExecute(Boolean result)
+ *      void onCancelled()
  *
  * Permissions needed in AndroidManifest file:
  *      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -53,10 +54,10 @@ public class DetailWorker extends MyWorker{
 /**************************************************************************************************/
 
 /**************************************************************************************************/
-    /**
-     * DetailWorker - constructor
-     * @param butler - butler class making the API request
-     */
+/**
+ * DetailWorker - constructor
+ * @param butler - butler class making the API request
+ */
     public DetailWorker(MyButler butler){
         //Butler making the API request
         mButler = butler;
@@ -199,8 +200,6 @@ public class DetailWorker extends MyWorker{
  * Class methods
  *      Boolean processJSON(StringBuilder) - process raw JSON data to MovieModel
  */
-/**************************************************************************************************/
-
 /**************************************************************************************************/
 /**
  * Boolean processJSON(StringBuilder) - process raw JSON data to MovieModel data
