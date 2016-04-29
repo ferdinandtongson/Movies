@@ -2,6 +2,8 @@ package me.makeachoice.movies.controller.butler;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+
 import me.makeachoice.movies.controller.Boss;
 
 /**
@@ -14,13 +16,19 @@ public abstract class MyButler {
 /**
  * Class Variables
  *      Boss mBoss - reference to Boss class
- *      Bridge mBridge - class implementing Bridge, typically a HouseKeeper class
- *      Fragment mFragment - fragment being maintained by the Maid
+ *      Boolean mWorking - boolean value to check if a Worker is working in the background
+ *      ArrayList<Integer> mRequestBuffer - pending AsyncTask Movie request
  *
  /**************************************************************************************************/
 
     //mBoss - application context that acts as a bridge between the Model and View
-    Boss mBoss;
+    protected Boss mBoss;
+
+    //mWorking - boolean value to check if a Worker is working in the background
+    protected Boolean mWorking;
+
+    //mBufferRequest - pending AsyncTask Movie requests
+    protected ArrayList<Integer> mRequestBuffer;
 
 /**************************************************************************************************/
 
