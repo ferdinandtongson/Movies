@@ -14,11 +14,13 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
  * PosterButler handles the creation of a list of PosterItems to be consumed by the View. It takes
- * data from API calls or from the database and process the data. It also buffers the data so it
+ * data from API calls or from the database and processes the data. It also buffers the data so it
  * does not need to make repeated calls to the API or database.
  *
  * Variables from MyButler:
  *      Boss mBoss
+ *      Boolean mWorking
+ *      ArrayList<Integer> mRequestBuffer
  *
  * Abstract Methods from MyButler:
  *      abstract public Context getActivityContext()
@@ -32,8 +34,6 @@ public class PosterButler extends MyButler{
  *      String mTMDBKey - the key used to access TheMovieDB api
  *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
  *      MovieWorker mMovieWorker - AsyncTask class that makes API calls to get Movie details
- *      Boolean mWorking - boolean value to check if a Worker is working in the background
- *      ArrayList<Integer> mRequestBuffer - pending AsyncTask Movie request
  *      int mMovieRequest - current list of Movies being requested
  *
  *      ArrayList<MovieModel> mPopularModels - Popular Movie raw data from TMDB
@@ -61,12 +61,6 @@ public class PosterButler extends MyButler{
 
     //mMovieWorker - AsyncTask class that makes API calls to get Movie details
     private MovieWorker mMovieWorker;
-
-    //mWorking - boolean value to check if a Worker is working in the background
-    private Boolean mWorking;
-
-    //mBufferRequest - pending AsyncTask Movie requests
-    private ArrayList<Integer> mRequestBuffer;
 
     //mMovieRequest - current list of Movies being requested
     private int mMovieRequest;
@@ -353,7 +347,7 @@ public class PosterButler extends MyButler{
         mWorking = true;
 
         //check type of movie request
-        switch (request) {
+        switch(request) {
             case PosterHelper.NAME_ID_MOST_POPULAR:
                 //start AsyncTask, get Popular movies from TheMovieDB api
                 mMovieWorker.execute(mTMDBUri.getMovieList(TMDBUri.PATH_POPULAR, mTMDBKey));
@@ -370,6 +364,8 @@ public class PosterButler extends MyButler{
                 //start AsyncTask, get Upcoming movies from TheMovieDB api
                 mMovieWorker.execute(mTMDBUri.getMovieList(TMDBUri.PATH_UPCOMING, mTMDBKey));
                 break;
+            default:
+                mWorking = false;
         }
     }
 
