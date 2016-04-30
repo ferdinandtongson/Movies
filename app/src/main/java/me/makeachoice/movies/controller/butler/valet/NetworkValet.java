@@ -48,7 +48,8 @@ public class NetworkValet {
     DialogInterface.OnClickListener mPositiveListener = new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int id) {
             if(hasConnection()){
-                mBoss.updateMainActivity();
+                //TODO - need to handle network reconnected
+                //mBoss.updateMainActivity();
             }
         }
     };
