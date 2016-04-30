@@ -32,6 +32,9 @@ public class TMDBUri {
 
 
     private final static int QUERY_API_KEY = R.string.tmdb_query_api_key;
+    private final static int QUERY_APPEND_RESPONSE = R.string.tmdb_query_append_response;
+
+    private final static int APPEND_RESPONSE_ALL = R.string.tmdb_append_response_all;
 
     MyButler mButler;
     public TMDBUri(MyButler butler){
@@ -85,6 +88,20 @@ public class TMDBUri {
         return builder.build().toString();
     }
 
+    public String getMovieDetailAll(String movieId, String apiKey){
+        // movie/movieId?api_key=apiKey
+        Uri.Builder builder = createUriBase();
+        builder.appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
+                .appendPath(movieId)
+                .appendQueryParameter(
+                        mButler.getActivityContext().getString(QUERY_API_KEY), apiKey)
+                .appendQueryParameter(
+                        mButler.getActivityContext().getString(QUERY_APPEND_RESPONSE),
+                        mButler.getActivityContext().getString(APPEND_RESPONSE_ALL));
+
+        return builder.build().toString();
+    }
+
     public String getMovieDetail(String movieId, int detailType, String apiKey){
         // movie/movieId/detailType?api_key=apiKey
         //credits: use CreditsResponse
@@ -115,28 +132,5 @@ public class TMDBUri {
 
     }
 
-    /*
-
-
-
-    http://api.themoviedb.org/3/genre/movie/list?api_key=ec1c9e77ea098584409c2b2309c4f287
-
-    http://api.themoviedb.org/3/movie/popular?api_key=ec1c9e77ea098584409c2b2309c4f287
-    http://api.themoviedb.org/3/movie/id?api_key=ec1c9e77ea098584409c2b2309c4f287
-
-    http://api.themoviedb.org/3/search/movie (by movie title)
-
-    http://api.themoviedb.org/3/genre/28/movies?api_key=ec1c9e77ea098584409c2b2309c4f287
-    http://api.themoviedb.org/3/movie/209112?api_key=ec1c9e77ea098584409c2b2309c4f287
-
-    //get movie details plus videos
-    http://api.themoviedb.org/3/movie/157336?api_key=ec1c9e77ea098584409c2b2309c4f287&append_to_response=videos
-    //same as above plus videos, similar movies, reviews and credits
-    http://......?api_key=[id]&append_to_response=videos,similar,reviews,credits
-
-
-    //get video with key
-    https://www.youtube.com/watch?v=SUXWAEX2jlg
-    */
 
 }
