@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MovieActivity"
+            android:name=".DetailActivity"
             android:theme="@style/AppTheme"
             android:parentActivityName=".SwipeActivity" >
             <meta-data
