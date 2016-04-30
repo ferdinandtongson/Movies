@@ -27,7 +27,7 @@ public class PosterHelper extends MyHelper {
     public final static int NAME_ID_NOW_PLAYING = R.string.maid_poster_now_playing;
     public final static int NAME_ID_UPCOMING = R.string.maid_poster_upcoming;
     public final static int NAME_ID_FAVORITE = R.string.maid_poster_favorite;
-    public final static int NAME_ID_EMPTY = R.string.maid_empty;
+    public final static int NAME_ID_EMPTY = R.string.maid_poster_empty;
 
 
 /**************************************************************************************************/
