@@ -10,12 +10,13 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.makeachoice.movies.MovieActivity;
+import me.makeachoice.movies.DetailActivity;
 import me.makeachoice.movies.MyActivity;
 import me.makeachoice.movies.SwipeActivity;
 import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
+import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
@@ -69,7 +70,7 @@ import me.makeachoice.movies.controller.housekeeper.recycler.SwipeAdapter;
  * Implements Maid.Bridge
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
- *      xxx onSomeCustomMaidMethod() [SomeMaid only]
+ *      void onSelectedPoster(int, int) - movie poster selected [PosterMaid.Bridge]
  *
  */
 public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, SwipeAdapter.Bridge,
@@ -186,7 +187,7 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         SwipeAdapter adapter = new SwipeAdapter(this, mFragmentManager, mFragmentRegistry);
 
         //get viewPager
-        ViewPager viewPager = (ViewPager)mViewHolder.getView(activity, SwipeHelper.SWIPE_PAGER_ID);
+        ViewPager viewPager = (ViewPager)activity.findViewById(SwipeHelper.SWIPE_PAGER_ID);
 
         //set adapter in viewPager
         viewPager.setAdapter(adapter);
@@ -283,27 +284,25 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  */
 /**************************************************************************************************/
 /**
- * void onSelectedPoster(int) - event called when a poster is selected.
- * @param id - id number of the Maid where the poster selection occurred
- * @param position - position of poster
+ * void onSelectedPoster(int) - event called when a poster is selected; starts DetailActivity
+ * @param movieType - id number of the Maid used as movieType where the poster selection occurred
+ * @param index - position of poster
  */
-    public void onSelectedPoster(int id, int position){
-        Log.d("Movies", "SwipeKeeper.onSelectedPoster: " + position);
-        //mBoss.onMovieActivityChange();
-        //get the posterItem of the selected poster
-        PosterItem poster = mBoss.getPosters(id).get(position);
+    public void onSelectedPoster(int movieType, int index){
+        //get key for saving movie type to Extra
+        String keyType = mBoss.getActivityContext().getString(DetailHelper.KEY_MOVIE_TYPE_ID);
+        //get key for saving movie index to Extra
+        String keyIndex = mBoss.getActivityContext().getString(DetailHelper.KEY_MOVIE_INDEX_ID);
 
-        Log.d("Movies", "     title: " + poster.getTitle());
+        //create intent to start DetailActivity
+        Intent intent = new Intent(mBoss.getActivityContext(), DetailActivity.class);
 
-        //check if there is a title
-        /*if(poster.getTitle().equals(mBoss.getActivityContext()
-                .getString(PosterHelper.NAME_ID_EMPTY))){
-            //has a title, get Movie
-            String plot = mBoss.getMovie(id, position).getOverview();
-        }*/
+        //save movieType for DetailActivity to use
+        intent.putExtra(keyType, String.valueOf(movieType));
+        //save movieIndex for DetailActivity to use
+        intent.putExtra(keyIndex, String.valueOf(index));
 
-        Intent intent = new Intent(mBoss.getActivityContext(), MovieActivity.class);
-        //intent.putExtra(EXTRA_MESSAGE, message);
+        //start DetailActivity
         mBoss.getActivityContext().startActivity(intent);
 
 
@@ -319,13 +318,12 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 /**************************************************************************************************/
 /**
  * void onFragmentChange(int) - SwipeAdapter Bridge implementation, called when a swipe event
- * happens causinng the Fragment being viewed to be changed. Gets poster data from Boss, if
+ * happens causing the Fragment being viewed to be changed. Gets poster data from Boss, if
  * poster data is not available, an AsyncTask will start and updatePoster() will be called
  * when the task is done.
  * @param position - position of fragment being displayed
  */
     public void onFragmentChange(int position){
-        Log.d("Movies", "SwipeKeeper.onFragmentChange: " + position);
         //get movie data from Boss, if null will start AsyncTask to get data, calls updatePoster
         switch (position) {
             case 0: mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
