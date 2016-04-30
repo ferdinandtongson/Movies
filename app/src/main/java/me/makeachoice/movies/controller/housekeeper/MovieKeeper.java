@@ -1,27 +1,28 @@
 package me.makeachoice.movies.controller.housekeeper;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.HashMap;
 
+import me.makeachoice.movies.DetailActivity;
 import me.makeachoice.movies.MyActivity;
-import me.makeachoice.movies._templateActivity;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.assistant.FragmentAssistant;
 import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
-import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.MovieHelper;
-import me.makeachoice.movies.controller.housekeeper.helper._templateHelper;
-import me.makeachoice.movies.controller.housekeeper.maid._templateMaid;
+import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
+import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
+import me.makeachoice.movies.controller.housekeeper.recycler.DetailAdapter;
+import me.makeachoice.movies.model.item.MovieItem;
 
 
 /**
- * _templateHouseKeeper is the template for HouseKeeper Class. It is responsible for the Activity
- * and all of the Fragments contained within this activity. It communicates directly with Boss to
- * get data needed by the Activity and Fragments as well as the Activity and Fragments.
+ * DetailKeeper is responsible for DetailActivity and all the Fragments contained with the activity.
+ * It communicates directly with Boss, DetailActivity and the Maids maintaining the fragments.
  *
  * The HouseKeeper is only aware of the Activity, its' child views, and fragments contained within
  * the Activity. It is Not aware of the details of the fragments it contains, the details are taken
@@ -29,10 +30,10 @@ import me.makeachoice.movies.controller.housekeeper.maid._templateMaid;
  *
  * It uses other classes to assist in the upkeep of the Activity:
  *      MaidAssistant - initializes and registers all the Maids used by this HouseKeeper
- *      SomeMaid - maintains the SomeFragment
+ *      InfoMaid - maintains the InfoFragment that displays general information about the movie
  *
- *      FragmentAssistant - assists in the transitions between fragments
- *      _templateHelper - holds all static resources (layout id, view ids, etc)
+ *      DetailHelper - holds all static resources (layout id, view ids, etc)
+ *      DetailAdapter - FragmentStatePagerAdapter that handles the Fragment swipe updates
  *
  * Variables from MyHouseKeeper:
  *      Boss mBoss
@@ -62,17 +63,19 @@ import me.makeachoice.movies.controller.housekeeper.maid._templateMaid;
  *      xxx onSomeCustomMaidMethod() [SomeMaid only]
  *
  */
-public class MovieKeeper extends MyHouseKeeper implements _templateActivity.Bridge,
-        _templateMaid.Bridge {
+public class MovieKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
+        DetailAdapter.Bridge,
+        InfoMaid.Bridge {
 
 /**************************************************************************************************/
 /**
  * Class Variables:
- *      - None -
+ *      DetailHelper.ViewHolder mViewHolder - holds all the child view of the Activity
  */
 /**************************************************************************************************/
 
-    //add class variables here
+    //mViewHolder - holds all the child views of the fragment
+    private DetailHelper.ViewHolder mViewHolder;
 
 /**************************************************************************************************/
 
@@ -88,22 +91,19 @@ public class MovieKeeper extends MyHouseKeeper implements _templateActivity.Brid
         mBoss = boss;
 
         //register HouseKeeper to Boss
-        mBoss.registerHouseKeeper(MovieHelper.NAME_ID, this);
+        mBoss.registerHouseKeeper(DetailHelper.NAME_ID, this);
 
+        //initialize fragment registry
         mFragmentRegistry = new HashMap<>();
+
+        //initialize ViewHolder
+        mViewHolder = new DetailHelper.ViewHolder();
 
         //initialize MaidAssistant
         mMaidAssistant = new MaidAssistant();
 
-        //TODO - add custom method to MaidAssistant
-        //initialize all Maids used by the _templateHouseKeeper
-        //mMaidAssistant.hireXXXMaids(mBoss, this);
-
-        //initialize FragmentAssistant
-        mFragAssistant = new FragmentAssistant();
-
-        //set class variable values here
-        // xxxVariable = xxxValue;
+        //initialize all Maids used by the SwipeKeeper
+        mMaidAssistant.hireDetailMaids(mBoss, this);
     }
 
 /**************************************************************************************************/
@@ -161,9 +161,22 @@ public class MovieKeeper extends MyHouseKeeper implements _templateActivity.Brid
             //TODO - need to save instances. Movie request type maybe?
         }
 
-        //TODO - set activity layout, create Helper
+        String keyType = activity.getString(DetailHelper.KEY_MOVIE_TYPE_ID);
+        String keyIndex = activity.getString(DetailHelper.KEY_MOVIE_INDEX_ID);
+
+        Intent intent = activity.getIntent();
+        int movieType = Integer.valueOf(intent.getStringExtra(keyType));
+        int index = Integer.valueOf(intent.getStringExtra(keyIndex));
+
+        MovieItem movie = mBoss.getMovie(movieType, index);
+
+        InfoMaid maid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
+        maid.setMovie(movie);
+
+        Log.d("Movies", "     overview: " + movie.getOverview());
+
         //set activity layout
-        activity.setContentView(MovieHelper.MOVIE_LAYOUT_ID);
+        activity.setContentView(DetailHelper.DETAIL_LAYOUT_ID);
 
         //fragmentManager is context sensitive, need to recreate every time onCreate() is called
         mFragmentManager = activity.getSupportFragmentManager();
@@ -180,6 +193,15 @@ public class MovieKeeper extends MyHouseKeeper implements _templateActivity.Brid
             //do something if no network found
         }
 
+        //create FragmentPagerAdapter for viewPager
+        DetailAdapter adapter = new DetailAdapter(this, mFragmentManager, mFragmentRegistry);
+        Log.d("Movies", "     adapter: " + adapter.toString());
+
+        //get viewPager
+        ViewPager viewPager = (ViewPager)activity.findViewById(DetailHelper.DETAIL_PAGER_ID);
+
+        //set adapter in viewPager
+        viewPager.setAdapter(adapter);
     }
 
 /**
@@ -255,24 +277,87 @@ public class MovieKeeper extends MyHouseKeeper implements _templateActivity.Brid
         //type of movie requested
         int movieRequest;
 
+        switch(id){
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                //NavUtils.navigateUpFromSameTask(activity);
+                //return true;
+        }
+
         //identify menu selection
         /*if (id == MainHelper.MENU_ITEM01) {
             //requested most popular movies
-            //movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
+            //movieRequest = PosterButler.MOVIE_REQUEST_MOST_POPULAR;
         }
         else if (id == MainHelper.MENU_ITEM02) {
             //requested most popular movies
-            //movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
+            //movieRequest = PosterButler.MOVIE_REQUEST_MOST_POPULAR;
         }
         else if (id == MainHelper.MENU_ITEM03) {
             //requested now playing movies
-            //movieRequest = MovieButler.MOVIE_REQUEST_NOW_PLAYING;
+            //movieRequest = PosterButler.MOVIE_REQUEST_NOW_PLAYING;
         }
         else{
             //requested upcoming movies
-            movieRequest = MovieButler.MOVIE_REQUEST_UPCOMING;
+            movieRequest = PosterButler.MOVIE_REQUEST_UPCOMING;
         }*/
 
+    }
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * DetailAdapter.Bridge implementations:
+ *      void onFragmentChange(int position) - fragment being viewed changed, swipe event happened
+ */
+/**************************************************************************************************/
+/**
+ * void onFragmentChange(int) - DetailAdapter Bridge implementation, called when a swipe event
+ * happens causing the Fragment being viewed to be changed. Gets poster data from Boss, if
+ * poster data is not available, an AsyncTask will start and updatePoster() will be called
+ * when the task is done.
+ * @param position - position of fragment being displayed
+ */
+    public void onFragmentChange(int position){
+        //get movie data from Boss, if null will start AsyncTask to get data, calls updatePoster
+        switch (position) {
+            case 0:
+                Log.d("Movies", "MovieKeeper.onFragmentChange: " + position);
+                //mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
+                break;
+            case 1:
+                //mBoss.getPosters(PosterHelper.NAME_ID_TOP_RATED);
+                break;
+            case 2:
+                //mBoss.getPosters(PosterHelper.NAME_ID_NOW_PLAYING);
+                break;
+            case 3:
+                //mBoss.getPosters(PosterHelper.NAME_ID_UPCOMING);
+                break;
+            case 4:
+                //mBoss.getPosters(PosterHelper.NAME_ID_EMPTY);
+                break;
+            default:
+                //mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
+                break;
+        }
+
+    }
+
+/**
+ * void updateDetails(MovieItem) - called when a detailed Movie request AsyncTask has
+ * finished.
+ * @param item - movie item data of current movie being viewed
+ */
+    public void updateDetails(MovieItem item){
+        Log.d("Movies", "MovieKeeper.updateDetails");
+        //get Maid responsible for displaying the type of movies requested
+        InfoMaid maid = ((InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID));
+
+        maid.updateViews(item);
+        //update posters being displayed by the Fragment being maintained by the Maid
+        //maid.updatePosters(posters);
     }
 
 /**************************************************************************************************/
