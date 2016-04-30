@@ -8,16 +8,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.makeachoice.movies.adapter.item.PosterItem;
+import me.makeachoice.movies.controller.butler.DetailButler;
 import me.makeachoice.movies.controller.butler.PosterButler;
-import me.makeachoice.movies.controller.housekeeper.MainKeeper;
-import me.makeachoice.movies.controller.housekeeper.MovieKeeper;
+import me.makeachoice.movies.controller.housekeeper.DetailKeeper;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
-import me.makeachoice.movies.controller.housekeeper.helper.MainHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.MovieHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.controller.butler.valet.NetworkValet;
+import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
@@ -45,7 +45,8 @@ public class Boss extends Application{
     Context mActivityContext;
 
     //mButler will take care of preparing Movie data for consumption
-    PosterButler mButler;
+    PosterButler mPosterButler;
+    DetailButler mDetailButler;
 
     //mNetworkValet is in charge of checking for network connectivity
     NetworkValet mNetworkValet;
@@ -66,7 +67,8 @@ public class Boss extends Application{
 /**
  * Getters:
  *      Context getActivityContext() - get current Activity Context
- *      MovieJson getMovies(int) - get list of JSON movie data
+ *      ArrayList<PosterItem> getPosters(int) - get list of poster item data
+ *      MovieItem getMovie(int, int) - get movie item data
  *      MyHouseKeeper getHouseKeeper(Integer) - get houseKeeper from registry
  *      MyMaid getMaid(Integer) - get Maid from registry
  *
@@ -83,19 +85,30 @@ public class Boss extends Application{
 }
 
 /**
- * MovieJSON getModel(int) - request access to the JSON movie data. If null or is a new request,
+ * ArrayList<PosterItem> getModel(int) - get list of poster item data. If null or is a new request,
  * Butler will start an AsyncTask to get new movie data.
- * @param request - type of movie data requested (most popular or highest rated)
- * @return - an array list of movie data
+ * @param request - type of movie data requested
+ * @return - an array list of poster item data
  */
     public ArrayList<PosterItem> getPosters(int request){
 
         //return poster items
-        return mButler.getPosters(request);
+        return mPosterButler.getPosters(request);
     }
 
-    public MovieModel getMovie(int movieType, int position){
-        return mButler.getMovie(movieType, position);
+/**
+ * MovieItem getMovie(int, int) - get movie item data. If the movie item data is incomplete, will
+ * start an AsyncTask to get the missing data.
+ * @param movieType - type of movies the movie is selected from
+ * @param position - index location of the selected movie
+ * @return - movie item data of the selected movie
+ */
+    public MovieItem getMovie(int movieType, int position){
+        //get the movie model from the PosterButler
+        MovieModel model = mPosterButler.getMovie(movieType, position);
+
+        //get the movie item data from DetailButler, if incomplete will start an AsyncTask
+        return mDetailButler.getMovie(model);
     }
 
 /**
@@ -180,9 +193,10 @@ public class Boss extends Application{
         mActivityContext = ctx;
 
         //check if Butler is awake
-        if(mButler == null){
+        if(mPosterButler == null){
             //initialize PosterButler
-            mButler = new PosterButler(this);
+            mPosterButler = new PosterButler(this);
+            mDetailButler = new DetailButler(this);
         }
     }
 
@@ -207,20 +221,17 @@ public class Boss extends Application{
  * void downloadMovieDataComplete() - communication channel used by Butlers to let the Boss
  * know when an AsyncTask thread has completed (in this case for MovieData)
  */
-    public void updateMainActivity(){
-        //TODO - very rigid, need to massage
-        //instantiate HouseKeeper that will maintain the Main Activity
-        MainKeeper keeper = (MainKeeper)mHouseKeeperRegistry.get(MainHelper.NAME_ID);
-        //tells the HouseKeeper to prepare the fragments the Activity will use
-        keeper.displayFragment();
-    }
-
     public void updateSwipeActivity(ArrayList<PosterItem> posters, int request){
         //TODO - very rigid, need to massage
         //instantiate HouseKeeper that will maintain the Main Activity
         SwipeKeeper keeper = (SwipeKeeper)mHouseKeeperRegistry.get(SwipeHelper.NAME_ID);
         //tells the HouseKeeper to prepare the fragments the Activity will use
         keeper.updatePosters(posters, request);
+    }
+
+    public void updateDetailActivity(MovieItem movie){
+        DetailKeeper keeper = (DetailKeeper)mHouseKeeperRegistry.get(DetailHelper.NAME_ID);
+        keeper.updateDetails(movie);
     }
 
 /**
@@ -253,21 +264,16 @@ public class Boss extends Application{
         MyHouseKeeper keeper = mHouseKeeperRegistry.get(key);
 
         if(keeper == null){
-            if(key == MainHelper.NAME_ID){
-                MainKeeper mainKeeper = new MainKeeper(this);
-
-                keeper = mainKeeper;
-            }
-            else if(key == SwipeHelper.NAME_ID){
+            if(key == SwipeHelper.NAME_ID){
                 Log.d("Movies", "Boss.startHouseKeeper: Swipe");
                 SwipeKeeper swipeKeeper = new SwipeKeeper(this);
 
                 keeper = swipeKeeper;
             }
-            else if(key == MovieHelper.NAME_ID){
-                MovieKeeper movieKeeper = new MovieKeeper(this);
+            else if(key == DetailHelper.NAME_ID){
+                DetailKeeper detailKeeper = new DetailKeeper(this);
 
-                keeper = movieKeeper;
+                keeper = detailKeeper;
             }
         }
 
