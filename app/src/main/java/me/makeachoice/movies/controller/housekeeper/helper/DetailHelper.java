@@ -75,4 +75,18 @@ public class DetailHelper extends MyHelper{
 
 /**************************************************************************************************/
 
+/**************************************************************************************************/
+/**
+ * String resource ids used as KEY values
+ */
+/**************************************************************************************************/
+
+    //KEY_MOVIE_TYPE_ID is key value used for storing the movie type
+    public static final int KEY_MOVIE_TYPE_ID = R.string.key_movie_type;
+
+    //KEY_MOVIE_INDEX_ID is key value used for storing the movie index
+    public static final int KEY_MOVIE_INDEX_ID = R.string.key_movie_index;
+
+/**************************************************************************************************/
+
 }
