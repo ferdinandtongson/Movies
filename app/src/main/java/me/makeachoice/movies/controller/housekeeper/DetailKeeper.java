@@ -63,7 +63,7 @@ import me.makeachoice.movies.model.item.MovieItem;
  *      xxx onSomeCustomMaidMethod() [SomeMaid only]
  *
  */
-public class MovieKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
+public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
         DetailAdapter.Bridge,
         InfoMaid.Bridge {
 
@@ -85,7 +85,7 @@ public class MovieKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
  * and initializes class variables if any
  * @param boss - Boss class
  */
-    public MovieKeeper(Boss boss){
+    public DetailKeeper(Boss boss){
 
         //set Boss
         mBoss = boss;
@@ -247,7 +247,7 @@ public class MovieKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
  */
     public void backPressed(MyActivity activity){
 
-        Log.d("Movies", "MovieKeeper.backPressed");
+        Log.d("Movies", "DetailKeeper.backPressed");
         //check current fragment being displayed
         /*if(mCurrentFragId == PosterHelper.NAME_ID){
             //if PosterFragment, shutdown app
@@ -323,7 +323,7 @@ public class MovieKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
         //get movie data from Boss, if null will start AsyncTask to get data, calls updatePoster
         switch (position) {
             case 0:
-                Log.d("Movies", "MovieKeeper.onFragmentChange: " + position);
+                Log.d("Movies", "DetailKeeper.onFragmentChange: " + position);
                 //mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
                 break;
             case 1:
@@ -351,7 +351,7 @@ public class MovieKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
  * @param item - movie item data of current movie being viewed
  */
     public void updateDetails(MovieItem item){
-        Log.d("Movies", "MovieKeeper.updateDetails");
+        Log.d("Movies", "DetailKeeper.updateDetails");
         //get Maid responsible for displaying the type of movies requested
         InfoMaid maid = ((InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID));
 
