@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.housekeeper.MainKeeper;
+import me.makeachoice.movies.controller.housekeeper.MovieKeeper;
 import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.EmptyHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
@@ -66,6 +67,11 @@ public class MaidAssistant{
         boss.registerMaid(PosterHelper.NAME_ID_FAVORITE, favoriteMaid);
     }
 
+    public void hireDetailMaids(Boss boss, MovieKeeper keeper){
+        InfoMaid infoMaid = new InfoMaid(keeper, InfoHelper.NAME_ID);
 
+        boss.registerMaid(InfoHelper.NAME_ID, infoMaid);
+
+    }
 
 }
