@@ -2,18 +2,24 @@ package me.makeachoice.movies.controller.housekeeper.maid;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.fragment.InfoFragment;
-import me.makeachoice.movies.model.response.tmdb.MovieModel;
+import me.makeachoice.movies.model.item.CastItem;
+import me.makeachoice.movies.model.item.MovieItem;
 
 /**
  * InfoMaid initializes and takes care of communicating with the Fragment that will display the
@@ -144,34 +150,57 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
      * @param layout - layout where child views reside
      */
     public void createActivity(Bundle savedInstanceState, View layout){
+        updateTextViews(layout, mItem);
+        updatePoster(layout, mItem);
 
-        updateTextViews(layout);
-        updatePoster(layout);
+        updateCastList(layout, mItem);
     }
 
-    private void updateTextViews(View layout){
+    private void updateTextViews(View layout, MovieItem item){
         //get textView children
         TextView txtTitle = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_TITLE);
         TextView txtRelease = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RELEASE);
-        TextView txtCast = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_CAST);
         TextView txtRating = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RATING);
         TextView txtOverview = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_OVERVIEW);
 
-        txtTitle.setText(mItem.getOriginalTitle());
-        txtRelease.setText(mItem.getReleaseDate());
-        txtCast.setText("Placeholder for cast");
-        txtRating.setText(mStrRating + ": " + mItem.getVoteAverage());
-        txtOverview.setText(mItem.getOverview());
+        txtTitle.setText(item.getTitle());
+        txtRelease.setText(item.getReleaseDate());
+        txtRating.setText(mStrRating + ": " + item.getVoteAverage());
+        txtOverview.setText(item.getOverview());
     }
 
+    private void updateCastList(View layout, MovieItem item){
+        ListView listView = (ListView)mViewHolder.getView(layout, InfoHelper.INFO_LST_CAST);
 
-    private void updatePoster(View layout){
+        mCastAdapter = new ArrayAdapter<String>(mBridge.getActivityContext(),
+                android.R.layout.simple_list_item_1, android.R.id.text1);
+
+        if(mItem.getCast() != null){
+            Log.d("Movies", "InfoMaid.updateCastList - " + item.getCast().size());
+            ArrayList<CastItem> cast = item.getCast();
+
+            int count = cast.size();
+
+            for(int i = 0; i < count; i++){
+                mCastAdapter.add(cast.get(i).name);
+            }
+
+
+            // Assign adapter to ListView
+            listView.setAdapter(mCastAdapter);
+        }
+    }
+
+    private ArrayAdapter<String> mCastAdapter;
+
+
+    private void updatePoster(View layout, MovieItem item){
 
         ImageView imgPoster = (ImageView)mViewHolder.getView(layout, InfoHelper.INFO_IMG_POSTER);
 
         //TODO - need to move to resource file
         String posterPath = mBridge.getActivityContext().getString(R.string.tmdb_image_base_request) +
-                mItem.getPosterPath() + "?" +
+                item.getPosterPath() + "?" +
                 mBridge.getActivityContext().getString(R.string.tmdb_query_api_key) + "=" +
                 mBridge.getActivityContext().getString(R.string.api_key_tmdb);
 
@@ -197,15 +226,32 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 /**************************************************************************************************/
 
 //TODO - methods in InfoMaid are a bit rough
-    public MovieModel getMovie(){
+    public MovieItem getMovie(){
         return mItem;
     }
 
-//TODO - using MovieJSON.MovieDetail is breaking MVP design!!
-//TODO - String values are hardcode here - move to resource file
-    private MovieModel mItem;
-    public void setMovie(MovieModel item){
+    private MovieItem mItem;
+    public void setMovie(MovieItem item){
         mItem = item;
+    }
+
+    public void updateViews(MovieItem item){
+        Log.d("Movies", "InfoMaid.updateViews");
+        mItem = item;
+
+        if(item.getCast() != null){
+            Log.d("Movies", "     have cast info");
+            mCastAdapter.clear();
+
+            int count = item.getCast().size();
+            for(int i = 0; i < count; i++){
+                Log.d("Movies", "          name: " + item.getCast().get(i).name);
+                mCastAdapter.add(item.getCast().get(i).name);
+            }
+
+            mCastAdapter.notifyDataSetChanged();
+        }
+
     }
 
 /**************************************************************************************************/
