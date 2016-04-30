@@ -13,5 +13,9 @@
 
     <string name="keeper_swipe">Swipe Keeper</string>
 
-    <string name="keeper_movie">Movie Keeper</string>
+    <string name="keeper_detail">Detail Keeper</string>
+        <string name="maid_detail_info">Info</string>
+        <string name="maid_detail_reviews">Reviews</string>
+        <string name="maid_detail_videos">Videos</string>
+        <string name="maid_detail_credits">Credits</string>
 </resources>
