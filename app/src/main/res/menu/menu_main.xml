@@ -3,19 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
     <item android:id="@+id/action_bar_item01"
-        android:title="@string/action_bar_popular"
+        android:title="Popular"
         android:orderInCategory="101" app:showAsAction="never" />
 
     <item android:id="@+id/action_bar_item02"
-        android:title="@string/action_bar_rated"
+        android:title="Top Rated"
         android:orderInCategory="102" app:showAsAction="never" />
 
     <item android:id="@+id/action_bar_item03"
-        android:title="@string/action_bar_now_playing"
+        android:title="Now Playing"
         android:orderInCategory="103" app:showAsAction="never" />
 
     <item android:id="@+id/action_bar_item04"
-        android:title="@string/action_bar_upcoming"
+        android:title="Upcoming"
         android:orderInCategory="104" app:showAsAction="never" />
 
 </menu>

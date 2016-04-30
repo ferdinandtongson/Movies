@@ -50,13 +50,13 @@ public class MainHelper extends MyHelper{
 /**************************************************************************************************/
 
     //Menu for Toolbar
-    public static final  int MAIN_MENU = R.menu.menu_main;
+    //public static final  int MAIN_MENU = R.menu.menu_main;
 
     //Item id from Menu
-    public static final  int MENU_ITEM01 = R.id.action_bar_item01;
-    public static final  int MENU_ITEM02 = R.id.action_bar_item02;
-    public static final  int MENU_ITEM03 = R.id.action_bar_item03;
-    public static final  int MENU_ITEM04 = R.id.action_bar_item04;
+    //public static final  int MENU_ITEM01 = R.id.action_bar_item01;
+    //public static final  int MENU_ITEM02 = R.id.action_bar_item02;
+    //public static final  int MENU_ITEM03 = R.id.action_bar_item03;
+    //public static final  int MENU_ITEM04 = R.id.action_bar_item04;
 
 
 /**************************************************************************************************/
