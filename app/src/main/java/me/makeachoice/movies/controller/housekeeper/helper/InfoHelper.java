@@ -21,7 +21,7 @@ import me.makeachoice.movies.R;
 public class InfoHelper extends MyHelper{
 
     //NAME_ID - unique name of instantiated Maid class
-    public final static int NAME_ID = R.string.maid_info;
+    public final static int NAME_ID = R.string.maid_detail_info;
 
 /**************************************************************************************************/
 /**
@@ -38,10 +38,8 @@ public class InfoHelper extends MyHelper{
     public final static int INFO_IMG_POSTER = R.id.img_poster;
     //INFO_TXT_RELEASE - textView child for release date of movie
     public final static int INFO_TXT_RELEASE = R.id.txt_release;
-    //INFO_TXT_CAST - textView child for cast members of movie
-    public final static int INFO_TXT_CAST = R.id.txt_cast;
-    //INFO_RTB_RATING - ratingBarView child for visual display of rating
-    public final static int INFO_RTB_RATING = R.id.rtb_rating;
+    //INFO_LST_CAST - listView child for cast members of movie
+    public final static int INFO_LST_CAST = R.id.lst_cast;
     //INFO_TXT_RATING - textView child for rating percentage of movie
     public final static int INFO_TXT_RATING = R.id.txt_rating;
     //INFO_TXT_OVERVIEW - textView child for overview, plot, of movie
