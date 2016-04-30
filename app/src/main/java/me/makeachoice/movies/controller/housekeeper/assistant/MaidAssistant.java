@@ -4,13 +4,10 @@ import java.util.ArrayList;
 
 import me.makeachoice.movies.adapter.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.MainKeeper;
 import me.makeachoice.movies.controller.housekeeper.MovieKeeper;
 import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
-import me.makeachoice.movies.controller.housekeeper.helper.EmptyHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
-import me.makeachoice.movies.controller.housekeeper.maid.EmptyMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
 
@@ -33,16 +30,6 @@ public class MaidAssistant{
  * or requests up to the MyHouseKeeper if the MyMaid cannot handle it.
  */
 /**************************************************************************************************/
-    public void hireMainMaids(Boss boss, MainKeeper keeper){
-        PosterMaid posterMaid = new PosterMaid(keeper, PosterHelper.NAME_ID);
-        EmptyMaid emptyMaid = new EmptyMaid(keeper, EmptyHelper.NAME_ID);
-        InfoMaid infoMaid = new InfoMaid(keeper, InfoHelper.NAME_ID);
-
-        boss.registerMaid(PosterHelper.NAME_ID, posterMaid);
-        boss.registerMaid(EmptyHelper.NAME_ID, emptyMaid);
-        boss.registerMaid(InfoHelper.NAME_ID, infoMaid);
-    }
-
     public void hireSwipeMaids(Boss boss, SwipeKeeper keeper){
         PosterMaid popularMaid = new PosterMaid(keeper, PosterHelper.NAME_ID_MOST_POPULAR);
         PosterMaid topRatedMaid = new PosterMaid(keeper, PosterHelper.NAME_ID_TOP_RATED);
