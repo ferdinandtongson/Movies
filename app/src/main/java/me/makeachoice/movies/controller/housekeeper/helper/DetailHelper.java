@@ -3,7 +3,7 @@ package me.makeachoice.movies.controller.housekeeper.helper;
 import me.makeachoice.movies.R;
 
 /**
- * MovieHelper contains constant definitions for all the resources used by MovieActivity. It also
+ * DetailHelper contains constant definitions for all the resources used by DetailActivity. It also
  * has a ViewHolder pattern implementation contained in the inner class inherited from MyHelper
  * abstract class
  *
@@ -19,10 +19,10 @@ import me.makeachoice.movies.R;
  *          public View getView(View layout, int id)
  *
  */
-public class MovieHelper extends MyHelper{
+public class DetailHelper extends MyHelper{
 
     //NAME_ID - unique name of instantiated MyHouseKeeper class
-    public final static int NAME_ID = R.string.keeper_movie;
+    public final static int NAME_ID = R.string.keeper_detail;
 
 
 /**************************************************************************************************/
@@ -36,12 +36,14 @@ public class MovieHelper extends MyHelper{
  */
 /**************************************************************************************************/
 
-    //TODO - create layout for activity, also toolbar and floating action button (if necessary)
-    //MOVIE_LAYOUT_ID is the layout used to display fragments
-    public static final int MOVIE_LAYOUT_ID = R.layout.activity_main;
+    //DETAIL_LAYOUT_ID is the layout used to display fragments
+    public static final int DETAIL_LAYOUT_ID = R.layout.activity_detail;
 
-    //MOVIE_CONTAINER_ID is container that holds the fragments
-    public static final int MOVIE_CONTAINER_ID = R.id.main_container;
+    //DETAIL_PAGER_ID is the swipe viewpager that holds the fragments
+    public static final int DETAIL_PAGER_ID = R.id.detail_pager;
+
+    //DETAIL_TITLE_STRIP_ID is the viewpager title strip
+    public static final int DETAIL_TITLE_STRIP_ID = R.id.detail_title_strip;
 
     //XXX_TOOLBAR_ID is the toolbar used by Activity
     //public static final  int XXX_TOOLBAR_ID = R.id.toolbar;
