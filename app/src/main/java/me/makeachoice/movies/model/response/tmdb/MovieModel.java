@@ -4,46 +4,54 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.controller.butler.uri.TMDBUri;
 
 /**
  * Created by Usuario on 4/22/2016.
  */
 public class MovieModel {
-    int id;
-    String title;
-    String overview;
+    private int id;
+    private String title;
+    private String overview;
     @SerializedName("release_date")
-    String releaseDate;
+    private String releaseDate;
     @SerializedName("imbd_id")
-    String imbdId;
+    private String imbdId;
+    private  String homepage;                     //called during a request for a specific movie
 
 
     @SerializedName("original_title")
-    String originalTitle;
+    private String originalTitle;
     @SerializedName("original_language")
-    String originalLanguage;
+    private String originalLanguage;
 
 
-    float popularity;
+    private float popularity;
     @SerializedName("vote_count")
-    float voteCount;
+    private Integer voteCount;
     @SerializedName("vote_average")
-    float voteAverage;
+    private float voteAverage;
 
 
     @SerializedName("poster_path")
-    String posterPath;
+    private String posterPath;
     @SerializedName("backdrop_path")
-    String backdropPath;
-    Boolean video;
-    String homepage;                    //specific movie request
+    private String backdropPath;
+    private Boolean video;
 
 
-    Boolean adult;
+    private Boolean adult;
     @SerializedName("genre_ids")
-    Integer[] genreIds;                 //called during a movie list request
-    ArrayList<GenreModel> genres;       //called during a request for a specific movie
+    private Integer[] genreIds;                       //called during a movie list request
+    private ArrayList<GenreModel> genres;      //called during a request for a specific movie
+
+    @SerializedName("videos")
+    private VideosResponse videoResult;       //called during a request for a specific movie
+    @SerializedName("reviews")
+    private ReviewsResponse reviewResult;     //called during a request for a specific movie
+    @SerializedName("similar")
+    private SimilarResponse similarResult;     //called during a request for a specific movie
+    @SerializedName("credits")
+    private CreditsResponse creditResult;     //called during a request for a specific movie
 
 
     public int getId(){
@@ -62,7 +70,9 @@ public class MovieModel {
         return releaseDate;
     }
 
-    public String getImbdId() {return imbdId; }
+    public String getIMBDId(){ return imbdId; }
+
+    public String getHomepage(){ return homepage; }
 
 
 
@@ -81,7 +91,7 @@ public class MovieModel {
         return popularity;
     }
 
-    public float getVoteCount(){
+    public Integer getVoteCount(){
         return voteCount;
     }
 
@@ -101,8 +111,6 @@ public class MovieModel {
         return video;
     }
 
-    public String getHomepage() { return homepage; }
-
 
 
     public Boolean getAdult(){
@@ -113,7 +121,15 @@ public class MovieModel {
         return genreIds;
     }
 
-    public ArrayList<GenreModel> getGenres(){
-        return genres;
-    }
+    public ArrayList<GenreModel> getGenres(){ return genres; }
+
+
+    public ArrayList<CastModel> getCast(){ return creditResult.cast; }
+
+    public ArrayList<CrewModel> getCrew(){ return creditResult.crew; }
+
+    public ArrayList<ReviewModel> getReviews(){ return reviewResult.getReviews(); }
+
+    public ArrayList<VideoModel> getVideos(){ return videoResult.getVideos(); }
+
 }
