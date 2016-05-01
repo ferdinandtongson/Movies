@@ -10,6 +10,7 @@
     <string name="msg_enable_network">Enable Network then press Retry</string>
 
     <string name="str_user_rating">User Rating</string>
+    <string name="str_cast">Cast</string>
 
     <string name="key_movie_type">Movie Type</string>
     <string name="key_movie_index">Movie Index</string>
