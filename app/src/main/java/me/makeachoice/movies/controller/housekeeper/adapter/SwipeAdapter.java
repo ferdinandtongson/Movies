@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.recycler;
+package me.makeachoice.movies.controller.housekeeper.adapter;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -8,10 +8,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 
 /**
- * DetailAdapter extends FragmentPagerAdapter and is used to display fragments as pages where users
+ * SwipeRecycler extends FragmentPagerAdapter and is used to display fragments as pages where users
  * can swipe between the different pages.
  *
  * FragmentPageAdapter is used because there is a fixed number of pages to be displayed.
@@ -22,7 +22,7 @@ import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
  *      CharSequence getPageTitle(int)
  *
  */
-public class DetailAdapter extends FragmentPagerAdapter {
+public class SwipeAdapter extends FragmentPagerAdapter {
 
 /**************************************************************************************************/
 /**
@@ -38,7 +38,7 @@ public class DetailAdapter extends FragmentPagerAdapter {
 /**************************************************************************************************/
 
     //set number of fragments to be viewed
-    static final int NUM_FRAGMENT = 1;
+    static final int NUM_FRAGMENT = 5;
 
     //list of fragments to be viewed
     private ArrayList<Fragment> mFragments;
@@ -66,8 +66,8 @@ public class DetailAdapter extends FragmentPagerAdapter {
      * @param fm - fragment manager
      * @param fragmentMap - hashMap containing fragments to be displayed
      */
-    public DetailAdapter(Bridge bridge, FragmentManager fm,
-                         HashMap<Integer, Fragment> fragmentMap) {
+    public SwipeAdapter(Bridge bridge, FragmentManager fm,
+                        HashMap<Integer, Fragment> fragmentMap) {
         super(fm);
 
         //get Bridge
@@ -77,22 +77,22 @@ public class DetailAdapter extends FragmentPagerAdapter {
         mFragments = new ArrayList<>();
 
         //add fragments to array list
-        mFragments.add(fragmentMap.get(InfoHelper.NAME_ID));
-        //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_TOP_RATED));
-        //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_NOW_PLAYING));
-        //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_UPCOMING));
-        //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_FAVORITE));
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_MOST_POPULAR));
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_TOP_RATED));
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_NOW_PLAYING));
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_UPCOMING));
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_FAVORITE));
 
         //get context
         Context ctx = mBridge.getActivityContext();
 
         //initialize title array list
         mTitles = new ArrayList<>();
-        mTitles.add(ctx.getString(InfoHelper.NAME_ID));
-        //mTitles.add(ctx.getString(PosterHelper.NAME_ID_TOP_RATED));
-        //mTitles.add(ctx.getString(PosterHelper.NAME_ID_NOW_PLAYING));
-        //mTitles.add(ctx.getString(PosterHelper.NAME_ID_UPCOMING));
-        //mTitles.add(ctx.getString(PosterHelper.NAME_ID_FAVORITE));
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_MOST_POPULAR));
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_TOP_RATED));
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_NOW_PLAYING));
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_UPCOMING));
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_FAVORITE));
 
     }
 

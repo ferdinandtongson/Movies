@@ -16,7 +16,7 @@ import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
 import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
-import me.makeachoice.movies.controller.housekeeper.recycler.DetailAdapter;
+import me.makeachoice.movies.controller.housekeeper.adapter.DetailAdapter;
 import me.makeachoice.movies.model.item.MovieItem;
 
 

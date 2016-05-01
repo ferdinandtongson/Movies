@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.recycler;
+package me.makeachoice.movies.controller.housekeeper.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

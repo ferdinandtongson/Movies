@@ -20,7 +20,7 @@ import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
-import me.makeachoice.movies.controller.housekeeper.recycler.SwipeAdapter;
+import me.makeachoice.movies.controller.housekeeper.adapter.SwipeAdapter;
 
 /**
  * SwipeKeeper is responsible for SwipeActivity and all the Fragments contained with the activity.
