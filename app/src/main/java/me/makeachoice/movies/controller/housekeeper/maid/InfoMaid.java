@@ -2,11 +2,9 @@ package me.makeachoice.movies.controller.housekeeper.maid;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,7 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.R;
+import me.makeachoice.movies.controller.housekeeper.adapter.NameAdapter;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.fragment.InfoFragment;
 import me.makeachoice.movies.model.item.CastItem;
@@ -28,9 +26,10 @@ import me.makeachoice.movies.model.item.MovieItem;
  * The InfoMaid is only aware of the Fragment and the views at the fragment level. It is NOT
  * aware of the view above it (the Activity containing the Fragment).
  *
- * It uses other classes to assist in the upkeeping of the Fragment:
+ * It uses other classes to assist in the upkeep of the Fragment:
  *      InfoFragment - handles the Fragment lifecycle
  *      InfoHelper - holds all static resources (layout id, view ids, etc)
+ *      NameAdapter - updates the cast listView
  *
  * Variables from MyMaid:
  *      Bridge mBridge
@@ -54,23 +53,32 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 /**
  * Class Variables
  *      InfoHelper.ViewHolder mViewHolder - holds all the child views of the fragment
- *      String mStarRating
+ *      NameAdapter mCastAdapter - adapter for cast listView, displays cast members in the movie
+ *      MovieItem mItem - MovieItem holding all the movie data
+ *      String mStarRating - string value "User Rating"
  */
 /**************************************************************************************************/
 
     //mViewHolder - holds all the child views of the fragment
     private InfoHelper.ViewHolder mViewHolder;
 
-    //TODO - need to comment
+    //mCastAdapter - adapter for cast listView, displays cast members in the movie
+    private NameAdapter mCastAdapter;
+
+    //mItem - MovieItem holding all the movie data
+    private MovieItem mMovie;
+
+    //mStrRating - string value "User Rating"
     private String mStrRating;
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
-    /**
-     * InfoMaid - constructor
-     * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
-     */
+/**
+ * InfoMaid - constructor
+ * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
+ * @param id - id number of InfoMaid
+ */
     public InfoMaid(Bridge bridge, int id){
 
         //class implementing Bridge interface
@@ -88,6 +96,12 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         //registers fragment PosterMaid is assigned to maintain
         mBridge.registerFragment(id, mFragment);
 
+        //create empty array list of names
+        ArrayList<String> names = new ArrayList<>();
+
+        //initialize adapter used to hold cast member names
+        mCastAdapter = new NameAdapter(mBridge.getActivityContext(), names);
+
     }
 
 /**************************************************************************************************/
@@ -98,9 +112,18 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
  *      - None -
  *
  * Setters:
- *      - None -
+ *      void setMovie(MovieItem) - set movie data used by fragment
  */
 /**************************************************************************************************/
+
+/**
+ * void setMovie(MovieItem) - set movie data used by fragment
+ * @param item - MovieItem data
+ */
+    public void setMovie(MovieItem item){
+        mMovie = item;
+    }
+
 
 /**************************************************************************************************/
 /**
@@ -111,6 +134,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 /**************************************************************************************************/
 /**
  * void initFragment() - initialize Fragment; set layout and child view ids and maid name
+ * @param id - id number of maid taking care of fragment
  */
     protected Fragment initFragment(int id){
         //create InfoFragment
@@ -143,73 +167,81 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         return v;
     }
 
-    /**
-     * void createActivity(Bundle, View) - is called by PosterFragment when onCreateActivity(...)
-     * is called in that class. Sets child views in fragment before being seen by the user
-     * @param savedInstanceState - saved instance states
-     * @param layout - layout where child views reside
-     */
+/**
+ * void createActivity(Bundle, View) - is called by PosterFragment when onCreateActivity(...)
+ * is called in that class. Sets child views in fragment before being seen by the user
+ * @param savedInstanceState - saved instance states
+ * @param layout - layout where child views reside
+ */
     public void createActivity(Bundle savedInstanceState, View layout){
-        updateTextViews(layout, mItem);
-        updatePoster(layout, mItem);
+        //update textView in the fragment
+        updateTextViews(layout, mMovie);
 
-        updateCastList(layout, mItem);
+        //update listView used to display the list of cast members
+        updateCastList(layout, mMovie);
+
+        //update imageView used to display the movie poster
+        updatePoster(layout, mMovie);
+
     }
 
+/**
+ * void updateTextViews(View, MovieItem) - set all the textView children with the given movie
+ * data take from MovieItem.
+ * @param layout - parent view holding the textView children
+ * @param item - MovieItem holding the movie data
+ */
     private void updateTextViews(View layout, MovieItem item){
-        //get textView children
+        //get textView children from viewHolder
         TextView txtTitle = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_TITLE);
         TextView txtRelease = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RELEASE);
         TextView txtRating = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RATING);
         TextView txtOverview = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_OVERVIEW);
 
+        //set the title of the movie
         txtTitle.setText(item.getTitle());
+        //set the release date of the movie
         txtRelease.setText(item.getReleaseDate());
+        //set the user rating average
         txtRating.setText(mStrRating + ": " + item.getVoteAverage());
+        //set the overview of the movie (plot)
         txtOverview.setText(item.getOverview());
     }
 
+/**
+ * void updateCastList(View, MovieItem) - updates the cast listView with the cast adapter data
+ * @param layout - parent view holding the listView child
+ * @param item - MovieItem holding the movie data
+ */
     private void updateCastList(View layout, MovieItem item){
+        //get listView from viewHolder
         ListView listView = (ListView)mViewHolder.getView(layout, InfoHelper.INFO_LST_CAST);
 
-        mCastAdapter = new ArrayAdapter<String>(mBridge.getActivityContext(),
-                android.R.layout.simple_list_item_1, android.R.id.text1);
-
-        if(mItem.getCast() != null){
-            Log.d("Movies", "InfoMaid.updateCastList - " + item.getCast().size());
-            ArrayList<CastItem> cast = item.getCast();
-
-            int count = cast.size();
-
-            for(int i = 0; i < count; i++){
-                mCastAdapter.add(cast.get(i).name);
-            }
-
-
-            // Assign adapter to ListView
-            listView.setAdapter(mCastAdapter);
+        //check if MovieItem has cast information
+        if(item.getCast() != null){
+            //add cast names to cast adapter
+            mCastAdapter.addNames(prepareNames(item.getCast()));
         }
+
+        // Assign adapter to ListView
+        listView.setAdapter(mCastAdapter);
     }
 
-    private ArrayAdapter<String> mCastAdapter;
-
-
+/**
+ * void updatePoster(View, MovieItem) - updates the imageView with the poster of the movie
+ * @param layout - parent view holding the listView child
+ * @param item - MovieItem holding the movie data
+ */
     private void updatePoster(View layout, MovieItem item){
 
+        //get imageView from viewHolder
         ImageView imgPoster = (ImageView)mViewHolder.getView(layout, InfoHelper.INFO_IMG_POSTER);
-
-        //TODO - need to move to resource file
-        String posterPath = mBridge.getActivityContext().getString(R.string.tmdb_image_base_request) +
-                item.getPosterPath() + "?" +
-                mBridge.getActivityContext().getString(R.string.tmdb_query_api_key) + "=" +
-                mBridge.getActivityContext().getString(R.string.api_key_tmdb);
-
 
         //add poster image, placeholder image and error image
         Picasso.with(mBridge.getActivityContext())
-                .load(posterPath)
+                .load(item.getPosterPath())
                 .placeholder(InfoHelper.INFO_PLACEHOLDER_IMG_ID)
-                .error(InfoHelper.INFO_ERROR_IMG_ID)
+                .error(InfoHelper.INFO_PLACEHOLDER_IMG_ID)
                 .into(imgPoster);
     }
 
@@ -218,40 +250,55 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 
 /**************************************************************************************************/
 /**
- * SimpleListFragment.Bridge interface implementation.
- *      ListAdapter getListAdapter() - Fragments' access to the ListAdapter
- *      void setListAdapter() - used to ensure that the Maid class uses the setListAdapter method
- *      void onItemClick() - list item click event
+ * Class Methods
+ *      void updateViews(MovieItem) - update fragment views with new movie data
+ *      ArrayList<String> prepareNames(ArrayList<CastItem> - get cast member names and put them in
+ *          an ArrayList<String>
  */
 /**************************************************************************************************/
-
-//TODO - methods in InfoMaid are a bit rough
-    public MovieItem getMovie(){
-        return mItem;
-    }
-
-    private MovieItem mItem;
-    public void setMovie(MovieItem item){
-        mItem = item;
-    }
-
+/**
+ * void updateViews(MovieItem) - update fragment views with new movie data
+ * @param item - MovieItem containing movie data
+ */
     public void updateViews(MovieItem item){
-        Log.d("Movies", "InfoMaid.updateViews");
-        mItem = item;
+        //save movie data to class variable
+        mMovie = item;
 
+        //check if cast member data is available
         if(item.getCast() != null){
-            Log.d("Movies", "     have cast info");
-            mCastAdapter.clear();
+            //has cast membr data, get names of cast members and update cast adapter
+            mCastAdapter.addNames(prepareNames(item.getCast()));
+        }
+        else{
+            //no cast member data, send empty list of names to cast adapter
+            mCastAdapter.addNames(new ArrayList<String>());
+        }
+        //notify cast adapter that data has changed
+        mCastAdapter.notifyDataSetChanged();
 
-            int count = item.getCast().size();
-            for(int i = 0; i < count; i++){
-                Log.d("Movies", "          name: " + item.getCast().get(i).name);
-                mCastAdapter.add(item.getCast().get(i).name);
-            }
+    }
 
-            mCastAdapter.notifyDataSetChanged();
+/**
+ * ArrayList<String> prepareNames(ArrayList<CastItem> - get cast member names and put them in
+ * an ArrayList<String>.
+ * @param castList - list of CastItem data
+ * @return - return simple list of string names
+ */
+    private ArrayList<String> prepareNames(ArrayList<CastItem> castList){
+        //create simple array list of names
+        ArrayList<String> names = new ArrayList<>();
+
+        //get number of cast members
+        int count = castList.size();
+
+        //populate simple array list of names
+        for(int i = 0; i < count; i++){
+            //add name to list
+            names.add(castList.get(i).name);
         }
 
+        //return list of names
+        return names;
     }
 
 /**************************************************************************************************/
