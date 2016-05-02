@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
 
 /**
  * DetailAdapter extends FragmentPagerAdapter and is used to display fragments as pages where users
@@ -39,7 +40,7 @@ public class DetailAdapter extends FragmentPagerAdapter {
 /**************************************************************************************************/
 
     //set number of fragments to be viewed
-    static final int NUM_FRAGMENT = 2;
+    static final int NUM_FRAGMENT = 3;
 
     //list of fragments to be viewed
     private ArrayList<Fragment> mFragments;
@@ -80,7 +81,7 @@ public class DetailAdapter extends FragmentPagerAdapter {
         //add fragments to array list
         mFragments.add(fragmentMap.get(InfoHelper.NAME_ID));
         mFragments.add(fragmentMap.get(ReviewHelper.NAME_ID));
-        //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_NOW_PLAYING));
+        mFragments.add(fragmentMap.get(VideoHelper.NAME_ID));
         //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_UPCOMING));
         //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_FAVORITE));
 
@@ -91,7 +92,7 @@ public class DetailAdapter extends FragmentPagerAdapter {
         mTitles = new ArrayList<>();
         mTitles.add(ctx.getString(InfoHelper.NAME_ID));
         mTitles.add(ctx.getString(ReviewHelper.NAME_ID));
-        //mTitles.add(ctx.getString(PosterHelper.NAME_ID_NOW_PLAYING));
+        mTitles.add(ctx.getString(VideoHelper.NAME_ID));
         //mTitles.add(ctx.getString(PosterHelper.NAME_ID_UPCOMING));
         //mTitles.add(ctx.getString(PosterHelper.NAME_ID_FAVORITE));
 

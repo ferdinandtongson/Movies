@@ -16,9 +16,11 @@ import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
 import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
 import me.makeachoice.movies.controller.housekeeper.adapter.DetailAdapter;
 import me.makeachoice.movies.controller.housekeeper.maid.ReviewMaid;
+import me.makeachoice.movies.controller.housekeeper.maid.VideoMaid;
 import me.makeachoice.movies.model.item.MovieItem;
 
 
@@ -66,7 +68,7 @@ import me.makeachoice.movies.model.item.MovieItem;
  *
  */
 public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
-        DetailAdapter.Bridge, InfoMaid.Bridge, ReviewMaid.Bridge {
+        DetailAdapter.Bridge, InfoMaid.Bridge, ReviewMaid.Bridge, VideoMaid.Bridge {
 
 /**************************************************************************************************/
 /**
@@ -136,6 +138,10 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         Log.d("Movies", "DetailKeeper.onSelectedReview: " + position);
     }
 
+    public void onSelectedVideo(int position){
+        Log.d("Movies", "DetailKeeper.onSelectedVideo: " + position);
+    }
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -171,8 +177,16 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
         MovieItem movie = mBoss.getMovie(movieType, index);
 
-        InfoMaid maid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
-        maid.setMovie(movie);
+        InfoMaid infoMaid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
+        infoMaid.setMovie(movie);
+
+        Log.d("Movies", "     reviews: " + movie.getReviews().size());
+        ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
+        reviewMaid.setReviews(movie.getReviews());
+
+        Log.d("Movies", "     videos: " + movie.getVideos().size());
+        VideoMaid videoMaid = (VideoMaid)mBoss.getMaid(VideoHelper.NAME_ID);
+        videoMaid.setVideos(movie.getVideos());
 
         //ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
         //reviewMaid.updateReviews(movie.getReviews());
@@ -360,8 +374,13 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         InfoMaid infoMaid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
         infoMaid.updateViews(item);
 
+        Log.d("Movies", "     reviews: " + item.getReviews().size());
         ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
         reviewMaid.updateReviews(item.getReviews());
+
+        Log.d("Movies", "     videos: " + item.getVideos().size());
+        VideoMaid videoMaid = (VideoMaid)mBoss.getMaid(VideoHelper.NAME_ID);
+        videoMaid.updateVideos(item.getVideos());
 
         //update posters being displayed by the Fragment being maintained by the Maid
         //maid.updatePosters(posters);
