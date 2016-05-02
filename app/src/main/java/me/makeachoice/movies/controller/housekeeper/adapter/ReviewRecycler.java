@@ -78,8 +78,11 @@ public class ReviewRecycler extends RecyclerView.Adapter<ReviewRecycler.ReviewHo
  */
     @Override
     public int getItemCount(){
-        //return number of review items
-        return mReviews.size();
+        if(mReviews != null){
+            //return number of review items
+            return mReviews.size();
+        }
+        return 0;
     }
 
 /**
@@ -87,8 +90,7 @@ public class ReviewRecycler extends RecyclerView.Adapter<ReviewRecycler.ReviewHo
  * @param reviews - list of review data
  */
     public void setReviews(ArrayList<ReviewItem> reviews){
-        mReviews.clear();
-        mReviews.addAll(reviews);
+        mReviews = reviews;
     }
 
 /**************************************************************************************************/
@@ -144,7 +146,7 @@ public class ReviewRecycler extends RecyclerView.Adapter<ReviewRecycler.ReviewHo
 
 /**************************************************************************************************/
 /**
- * PosterHolder - extends RecyclerView.ViewHolder, a design pattern to increase performance. It
+ * ReviewHolder - extends RecyclerView.ViewHolder, a design pattern to increase performance. It
  * holds the references to the UI components for each item in a ListView or GridView
  */
 /**************************************************************************************************/
@@ -158,7 +160,7 @@ public class ReviewRecycler extends RecyclerView.Adapter<ReviewRecycler.ReviewHo
  */
 /**************************************************************************************************/
 
-        //mCrdPoster - cardView that hold child views found below
+        //mCrdReview - cardView that hold child views found below
         protected CardView mCrdReview;
         //mTxtAuthor - textView that show the author of the review
         protected TextView mTxtAuthor;
@@ -169,7 +171,7 @@ public class ReviewRecycler extends RecyclerView.Adapter<ReviewRecycler.ReviewHo
 
 /**************************************************************************************************/
 /**
- * PosterHolder - constructor
+ * ReviewHolder - constructor
  * @param recycleView - item layout containing the child views
  */
         public ReviewHolder(View recycleView){
