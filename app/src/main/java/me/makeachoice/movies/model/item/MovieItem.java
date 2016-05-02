@@ -1,10 +1,8 @@
 package me.makeachoice.movies.model.item;
 
-import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.model.response.tmdb.GenreModel;
 
 /**
  * Created by Usuario on 4/22/2016.
@@ -32,7 +30,11 @@ public class MovieItem {
     private Boolean adult;
     private Integer[] genreIds;                 //called during a movie list request
     private ArrayList<GenreItem> genres;       //called during a request for a specific movie
+
     private ArrayList<CastItem> cast;
+    private ArrayList<ReviewItem> reviews;
+    private ArrayList<VideoItem> videos;
+
 
 
     public int getId(){
@@ -125,4 +127,11 @@ public class MovieItem {
 
     public ArrayList<CastItem> getCast(){ return cast; }
     public void setCast(ArrayList<CastItem> cast){ this.cast = cast; }
+
+    public ArrayList<ReviewItem> getReviews(){ return reviews; }
+    public void setReviews(ArrayList<ReviewItem> reviews){ this.reviews = reviews; }
+
+    public ArrayList<VideoItem> getVideos(){ return videos; }
+    public void setVideos(ArrayList<VideoItem> videos){ this.videos = videos; }
+
 }
