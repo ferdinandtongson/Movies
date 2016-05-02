@@ -270,6 +270,8 @@ public class DetailButler extends MyButler{
         movieItem.setAdult(model.getAdult());
         movieItem.setGenreIds(model.getGenreIds());
 
+        prepareEmptyDetails(movieItem);
+
         //save movie item to buffer
         mMovieMap.put(model.getId(), movieItem);
 
