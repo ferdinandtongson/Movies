@@ -13,9 +13,11 @@ import me.makeachoice.movies.controller.butler.worker.DetailWorker;
 import me.makeachoice.movies.model.item.CastItem;
 import me.makeachoice.movies.model.item.GenreItem;
 import me.makeachoice.movies.model.item.MovieItem;
+import me.makeachoice.movies.model.item.ReviewItem;
 import me.makeachoice.movies.model.response.tmdb.CastModel;
 import me.makeachoice.movies.model.response.tmdb.GenreModel;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
+import me.makeachoice.movies.model.response.tmdb.ReviewModel;
 
 /**
  * DetailButler handles the creation of a MovieItems to be consumed by the View. It takes data from
@@ -278,13 +280,14 @@ public class DetailButler extends MyButler{
 
         movieItem.setImbdId(model.getIMBDId());
         movieItem.setHomepage(model.getHomepage());
-        movieItem.setGenres(prepareGenreItem(model.getGenres()));
-        movieItem.setCast(prepareCastItem(model.getCast()));
+        movieItem.setGenres(prepareGenreItems(model.getGenres()));
+        movieItem.setCast(prepareCastItems(model.getCast()));
+        movieItem.setReviews(prepareReviewItems(model.getReviews()));
 
         return movieItem;
     }
 
-    private ArrayList<GenreItem> prepareGenreItem(ArrayList<GenreModel> models){
+    private ArrayList<GenreItem> prepareGenreItems(ArrayList<GenreModel> models){
         ArrayList<GenreItem> genres = new ArrayList<>();
 
         int count = models.size();
@@ -301,7 +304,7 @@ public class DetailButler extends MyButler{
         return genres;
     }
 
-    private ArrayList<CastItem> prepareCastItem(ArrayList<CastModel> models){
+    private ArrayList<CastItem> prepareCastItems(ArrayList<CastModel> models){
         ArrayList<CastItem> cast = new ArrayList<>();
 
         int count = models.size();
@@ -317,6 +320,24 @@ public class DetailButler extends MyButler{
         }
 
         return cast;
+    }
+
+    private ArrayList<ReviewItem> prepareReviewItems(ArrayList<ReviewModel> models){
+        ArrayList<ReviewItem> reviews = new ArrayList<>();
+
+        int count = models.size();
+        for(int i = 0; i < count; i++){
+            ReviewModel mod = models.get(i);
+
+            ReviewItem item = new ReviewItem();
+            item.author = mod.author;
+            item.review = mod.content;
+            item.reviewPath = mod.url;
+
+            reviews.add(item);
+        }
+
+        return reviews;
     }
 
 
