@@ -78,7 +78,7 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
         //TODO - notify HouseKeeper a poster has been selected
-        //void onSelectedPoster(int id, int position);
+        void onSelectedReview(int position);
     }
 
 /**************************************************************************************************/
@@ -187,15 +187,18 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
         //setHasFixedSize to true because 1)is true and 2)for optimization
         recycler.setHasFixedSize(true);
 
-        ReviewItem item = new ReviewItem();
-        item.author = "temp";
-        item.review = "temp";
-        item.reviewPath = "temp";
-
-        ArrayList<ReviewItem> reviewList = new ArrayList<>();
-        reviewList.add(item);
-
-        mRecycler.setReviews(reviewList);
+        //set onItemTouchListener for items in RecyclerView
+        //TODO - need to fix and relocate onItemClick event logic
+        recycler.addOnItemTouchListener(
+                new RecyclerItemClickListener(mBridge.getActivityContext(),
+                        new RecyclerItemClickListener.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                Log.d("Movies", "ReviewMaid.onItemClick: " + position);
+                                mBridge.onSelectedReview(position);
+                            }
+                        })
+        );
 
 
         //create LayoutManager for RecyclerView, in this case a list type LayoutManager
