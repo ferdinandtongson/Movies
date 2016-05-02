@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +18,8 @@ import me.makeachoice.movies.fragment.ReviewFragment;
 import me.makeachoice.movies.model.item.ReviewItem;
 
 /**
- * ReviewMaid initializes and takes care of communicating with the Fragment that hold the
- * list of reviews for a given movie
+ * ReviewMaid initializes and takes care of communicating with the Fragment that hold the list of
+ * reviews for a given movie
  *
  * Its main purpose is to upkeep and handle events and request from the Fragment and if the Maid
  * cannot handle a request or an event, it will pass it onto the HouseKeeper.
@@ -62,7 +61,7 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
  *      ReviewRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
  *
  * Extends Bridge Interface:
- *      void onSelectedPoster(int)
+ *      void onSelectedReview(int)
  */
 /**************************************************************************************************/
 
@@ -77,7 +76,7 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
-        //TODO - notify HouseKeeper a poster has been selected
+        //notify HouseKeeper that a review has been selected
         void onSelectedReview(int position);
     }
 
@@ -117,7 +116,7 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
  *      Context getActivityContext() - required as part of ReviewRecycler.Bridge interface
  *
  * Setters:
- *      - None -
+ *      void setReviews(ArrayList<ReviewItem> - set data to be displayed by the RecyclerView
  */
 /**************************************************************************************************/
 /**
@@ -126,7 +125,17 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
  * @return - current Activity context
  */
     public Context getActivityContext(){
+        //get current Activity context
         return mBridge.getActivityContext();
+    }
+
+/**
+ * void setReviews(ArrayList<ReviewItem>) - set data to be displayed by the RecyclerView
+ * @param reviews - list of review data
+ */
+    public void setReviews(ArrayList<ReviewItem> reviews){
+        //set review data for recycler
+        mRecycler.setReviews(reviews);
     }
 
 /**************************************************************************************************/
@@ -194,7 +203,7 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-                                Log.d("Movies", "ReviewMaid.onItemClick: " + position);
+                                //notify Bridge that a review has been selected
                                 mBridge.onSelectedReview(position);
                             }
                         })
@@ -202,7 +211,6 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
 
 
         //create LayoutManager for RecyclerView, in this case a list type LayoutManager
-        //TODO - need to change 240 to a dynamic variable
         LinearLayoutManager manager =
                 new LinearLayoutManager(mBridge.getActivityContext());
 
