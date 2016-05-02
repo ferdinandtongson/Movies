@@ -1,0 +1,39 @@
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/crd_review"
+    android:layout_width="fill_parent"
+    android:layout_height="170dp"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardBackgroundColor="@color/powderBlueish_20"
+    android:layout_margin="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="7dp"
+        >
+
+        <TextView android:id="@+id/txt_review_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:gravity="right"
+            android:padding="2dp"
+            android:textSize="12sp"
+            android:textColor="@color/white"/>
+
+        <TextView android:id="@+id/txt_review"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/txt_review_author"
+            android:layout_margin="10dp"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:padding="10dp"
+            android:ellipsize="end"
+            android:singleLine="false"
+            android:background="@color/powderBlueish_20"/>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
