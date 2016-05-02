@@ -1,10 +1,9 @@
 package me.makeachoice.movies.controller.housekeeper.helper;
 
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 
 /**
- * ReviewHelper contains constant definitions for all the resources used by the ReviewFragment. It
+ * ReviewHelper contains constant definitions for all the resources used by the review fragment. It
  * also has a ViewHolder pattern implementation contained in the inner class inherited from
  * MyHelper abstract class
  *
@@ -22,7 +21,6 @@ import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
  */
 public class ReviewHelper extends MyHelper{
 
-    //TODO - save HouseKeeper name to String resource file found at res/values
     //NAME_ID - unique name of instantiated MyHouseKeeper class
     public final static int NAME_ID = R.string.maid_detail_reviews;
 
