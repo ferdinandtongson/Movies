@@ -128,12 +128,12 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  * Maid.Bridge implementations:
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
- *      xxx onSomeCustomMaidMethod() [SomeMaid only]
+ *      void onSelectedReview(int) [ReviewMaid only]
  */
 /**************************************************************************************************/
 
-    public void onSomeCustomMaidMethod(){
-        //communication method used by some Maid class to request something from the HouseKeeper
+    public void onSelectedReview(int position){
+        Log.d("Movies", "DetailKeeper.onSelectedReview: " + position);
     }
 
 /**************************************************************************************************/
@@ -358,11 +358,11 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         Log.d("Movies", "DetailKeeper.updateDetails");
         //get Maid responsible for displaying the type of movies requested
         InfoMaid infoMaid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
-
         infoMaid.updateViews(item);
 
         ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
         reviewMaid.updateReviews(item.getReviews());
+
         //update posters being displayed by the Fragment being maintained by the Maid
         //maid.updatePosters(posters);
     }
