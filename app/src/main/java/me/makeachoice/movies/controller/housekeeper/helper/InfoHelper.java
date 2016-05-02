@@ -33,19 +33,31 @@ public class InfoHelper extends MyHelper{
     public final static int INFO_FRAGMENT_LAYOUT_ID = R.layout.info_fragment;
 
     //INFO_TXT_TITLE - textView child for title of movie
-    public final static int INFO_TXT_TITLE = R.id.txt_title;
+    public final static int INFO_TXT_TITLE_ID = R.id.txt_title;
     //INFO_IMG_POSTER - imageView child for poster image of movie
-    public final static int INFO_IMG_POSTER = R.id.img_poster;
+    public final static int INFO_IMG_POSTER_ID = R.id.img_poster;
     //INFO_TXT_RELEASE - textView child for release date of movie
-    public final static int INFO_TXT_RELEASE = R.id.txt_release;
+    public final static int INFO_TXT_RELEASE_ID = R.id.txt_release;
     //INFO_LST_CAST - listView child for cast members of movie
-    public final static int INFO_LST_CAST = R.id.lst_cast;
+    public final static int INFO_LST_CAST_ID = R.id.lst_cast;
     //INFO_TXT_RATING - textView child for rating percentage of movie
-    public final static int INFO_TXT_RATING = R.id.txt_rating;
+    public final static int INFO_TXT_RATING_ID = R.id.txt_rating;
     //INFO_TXT_OVERVIEW - textView child for overview, plot, of movie
-    public final static int INFO_TXT_OVERVIEW = R.id.txt_overview;
+    public final static int INFO_TXT_OVERVIEW_ID = R.id.txt_overview;
 
 /**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * ListView item child view ids
+ */
+/**************************************************************************************************/
+
+    //ITEM_NAME_LAYOUT_ID - item layout used in the cast listview
+    public final static int ITEM_NAME_LAYOUT_ID = R.layout.item_name;
+
+    //ITEM_NAME_TXT_NAME_ID - textView child for name of cast members in the movie
+    public final static int ITEM_NAME_TXT_NAME_ID = R.id.txt_name;
 
 /**************************************************************************************************/
 /**
