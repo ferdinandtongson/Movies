@@ -14,10 +14,12 @@ import me.makeachoice.movies.model.item.CastItem;
 import me.makeachoice.movies.model.item.GenreItem;
 import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.model.item.ReviewItem;
+import me.makeachoice.movies.model.item.VideoItem;
 import me.makeachoice.movies.model.response.tmdb.CastModel;
 import me.makeachoice.movies.model.response.tmdb.GenreModel;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
 import me.makeachoice.movies.model.response.tmdb.ReviewModel;
+import me.makeachoice.movies.model.response.tmdb.VideoModel;
 
 /**
  * DetailButler handles the creation of a MovieItems to be consumed by the View. It takes data from
@@ -275,6 +277,48 @@ public class DetailButler extends MyButler{
         return movieItem;
     }
 
+    private void prepareEmptyDetails(MovieItem movie){
+        ArrayList<GenreItem> emptyGenre = new ArrayList<>();
+        GenreItem genreItem = new GenreItem();
+        genreItem.setTMDBId(-1);
+        genreItem.setName("empty");
+
+        emptyGenre.add(genreItem);
+        movie.setGenres(emptyGenre);
+
+        ArrayList<CastItem> emptyCast = new ArrayList<>();
+
+        CastItem castItem = new CastItem();
+        castItem.character = "empty";
+        castItem.name = "empty";
+        castItem.profilePath = "empty";
+
+        emptyCast.add(castItem);
+        movie.setCast(emptyCast);
+
+        ArrayList<ReviewItem> emptyReview = new ArrayList<>();
+
+        ReviewItem reviewItem = new ReviewItem();
+        reviewItem.author = "empty";
+        reviewItem.review = "empty";
+        reviewItem.reviewPath = "empty";
+
+        emptyReview.add(reviewItem);
+        movie.setReviews(emptyReview);
+
+        ArrayList<VideoItem> emptyVideo = new ArrayList<>();
+
+        VideoItem videoItem = new VideoItem();
+        videoItem.key = "empty";
+        videoItem.name = "empty";
+        videoItem.site = "empty";
+        videoItem.size = -1;
+
+        emptyVideo.add(videoItem);
+        movie.setVideos(emptyVideo);
+
+    }
+
     private MovieItem prepareMovieDetails(MovieModel model){
         MovieItem movieItem = mMovieMap.get(model.getId());
 
@@ -283,6 +327,7 @@ public class DetailButler extends MyButler{
         movieItem.setGenres(prepareGenreItems(model.getGenres()));
         movieItem.setCast(prepareCastItems(model.getCast()));
         movieItem.setReviews(prepareReviewItems(model.getReviews()));
+        movieItem.setVideos(prepareVideoItems(model.getVideos()));
 
         return movieItem;
     }
@@ -340,8 +385,27 @@ public class DetailButler extends MyButler{
         return reviews;
     }
 
+    private ArrayList<VideoItem> prepareVideoItems(ArrayList<VideoModel> models){
+        ArrayList<VideoItem> reviews = new ArrayList<>();
 
-/**
+        int count = models.size();
+        for(int i = 0; i < count; i++){
+            VideoModel mod = models.get(i);
+
+            VideoItem item = new VideoItem();
+            item.key = mod.key;
+            item.site = mod.site;
+            item.name = mod.name;
+            item.size = mod.size;
+
+            reviews.add(item);
+        }
+
+        return reviews;
+    }
+
+
+    /**
  * void checkRequestBuffer() - checks the request buffer if there are any pending movie requests
  */
     private void checkRequestBuffer(){
