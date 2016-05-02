@@ -9,9 +9,11 @@ import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.ReviewMaid;
+import me.makeachoice.movies.controller.housekeeper.maid.VideoMaid;
 
 /**
  * MaidAssistant will assist the HouseKeeper class with initializing and registering the Maids.
@@ -59,9 +61,11 @@ public class MaidAssistant{
     public void hireDetailMaids(Boss boss, DetailKeeper keeper){
         InfoMaid infoMaid = new InfoMaid(keeper, InfoHelper.NAME_ID);
         ReviewMaid reviewMaid = new ReviewMaid(keeper, ReviewHelper.NAME_ID);
+        VideoMaid videoMaid = new VideoMaid(keeper, VideoHelper.NAME_ID);
 
         boss.registerMaid(InfoHelper.NAME_ID, infoMaid);
         boss.registerMaid(ReviewHelper.NAME_ID, reviewMaid);
+        boss.registerMaid(VideoHelper.NAME_ID, videoMaid);
     }
 
 }
