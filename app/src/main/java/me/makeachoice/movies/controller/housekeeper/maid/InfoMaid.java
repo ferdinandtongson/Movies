@@ -193,10 +193,10 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
  */
     private void updateTextViews(View layout, MovieItem item){
         //get textView children from viewHolder
-        TextView txtTitle = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_TITLE);
-        TextView txtRelease = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RELEASE);
-        TextView txtRating = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RATING);
-        TextView txtOverview = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_OVERVIEW);
+        TextView txtTitle = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_TITLE_ID);
+        TextView txtRelease = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RELEASE_ID);
+        TextView txtRating = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RATING_ID);
+        TextView txtOverview = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_OVERVIEW_ID);
 
         //set the title of the movie
         txtTitle.setText(item.getTitle());
@@ -215,12 +215,12 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
  */
     private void updateCastList(View layout, MovieItem item){
         //get listView from viewHolder
-        ListView listView = (ListView)mViewHolder.getView(layout, InfoHelper.INFO_LST_CAST);
+        ListView listView = (ListView)mViewHolder.getView(layout, InfoHelper.INFO_LST_CAST_ID);
 
         //check if MovieItem has cast information
         if(item.getCast() != null){
             //add cast names to cast adapter
-            mCastAdapter.addNames(prepareNames(item.getCast()));
+            mCastAdapter.setNames(prepareNames(item.getCast()));
         }
 
         // Assign adapter to ListView
@@ -235,7 +235,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
     private void updatePoster(View layout, MovieItem item){
 
         //get imageView from viewHolder
-        ImageView imgPoster = (ImageView)mViewHolder.getView(layout, InfoHelper.INFO_IMG_POSTER);
+        ImageView imgPoster = (ImageView)mViewHolder.getView(layout, InfoHelper.INFO_IMG_POSTER_ID);
 
         //add poster image, placeholder image and error image
         Picasso.with(mBridge.getActivityContext())
@@ -267,11 +267,11 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         //check if cast member data is available
         if(item.getCast() != null){
             //has cast membr data, get names of cast members and update cast adapter
-            mCastAdapter.addNames(prepareNames(item.getCast()));
+            mCastAdapter.setNames(prepareNames(item.getCast()));
         }
         else{
             //no cast member data, send empty list of names to cast adapter
-            mCastAdapter.addNames(new ArrayList<String>());
+            mCastAdapter.setNames(new ArrayList<String>());
         }
         //notify cast adapter that data has changed
         mCastAdapter.notifyDataSetChanged();
