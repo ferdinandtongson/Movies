@@ -189,7 +189,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 
         //set onItemTouchListener for items in RecyclerView
         //TODO - need to fix and relocate onItemClick event logic
-       recycler.addOnItemTouchListener(
+        recycler.addOnItemTouchListener(
                 new RecyclerItemClickListener(mBridge.getActivityContext(),
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
