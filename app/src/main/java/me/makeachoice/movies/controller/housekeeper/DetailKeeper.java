@@ -15,8 +15,10 @@ import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
 import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
 import me.makeachoice.movies.controller.housekeeper.adapter.DetailAdapter;
+import me.makeachoice.movies.controller.housekeeper.maid.ReviewMaid;
 import me.makeachoice.movies.model.item.MovieItem;
 
 
@@ -64,8 +66,7 @@ import me.makeachoice.movies.model.item.MovieItem;
  *
  */
 public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
-        DetailAdapter.Bridge,
-        InfoMaid.Bridge {
+        DetailAdapter.Bridge, InfoMaid.Bridge, ReviewMaid.Bridge {
 
 /**************************************************************************************************/
 /**
@@ -172,6 +173,9 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
         InfoMaid maid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
         maid.setMovie(movie);
+
+        //ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
+        //reviewMaid.updateReviews(movie.getReviews());
 
         Log.d("Movies", "     overview: " + movie.getOverview());
 
@@ -353,9 +357,12 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
     public void updateDetails(MovieItem item){
         Log.d("Movies", "DetailKeeper.updateDetails");
         //get Maid responsible for displaying the type of movies requested
-        InfoMaid maid = ((InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID));
+        InfoMaid infoMaid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
 
-        maid.updateViews(item);
+        infoMaid.updateViews(item);
+
+        ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
+        reviewMaid.updateReviews(item.getReviews());
         //update posters being displayed by the Fragment being maintained by the Maid
         //maid.updatePosters(posters);
     }
