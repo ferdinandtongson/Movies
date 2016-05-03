@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.adapter.item.PosterItem;
+import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 
 /**

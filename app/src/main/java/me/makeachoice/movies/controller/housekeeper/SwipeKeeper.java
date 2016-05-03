@@ -13,7 +13,7 @@ import java.util.HashMap;
 import me.makeachoice.movies.view.DetailActivity;
 import me.makeachoice.movies.view.MyActivity;
 import me.makeachoice.movies.view.SwipeActivity;
-import me.makeachoice.movies.adapter.item.PosterItem;
+import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
 import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;

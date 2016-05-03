@@ -2,7 +2,7 @@ package me.makeachoice.movies.controller.housekeeper.assistant;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.adapter.item.PosterItem;
+import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.housekeeper.DetailKeeper;
 import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;

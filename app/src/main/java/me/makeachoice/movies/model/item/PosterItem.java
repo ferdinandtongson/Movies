@@ -1,4 +1,4 @@
-package me.makeachoice.movies.adapter.item;
+package me.makeachoice.movies.model.item;
 
 import android.graphics.Bitmap;
 

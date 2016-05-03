@@ -7,7 +7,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.makeachoice.movies.adapter.item.PosterItem;
+import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.butler.DetailButler;
 import me.makeachoice.movies.controller.butler.PosterButler;
 import me.makeachoice.movies.controller.housekeeper.DetailKeeper;

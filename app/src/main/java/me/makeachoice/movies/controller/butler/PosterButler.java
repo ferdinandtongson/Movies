@@ -4,7 +4,7 @@ import android.content.Context;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.adapter.item.PosterItem;
+import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.butler.uri.TMDBUri;
 import me.makeachoice.movies.controller.butler.worker.MovieWorker;
