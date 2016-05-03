@@ -16,7 +16,7 @@ import me.makeachoice.movies.controller.housekeeper.adapter.RecyclerItemClickLis
 import me.makeachoice.movies.util.GridAutofitLayoutManager;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.adapter.PosterRecycler;
-import me.makeachoice.movies.fragment.PosterFragment;
+import me.makeachoice.movies.view.fragment.PosterFragment;
 
 /**
  * PosterMaid initializes and takes care of communicating with the Fragment that hold the

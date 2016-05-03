@@ -1,7 +1,6 @@
-package me.makeachoice.movies.fragment;
+package me.makeachoice.movies.view.fragment;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,7 @@ import me.makeachoice.movies.controller.Boss;
 
 /**************************************************************************************************/
 /**
- * InfoFragment is a Fragment that displays detailed information about a selected movie
+ * PosterFragment is a fragment that will display a grid of posters (images)
  *
  * Variables from MyFragment:
  *      String KEY_MAID_ID
@@ -28,7 +27,7 @@ import me.makeachoice.movies.controller.Boss;
  *      void createActivity(Bundle, View)
  *
  */
-public class InfoFragment extends MyFragment {
+public class PosterFragment extends MyFragment {
 /*
     Fragment subclasses require an empty default constructor. If you don't provide one but
     specify a non-empty constructor, Lint will give you an error.
@@ -37,13 +36,15 @@ public class InfoFragment extends MyFragment {
     re-creating fragments by using the empty default constructor. If it cannot find one, you
     get an exception
  */
-    public static InfoFragment newInstance(){
-        return new InfoFragment();
+    public static PosterFragment newInstance(){
+        return new PosterFragment();
     }
 
-    public InfoFragment(){}
+    public PosterFragment(){}
 
 /**************************************************************************************************/
+
+
 
 /**************************************************************************************************/
 /**
@@ -70,17 +71,18 @@ public class InfoFragment extends MyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
             //get id number of Maid maintaining this fragment
             mMaidId = savedInstanceState.getInt(KEY_MAID_ID);
         }
 
-        //get application context, the Boss
+        //get Application context, the Boss
         Boss boss = (Boss)getActivity().getApplicationContext();
 
         try{
-            //make sure Maid is implementing the Bridge interface
+            //check if Maid is implementing interface
             mBridge = (Bridge)boss.getMaid(mMaidId);
         }catch(ClassCastException e){
             throw new ClassCastException(boss.toString() +
@@ -88,33 +90,16 @@ public class InfoFragment extends MyFragment {
         }
 
         //create and return fragment layout view from file found in res/layout/xxx.xml,
-        if(boss.getOrientation() == Configuration.ORIENTATION_PORTRAIT){
-            if(mLayout == null){
-                //inflate portrait layout if null
-                mLayout = mBridge.createView(inflater, container, savedInstanceState);
-            }
-
-            //set current layout to portrait layout
-            mCurrentLayout = mLayout;
-        }
-        else{
-            if(mLayoutLand == null){
-                //inflate landscape layout if null
-                mLayoutLand = mBridge.createView(inflater, container, savedInstanceState);
-            }
-
-            //set current layout to landscape layout
-            mCurrentLayout = mLayoutLand;
+        if(mLayout == null){
+            //mLayout = inflater.inflate(mLayoutId, container, false);
+            mLayout = mBridge.createView(inflater, container, savedInstanceState);
         }
 
         //fragment if some kind of configuration change occurs (like an orientation change)
         setRetainInstance(true);
 
-        return mCurrentLayout;
+        return mLayout;
     }
-
-    View mLayoutLand;
-    View mCurrentLayout;
 
 /**
  * onActivityCreated(...) is called when the activity the fragment is attached to completed its
@@ -125,8 +110,7 @@ public class InfoFragment extends MyFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mBridge.createActivity(savedInstanceState, mCurrentLayout);
-
+        mBridge.createActivity(savedInstanceState, mLayout);
     }
 
 /**
@@ -138,6 +122,7 @@ public class InfoFragment extends MyFragment {
         super.onSaveInstanceState(saveState);
         //save id number of Maid maintaining this fragment
         saveState.putInt(KEY_MAID_ID, mMaidId);
+
     }
 
 /**************************************************************************************************/
@@ -148,9 +133,9 @@ public class InfoFragment extends MyFragment {
  *      void setMaidId(Integer)
  */
 /**************************************************************************************************/
-    /**
-     * void setMaidId(Integer) - sets the id number of the Maid taking care of the fragment
-     */
+/**
+ * void setMaidId(Integer) - sets the id number of the Maid taking care of the fragment
+ */
     public void setMaidId(Integer id){
         mMaidId = id;
     }

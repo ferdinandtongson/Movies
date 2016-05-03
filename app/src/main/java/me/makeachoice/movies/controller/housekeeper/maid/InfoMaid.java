@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.housekeeper.adapter.NameAdapter;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
-import me.makeachoice.movies.fragment.InfoFragment;
+import me.makeachoice.movies.view.fragment.InfoFragment;
 import me.makeachoice.movies.model.item.CastItem;
 import me.makeachoice.movies.model.item.MovieItem;
 

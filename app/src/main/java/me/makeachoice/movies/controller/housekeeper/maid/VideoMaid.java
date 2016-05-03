@@ -16,7 +16,7 @@ import me.makeachoice.movies.controller.housekeeper.adapter.RecyclerItemClickLis
 import me.makeachoice.movies.controller.housekeeper.adapter.VideoRecycler;
 import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
-import me.makeachoice.movies.fragment.ReviewFragment;
+import me.makeachoice.movies.view.fragment.ReviewFragment;
 import me.makeachoice.movies.model.item.VideoItem;
 
 /**

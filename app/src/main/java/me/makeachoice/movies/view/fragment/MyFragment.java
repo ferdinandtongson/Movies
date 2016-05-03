@@ -1,4 +1,4 @@
-package me.makeachoice.movies.fragment;
+package me.makeachoice.movies.view.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

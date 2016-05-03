@@ -1,4 +1,4 @@
-package me.makeachoice.movies.fragment;
+package me.makeachoice.movies.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import me.makeachoice.movies.controller.Boss;
 
 /**************************************************************************************************/
+
 /**
- * PosterFragment is a fragment that will display a grid of posters (images)
+ * ReviewFragment is a fragment that will display a list of movie reviews
  *
  * Variables from MyFragment:
  *      String KEY_MAID_ID
@@ -27,7 +28,7 @@ import me.makeachoice.movies.controller.Boss;
  *      void createActivity(Bundle, View)
  *
  */
-public class PosterFragment extends MyFragment {
+public class ReviewFragment extends MyFragment {
 /*
     Fragment subclasses require an empty default constructor. If you don't provide one but
     specify a non-empty constructor, Lint will give you an error.
@@ -36,11 +37,11 @@ public class PosterFragment extends MyFragment {
     re-creating fragments by using the empty default constructor. If it cannot find one, you
     get an exception
  */
-    public static PosterFragment newInstance(){
-        return new PosterFragment();
+    public static ReviewFragment newInstance(){
+        return new ReviewFragment();
     }
 
-    public PosterFragment(){}
+    public ReviewFragment(){}
 
 /**************************************************************************************************/
 

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import me.makeachoice.movies.controller.housekeeper.adapter.RecyclerItemClickListener;
 import me.makeachoice.movies.controller.housekeeper.adapter.ReviewRecycler;
 import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
-import me.makeachoice.movies.fragment.ReviewFragment;
+import me.makeachoice.movies.view.fragment.ReviewFragment;
 import me.makeachoice.movies.model.item.ReviewItem;
 
 /**
