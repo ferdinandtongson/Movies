@@ -244,7 +244,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
     public void postResume(){
 
         //check orientation change status
-        if(!mBoss.onOrientationChange()){
+        if(!mBoss.getOrientationChanged()){
             //NOT an orientation change event, update fragment view
             //displayFragment();
         }

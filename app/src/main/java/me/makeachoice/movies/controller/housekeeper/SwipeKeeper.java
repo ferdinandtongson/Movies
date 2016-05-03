@@ -216,7 +216,7 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
     public void postResume(){
 
         //check orientation change status
-        if(!mBoss.onOrientationChange()){
+        if(!mBoss.getOrientationChanged()){
             //NOT an orientation change event, update fragment view
             //displayFragment();
         }
