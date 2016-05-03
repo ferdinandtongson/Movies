@@ -1,16 +1,16 @@
-package me.makeachoice.movies;
+package me.makeachoice.movies.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
 
 /**
- * DetailActivity allows the user to swipe through Detailed information about a selected movie. It
- * allows the user to see general information, credits, reviews, and trailers about the movie.
+ * SwipeActivity allows users to swipe through a various list of Posters set in a GridView fragment.
+ * If a user click on an poster, it will activate a new activity that will display the details of
+ * the movie selected.
  *
  * If HouseKeeper initializes Toolbar, onCreateOptionsMenu(Menu) will be called and an Options
  * Menu listener will be automatically created which will call onOptionsItemSelected(MenuItem) if
@@ -25,7 +25,7 @@ import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
  * take appropriate action if necessary. Also, onBackPressed() automatically handles popping the
  * back stack of the fragment stack and HouseKeeper is signalled to be aware of that event.
  *
- * DetailActivity extends MyActivity which extends AppCompatActivity to allow for Fragment and
+ * SwipeActivity extends MyActivity which extends AppCompatActivity to allow for Fragment and
  * Toolbar use.
  *
  * Variables from MyActivity:
@@ -42,10 +42,9 @@ import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
  *      void backPressed()
  *      void createOptionsMenu(Menu menu)
  *      void optionsItemSelected(MenuItem item)
- *
  */
 
-public class DetailActivity extends MyActivity {
+public class SwipeActivity extends MyActivity {
 
 /**************************************************************************************************/
 /**
@@ -58,17 +57,16 @@ public class DetailActivity extends MyActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("Movies", "DetailActivity.onCreate");
 
         //get Boss Application
-        Boss boss = (Boss)getApplicationContext();
+        Boss boss = (Boss) getApplicationContext();
 
         //register Activity context with Boss
         boss.activityCreated(this);
 
         try {
             //check if HouseKeeper is implementing interface
-            mBridge = (Bridge) boss.getHouseKeeper(DetailHelper.NAME_ID);
+            mBridge = (Bridge) boss.getHouseKeeper(SwipeHelper.NAME_ID);
         } catch (ClassCastException e) {
             throw new ClassCastException(boss.toString() +
                     " must implement Bridge interface");
@@ -105,7 +103,7 @@ public class DetailActivity extends MyActivity {
  * been resumed. Another approach is to use onResumeFragment()
  */
     @Override
-    public void onPostResume(){
+    public void onPostResume() {
         super.onPostResume();
         //signal to HouseKeeper that Activity and Fragments have resumed
         mBridge.postResume();
@@ -165,6 +163,8 @@ public class DetailActivity extends MyActivity {
     public void finishActivity() {
         //close activity
         this.finish();
+        android.os.Process.killProcess(android.os.Process.myPid());
+        super.onDestroy();
     }
 
 

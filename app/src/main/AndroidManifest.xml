@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".SwipeActivity"
+            android:name=".view.SwipeActivity"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,12 +22,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivity"
+            android:name=".view.DetailActivity"
             android:theme="@style/AppTheme"
-            android:parentActivityName=".SwipeActivity" >
+            android:parentActivityName=".view.SwipeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SwipeActivity" />
+                android:value=".view.SwipeActivity" />
         </activity>
 
     </application>

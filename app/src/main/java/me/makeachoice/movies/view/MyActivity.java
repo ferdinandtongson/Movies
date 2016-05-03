@@ -1,4 +1,4 @@
-package me.makeachoice.movies;
+package me.makeachoice.movies.view;
 
 /**************************************************************************************************/
 

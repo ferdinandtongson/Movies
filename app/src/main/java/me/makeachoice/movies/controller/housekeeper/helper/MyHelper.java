@@ -4,7 +4,7 @@ import android.view.View;
 
 import java.util.HashMap;
 
-import me.makeachoice.movies.MyActivity;
+import me.makeachoice.movies.view.MyActivity;
 
 /**
  * Abstract base Helper class. Used to manage resource ids and act as a ViewHolder.

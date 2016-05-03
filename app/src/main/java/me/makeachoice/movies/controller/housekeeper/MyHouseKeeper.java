@@ -9,7 +9,7 @@ import android.view.View;
 
 import java.util.HashMap;
 
-import me.makeachoice.movies.MyActivity;
+import me.makeachoice.movies.view.MyActivity;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.housekeeper.assistant.FragmentAssistant;
 import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
