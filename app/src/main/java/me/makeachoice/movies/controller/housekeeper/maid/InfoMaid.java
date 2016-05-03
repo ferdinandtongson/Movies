@@ -1,5 +1,6 @@
 package me.makeachoice.movies.controller.housekeeper.maid;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ import me.makeachoice.movies.model.item.MovieItem;
  * Bridge Interface from MyMaid:
  *      Context getActivityContext()
  *      void registerFragment(String, Fragment)
+ *      int getOrientation()
  *
  * Implements InfoFragment.Bridge
  *      View createView(LayoutInflater, ViewGroup, Bundle);
@@ -158,13 +160,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
     public View createView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState){
 
-        //TODO - see if this can be put into ViewHolder
-        //TODO - see if layoutID changes, for example when on portrait or landscape (if two files)
-        //inflate fragment from the xml fragment layout resource file
-        View v = inflater.inflate(InfoHelper.INFO_FRAGMENT_LAYOUT_ID, container, false);
-
-        //return fragment
-        return v;
+        return inflater.inflate(InfoHelper.INFO_FRAGMENT_LAYOUT_ID, container, false);
     }
 
 /**
@@ -192,11 +188,28 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
  * @param item - MovieItem holding the movie data
  */
     private void updateTextViews(View layout, MovieItem item){
-        //get textView children from viewHolder
-        TextView txtTitle = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_TITLE_ID);
-        TextView txtRelease = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RELEASE_ID);
-        TextView txtRating = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RATING_ID);
-        TextView txtOverview = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_OVERVIEW_ID);
+
+        //textView variables
+        TextView txtTitle;
+        TextView txtRelease;
+        TextView txtRating;
+        TextView txtOverview;
+
+        //check orientation
+        if(mBridge.getOrientation() == Configuration.ORIENTATION_PORTRAIT){
+            //get textView children from viewHolder - portrait
+            txtTitle = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_TITLE_ID);
+            txtRelease = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RELEASE_ID);
+            txtRating = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RATING_ID);
+            txtOverview = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_OVERVIEW_ID);
+        }
+        else{
+            //get textView children from viewHolder - landscape
+            txtTitle = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_TITLE_LAND_ID);
+            txtRelease = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RELEASE_LAND_ID);
+            txtRating = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_RATING_LAND_ID);
+            txtOverview = (TextView)mViewHolder.getView(layout, InfoHelper.INFO_TXT_OVERVIEW_LAND_ID);
+        }
 
         //set the title of the movie
         txtTitle.setText(item.getTitle());
@@ -214,8 +227,18 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
  * @param item - MovieItem holding the movie data
  */
     private void updateCastList(View layout, MovieItem item){
-        //get listView from viewHolder
-        ListView listView = (ListView)mViewHolder.getView(layout, InfoHelper.INFO_LST_CAST_ID);
+        //listView variable
+        ListView listView;
+
+        //check orientation
+        if(mBridge.getOrientation() == Configuration.ORIENTATION_PORTRAIT){
+            //get listView children from viewHolder - portrait
+            listView = (ListView)mViewHolder.getView(layout, InfoHelper.INFO_LST_CAST_ID);
+        }
+        else{
+            //get listView children from viewHolder - landscape
+            listView = (ListView)mViewHolder.getView(layout, InfoHelper.INFO_LST_CAST_LAND_ID);
+        }
 
         //check if MovieItem has cast information
         if(item.getCast() != null){
@@ -234,8 +257,18 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
  */
     private void updatePoster(View layout, MovieItem item){
 
-        //get imageView from viewHolder
-        ImageView imgPoster = (ImageView)mViewHolder.getView(layout, InfoHelper.INFO_IMG_POSTER_ID);
+        //imageView variable
+        ImageView imgPoster;
+
+        //check orientation
+        if(mBridge.getOrientation() == Configuration.ORIENTATION_PORTRAIT){
+            //get imageView children from viewHolder - portrait
+            imgPoster = (ImageView)mViewHolder.getView(layout, InfoHelper.INFO_IMG_POSTER_ID);
+        }
+        else{
+            //get imageView children from viewHolder - landscape
+            imgPoster = (ImageView)mViewHolder.getView(layout, InfoHelper.INFO_IMG_POSTER_LAND_ID);
+        }
 
         //add poster image, placeholder image and error image
         Picasso.with(mBridge.getActivityContext())
