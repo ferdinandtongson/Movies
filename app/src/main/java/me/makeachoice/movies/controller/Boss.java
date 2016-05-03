@@ -42,14 +42,14 @@ public class Boss extends Application{
 /**************************************************************************************************/
 
     //mActivityContext is the current UI Activity (In this case we are only using one Activity)
-    Context mActivityContext;
+    private Context mActivityContext;
 
     //mButler will take care of preparing Movie data for consumption
-    PosterButler mPosterButler;
-    DetailButler mDetailButler;
+    private PosterButler mPosterButler;
+    private DetailButler mDetailButler;
 
     //mNetworkValet is in charge of checking for network connectivity
-    NetworkValet mNetworkValet;
+    private NetworkValet mNetworkValet;
 
     //mHouseKeeperRegistry - HashMap of instantiated HouseKeeper classes being used by the Boss
     private HashMap<Integer, MyHouseKeeper> mHouseKeeperRegistry = new HashMap<>();
@@ -57,8 +57,11 @@ public class Boss extends Application{
     //mMaidRegistry - HashMap of instantiated Maid classes being used by HouseKeepers
     private HashMap<Integer, MyMaid> mMaidRegistry = new HashMap<>();
 
+    //mOrientation - current orientation of phone
+    private int mOrientation;
+
     //mOrientationChange - status flag on whether the phone orientation has changed
-    boolean mOrientationChange;
+    private boolean mOrientationChange;
 
 
 /**************************************************************************************************/
@@ -67,13 +70,12 @@ public class Boss extends Application{
 /**
  * Getters:
  *      Context getActivityContext() - get current Activity Context
+ *      int getOrientation() - get current orientation of phone
+ *      boolean getOrientationChanged() - get status flag for phone orientation changed
  *      ArrayList<PosterItem> getPosters(int) - get list of poster item data
  *      MovieItem getMovie(int, int) - get movie item data
  *      MyHouseKeeper getHouseKeeper(Integer) - get houseKeeper from registry
  *      MyMaid getMaid(Integer) - get Maid from registry
- *
- * Setters:
- *      void setOnOrientationChange(boolean) - saves orientation change status of Activity
  */
 /**************************************************************************************************/
 /**
@@ -85,6 +87,20 @@ public class Boss extends Application{
 }
 
 /**
+ * int getOrientation() - get current orientation of phone
+ * @return - orientation of phone
+ */
+    public int getOrientation(){ return mOrientation; }
+
+/**
+ * boolean getOrientationChanged() - get status flag for phone orientation changed
+ * @return - status flag for phone orientation changed
+ */
+    public boolean getOrientationChanged(){
+        return mOrientationChange;
+    }
+
+    /**
  * ArrayList<PosterItem> getModel(int) - get list of poster item data. If null or is a new request,
  * Butler will start an AsyncTask to get new movie data.
  * @param request - type of movie data requested
@@ -141,10 +157,28 @@ public class Boss extends Application{
         return mMaidRegistry.get(key);
     }
 
-    /**
-     * void setOnOrientationChange(boolean) - saves orientation change status of Activity
-     * @param changed - boolean value on whether the orientation of phone has changed or not
-     */
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Setters:
+ *      void setOrientation(int) - save current phone orientation
+ *      void setOnOrientationChange(boolean) - saves orientation change status of Activity
+ */
+/**************************************************************************************************/
+/**
+ * void setOrientation(int) - save current phone orientation
+ * @param orientation - orientation status of phone
+ */
+    public void setOrientation(int orientation){
+        //save orientation of phone
+        mOrientation = orientation;
+    }
+
+/**
+ * void setOnOrientationChange(boolean) - saves orientation change status of Activity
+ * @param changed - boolean value on whether the orientation of phone has changed or not
+ */
     public void setOnOrientationChange(boolean changed){
         //orientation change flag
         mOrientationChange = changed;
@@ -160,7 +194,6 @@ public class Boss extends Application{
  *      void activityCreated(Context) - notifies Boss that onCreate() has been called in Activity
  *      boolean checkNetwork() - checks network connection of phone
  *      void updateMainActivity() - called by Butler when network download has completed
- *      boolean onOrientationChange() - checks orientation change status of phone
  */
 /**************************************************************************************************/
 /**
@@ -233,15 +266,6 @@ public class Boss extends Application{
         DetailKeeper keeper = (DetailKeeper)mHouseKeeperRegistry.get(DetailHelper.NAME_ID);
         keeper.updateDetails(movie);
     }
-
-/**
- * boolean onOrientationChange() - check orientation change status of phone
- * @return - boolean status of phone orientation change
- */
-    public boolean onOrientationChange(){
-        return mOrientationChange;
-    }
-
 
 
 /**************************************************************************************************/
