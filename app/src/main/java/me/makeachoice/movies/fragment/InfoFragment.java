@@ -1,6 +1,7 @@
 package me.makeachoice.movies.fragment;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,6 @@ import me.makeachoice.movies.controller.Boss;
  *      Bridge mBridge
  *      View mLayout
  *      Integer mMaidId
- *      boolean mOrientationChange
  *
  * Methods from MyFragment:
  *      void setMaidId(Integer)
@@ -55,11 +55,6 @@ public class InfoFragment extends MyFragment {
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        //get Application context Boss
-        Boss boss = (Boss)context.getApplicationContext();
-
-        //check if phone orientation change has occured
-        mOrientationChange = boss.onOrientationChange();
     }
 
 /** onCreateView(...) is called when it's time for the fragment to draw its UI for the first
@@ -75,7 +70,6 @@ public class InfoFragment extends MyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
             //get id number of Maid maintaining this fragment
@@ -94,16 +88,33 @@ public class InfoFragment extends MyFragment {
         }
 
         //create and return fragment layout view from file found in res/layout/xxx.xml,
-        if(mLayout == null){
-            //mLayout = inflater.inflate(mLayoutId, container, false);
-            mLayout = mBridge.createView(inflater, container, savedInstanceState);
+        if(boss.getOrientation() == Configuration.ORIENTATION_PORTRAIT){
+            if(mLayout == null){
+                //inflate portrait layout if null
+                mLayout = mBridge.createView(inflater, container, savedInstanceState);
+            }
+
+            //set current layout to portrait layout
+            mCurrentLayout = mLayout;
+        }
+        else{
+            if(mLayoutLand == null){
+                //inflate landscape layout if null
+                mLayoutLand = mBridge.createView(inflater, container, savedInstanceState);
+            }
+
+            //set current layout to landscape layout
+            mCurrentLayout = mLayoutLand;
         }
 
         //fragment if some kind of configuration change occurs (like an orientation change)
         setRetainInstance(true);
 
-        return mLayout;
+        return mCurrentLayout;
     }
+
+    View mLayoutLand;
+    View mCurrentLayout;
 
 /**
  * onActivityCreated(...) is called when the activity the fragment is attached to completed its
@@ -114,7 +125,7 @@ public class InfoFragment extends MyFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mBridge.createActivity(savedInstanceState, mLayout);
+        mBridge.createActivity(savedInstanceState, mCurrentLayout);
 
     }
 

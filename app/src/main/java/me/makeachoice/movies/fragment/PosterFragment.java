@@ -2,7 +2,6 @@ package me.makeachoice.movies.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import me.makeachoice.movies.controller.Boss;
  *      Bridge mBridge
  *      View mLayout
  *      Integer mMaidId
- *      boolean mOrientationChange
  *
  * Methods from MyFragment:
  *      void setMaidId(Integer)
@@ -58,11 +56,6 @@ public class PosterFragment extends MyFragment {
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        //get Application context Boss
-        Boss boss = (Boss)context.getApplicationContext();
-
-        //check if phone orientation change has occured
-        mOrientationChange = boss.onOrientationChange();
     }
 
 /** onCreateView(...) is called when it's time for the fragment to draw its UI for the first
@@ -78,7 +71,6 @@ public class PosterFragment extends MyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("Movies", "PosterFragment.onCreateView");
 
         //check if bundle has been sent/saved
         if(savedInstanceState != null){
@@ -118,7 +110,6 @@ public class PosterFragment extends MyFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Log.d("Movies", "PosterFragment.onActivityCreated");
         mBridge.createActivity(savedInstanceState, mLayout);
     }
 
