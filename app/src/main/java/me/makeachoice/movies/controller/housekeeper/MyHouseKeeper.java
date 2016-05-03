@@ -45,6 +45,7 @@ public abstract class MyHouseKeeper {
     public Context getActivityContext(){
         return mBoss.getActivityContext();
     }
+    public int getOrientation(){ return mBoss.getOrientation(); }
 
     /**
      * void registerFragment(Integer, Fragment) - register Fragments maintained by Maid classes

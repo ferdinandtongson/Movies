@@ -50,6 +50,7 @@ import me.makeachoice.movies.model.item.MovieItem;
  *
  * Methods from MyHouseKeeper
  *      Context getActivityContext()
+ *      int getOrientation()
  *      void registerFragment(Integer key, Fragment fragment)
  *      Toolbar getToolbar(MyActivity, int)
  *      FloatingActionButton getFloatButton(MyActivity, int, View.OnClickListener)

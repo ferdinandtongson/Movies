@@ -52,6 +52,7 @@ import me.makeachoice.movies.controller.housekeeper.adapter.SwipeAdapter;
  *
  * Methods from MyHouseKeeper
  *      Context getActivityContext()
+ *      int getOrientation()
  *      void registerFragment(Integer key, Fragment fragment)
  *      Toolbar getToolbar(MyActivity, int)
  *      FloatingActionButton getFloatButton(MyActivity, int, View.OnClickListener)
