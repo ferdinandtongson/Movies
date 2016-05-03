@@ -54,6 +54,8 @@ public abstract class MyMaid {
         Context getActivityContext();
         //Interface methods needed to be implemented by the instantiating class
         void registerFragment(Integer key, Fragment fragment);
+        //get orientation value
+        int getOrientation();
     }
 
 /**************************************************************************************************/

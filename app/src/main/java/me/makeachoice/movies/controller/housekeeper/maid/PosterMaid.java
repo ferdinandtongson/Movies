@@ -43,6 +43,7 @@ import me.makeachoice.movies.fragment.PosterFragment;
  * Bridge Interface from MyMaid:
  *      Context getActivityContext()
  *      void registerFragment(String, Fragment)
+ *      int getOrientation()
  *
  * Implements PosterFragment.Bridge
  *      View createView(LayoutInflater, ViewGroup, Bundle);
@@ -163,13 +164,8 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
     public View createView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState){
 
-        //TODO - see if this can be put into ViewHolder
-        //TODO - see if layoutID changes, for example when on portrait or landscape (if two files)
-        //inflate fragment from the xml fragment layout resource file
-        View v = inflater.inflate(PosterHelper.POSTER_FRAGMENT_LAYOUT_ID, container, false);
-
         //return fragment
-        return v;
+        return inflater.inflate(PosterHelper.POSTER_FRAGMENT_LAYOUT_ID, container, false);
     }
 
 /**

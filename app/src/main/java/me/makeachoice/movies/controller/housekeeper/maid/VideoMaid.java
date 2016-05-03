@@ -17,7 +17,6 @@ import me.makeachoice.movies.controller.housekeeper.adapter.VideoRecycler;
 import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
 import me.makeachoice.movies.fragment.ReviewFragment;
-import me.makeachoice.movies.model.item.ReviewItem;
 import me.makeachoice.movies.model.item.VideoItem;
 
 /**
@@ -45,6 +44,7 @@ import me.makeachoice.movies.model.item.VideoItem;
  * Bridge Interface from MyMaid:
  *      Context getActivityContext()
  *      void registerFragment(String, Fragment)
+ *      int getOrientation()
  *
  * Implements ReviewFragment.Bridge
  *      View createView(LayoutInflater, ViewGroup, Bundle);
@@ -136,7 +136,6 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
  * @param videos - list of video data
  */
     public void setVideos(ArrayList<VideoItem> videos){
-        Log.d("Movies", "VideoMaid.setVideos: " + videos.size());
         mRecycler.setVideos(videos);
     }
 
@@ -174,13 +173,8 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
     public View createView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState){
 
-        //TODO - see if this can be put into ViewHolder
-        //TODO - see if layoutID changes, for example when on portrait or landscape (if two files)
-        //inflate fragment from the xml fragment layout resource file
-        View v = inflater.inflate(ReviewHelper.REVIEW_FRAGMENT_LAYOUT_ID, container, false);
-
         //return fragment
-        return v;
+        return inflater.inflate(ReviewHelper.REVIEW_FRAGMENT_LAYOUT_ID, container, false);
     }
 
 /**
