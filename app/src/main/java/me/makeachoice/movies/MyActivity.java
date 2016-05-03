@@ -78,18 +78,16 @@ public abstract class MyActivity extends AppCompatActivity {
 
 /**************************************************************************************************/
 /**
- * Abstract Methods:
+ * Class Methods:
  *      void setOrientationChangeFlag(Boss) - sets the orientation change flag for Boss
  */
 /**************************************************************************************************/
-    /**
-     * void setOrientationChangeFlag(Boss) - sets the orientation change flag for Boss. This flag
-     * is used to handle issues with the double calling of onCreateView() method in Fragments
-     * @param boss - Boss class
-     */
-    protected void setOrientationChangeFlag(Boss boss){
-        //get current orientation of phone (portrait = 1, landscape = 2)
-        int orientation = getResources().getConfiguration().orientation;
+/**
+ * void setOrientationChangeFlag(Boss) - sets the orientation change flag for Boss. This flag
+ * is used to handle issues with the double calling of onCreateView() method in Fragments
+ * @param boss - Boss class
+ */
+    protected void setOrientationChangeFlag(Boss boss, int orientation){
 
         //check previous orientation value
         if(mOrientation == 0){

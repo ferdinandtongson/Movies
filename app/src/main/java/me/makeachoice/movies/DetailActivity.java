@@ -74,8 +74,14 @@ public class DetailActivity extends MyActivity {
                     " must implement Bridge interface");
         }
 
-        //set orientation flag in Boss class
-        setOrientationChangeFlag(boss);
+        //get current orientation of phone (portrait = 1, landscape = 2)
+        int orientation = getResources().getConfiguration().orientation;
+
+        //send orientation status to boss
+        boss.setOrientation(orientation);
+
+        //set orientation flag in Boss class and mOrientation
+        setOrientationChangeFlag(boss, orientation);
 
         //use HouseKeeper class to create activity
         mBridge.create(this, savedInstanceState);
