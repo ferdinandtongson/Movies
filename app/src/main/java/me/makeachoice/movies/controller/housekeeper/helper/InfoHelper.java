@@ -25,25 +25,39 @@ public class InfoHelper extends MyHelper{
 
 /**************************************************************************************************/
 /**
- * Fragment layout ids used to display InfoFragment, from info_fragment.xml
+ * Fragment layout ids used to display InfoFragment, from info_fragment
  */
 /**************************************************************************************************/
 
     //INFO_FRAGMENT_LAYOUT_ID - layout used by Info Fragment
     public final static int INFO_FRAGMENT_LAYOUT_ID = R.layout.info_fragment;
 
-    //INFO_TXT_TITLE - textView child for title of movie
+    //INFO_TXT_TITLE_ID - textView child for title of movie
     public final static int INFO_TXT_TITLE_ID = R.id.txt_title;
-    //INFO_IMG_POSTER - imageView child for poster image of movie
+    //INFO_IMG_POSTER_ID - imageView child for poster image of movie
     public final static int INFO_IMG_POSTER_ID = R.id.img_poster;
-    //INFO_TXT_RELEASE - textView child for release date of movie
+    //INFO_TXT_RELEASE_ID - textView child for release date of movie
     public final static int INFO_TXT_RELEASE_ID = R.id.txt_release;
-    //INFO_LST_CAST - listView child for cast members of movie
+    //INFO_LST_CAST_ID - listView child for cast members of movie
     public final static int INFO_LST_CAST_ID = R.id.lst_cast;
-    //INFO_TXT_RATING - textView child for rating percentage of movie
+    //INFO_TXT_RATING_ID - textView child for rating percentage of movie
     public final static int INFO_TXT_RATING_ID = R.id.txt_rating;
-    //INFO_TXT_OVERVIEW - textView child for overview, plot, of movie
+    //INFO_TXT_OVERVIEW_ID - textView child for overview, plot, of movie
     public final static int INFO_TXT_OVERVIEW_ID = R.id.txt_overview;
+
+
+    //INFO_TXT_TITLE_LAND_ID - textView child for title of movie, landscape layout
+    public final static int INFO_TXT_TITLE_LAND_ID = R.id.txt_title_land;
+    //INFO_IMG_POSTER_LAND_ID - imageView child for poster image of movie, landscape layout
+    public final static int INFO_IMG_POSTER_LAND_ID = R.id.img_poster_land;
+    //INFO_TXT_RELEASE_LAND_ID - textView child for release date of movie, landscape layout
+    public final static int INFO_TXT_RELEASE_LAND_ID = R.id.txt_release_land;
+    //INFO_LST_CAST_LAND_ID - listView child for cast members of movie, landscape layout
+    public final static int INFO_LST_CAST_LAND_ID = R.id.lst_cast_land;
+    //INFO_TXT_RATING_LAND_ID - textView child for rating percentage of movie, landscape layout
+    public final static int INFO_TXT_RATING_LAND_ID = R.id.txt_rating_land;
+    //INFO_TXT_OVERVIEW_LAND_ID - textView child for overview, plot, of movie, landscape layout
+    public final static int INFO_TXT_OVERVIEW_LAND_ID = R.id.txt_overview_land;
 
 /**************************************************************************************************/
 
@@ -58,6 +72,8 @@ public class InfoHelper extends MyHelper{
 
     //ITEM_NAME_TXT_NAME_ID - textView child for name of cast members in the movie
     public final static int ITEM_NAME_TXT_NAME_ID = R.id.txt_name;
+
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
