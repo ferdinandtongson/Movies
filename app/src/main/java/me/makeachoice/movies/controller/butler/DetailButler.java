@@ -233,22 +233,9 @@ public class DetailButler extends MyButler{
  * @return - MovieItem
  */
     private MovieItem prepareMovieItem(MovieModel model){
-        Context ctx = mBoss.getActivityContext();
 
         //create an empty MovieItem object
         MovieItem movieItem = new MovieItem();
-
-        //create valid poster path uri for TheMovieDB api
-        String posterPath = ctx.getString(R.string.tmdb_image_base_request) +
-                model.getPosterPath() + "?" +
-                ctx.getString(R.string.tmdb_query_api_key) + "=" +
-                ctx.getString(R.string.api_key_tmdb);
-
-        //create valid poster path uri for TheMovieDB api
-        String backdropPath = ctx.getString(R.string.tmdb_image_base_request) +
-                model.getBackdropPath() + "?" +
-                ctx.getString(R.string.tmdb_query_api_key) + "=" +
-                ctx.getString(R.string.api_key_tmdb);
 
         //populate MovieItem with MovieModel data
         movieItem.setId(model.getId());
@@ -263,8 +250,8 @@ public class DetailButler extends MyButler{
         movieItem.setVoteCount(model.getVoteCount());
         movieItem.setVoteAverage(model.getVoteAverage());
 
-        movieItem.setPosterPath(posterPath);
-        movieItem.setBackdropPath(backdropPath);
+        movieItem.setPosterPath(processImagePath(model.getPosterPath()));
+        movieItem.setBackdropPath(processImagePath(model.getBackdropPath()));
         movieItem.setVideo(model.getVideo());
 
         movieItem.setAdult(model.getAdult());
@@ -358,10 +345,11 @@ public class DetailButler extends MyButler{
         for(int i = 0; i < count; i++){
             CastModel mod = models.get(i);
 
+
             CastItem item = new CastItem();
             item.character = mod.character;
             item.name = mod.name;
-            item.profilePath = mod.profilePath;
+            item.profilePath = processImagePath(mod.profilePath);
 
             cast.add(item);
         }
@@ -422,6 +410,16 @@ public class DetailButler extends MyButler{
             //make a movie request
             makeDetailRequest(request);
         }
+    }
+
+    private String processImagePath(String path){
+        Context ctx = mBoss.getActivityContext();
+
+        //create valid poster path uri for TheMovieDB api
+        return ctx.getString(R.string.tmdb_image_base_request) +
+                path + "?" +
+                ctx.getString(R.string.tmdb_query_api_key) + "=" +
+                ctx.getString(R.string.api_key_tmdb);
     }
 
 /**************************************************************************************************/
