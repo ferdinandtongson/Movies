@@ -89,4 +89,21 @@ public class DetailHelper extends MyHelper{
 
 /**************************************************************************************************/
 
+/**************************************************************************************************/
+/**
+ * ReviewDialog layout and child view ids
+ */
+/**************************************************************************************************/
+
+    //DIA_REVIEW_LAYOUT_ID - layout id of DialogReview
+    public static final int DIA_REVIEW_LAYOUT_ID = R.layout.review_dialog;
+
+    //DIA_REVIEW_TXT_AUTHOR - child view id of DialogReview used to display author of review
+    public static final int DIA_REVIEW_TXT_AUTHOR = R.id.dia_txt_review_author;
+
+    //DIA_REVIEW_TXT_REVIEW - child view id of DialogReview used to display review of movie
+    public static final int DIA_REVIEW_TXT_REVIEW = R.id.dia_txt_review;
+
+/**************************************************************************************************/
+
 }

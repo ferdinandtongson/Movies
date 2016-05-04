@@ -1,6 +1,8 @@
 package me.makeachoice.movies.controller.housekeeper;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -22,6 +24,7 @@ import me.makeachoice.movies.controller.housekeeper.adapter.DetailAdapter;
 import me.makeachoice.movies.controller.housekeeper.maid.ReviewMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.VideoMaid;
 import me.makeachoice.movies.model.item.MovieItem;
+import me.makeachoice.movies.view.dialog.ReviewDialog;
 
 
 /**
@@ -81,6 +84,8 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
     //mViewHolder - holds all the child views of the fragment
     private DetailHelper.ViewHolder mViewHolder;
 
+    private MovieItem mMovie;
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -131,12 +136,27 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  * Maid.Bridge implementations:
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
- *      void onSelectedReview(int) [ReviewMaid only]
+ *      void onSelectedReview(int) [ReviewMaid only] - review selected, open dialog to see review
+ *      void onSelectedVideo(int) [VideoMaid only] - video selected, open dialog to see video
  */
 /**************************************************************************************************/
-
+/**
+ * void onSelectedReview(int) - review selected, open dialog to see review
+ * @param position - index position of review selected
+ */
     public void onSelectedReview(int position){
-        Log.d("Movies", "DetailKeeper.onSelectedReview: " + position);
+        //get current activity
+        Activity activity = (Activity)mBoss.getActivityContext();
+
+        //create review dialog with review item data selected
+        ReviewDialog mDialog = new ReviewDialog(activity, mMovie.getReviews().get(position));
+
+        //make dialog background transparent
+        mDialog.getWindow().setBackgroundDrawable
+                (new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        //show dialog
+        mDialog.show();
     }
 
     public void onSelectedVideo(int position){
@@ -176,23 +196,17 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         int movieType = Integer.valueOf(intent.getStringExtra(keyType));
         int index = Integer.valueOf(intent.getStringExtra(keyIndex));
 
-        MovieItem movie = mBoss.getMovie(movieType, index);
+        mMovie = mBoss.getMovie(movieType, index);
 
         InfoMaid infoMaid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
-        infoMaid.setMovie(movie);
+        infoMaid.setMovie(mMovie);
 
-        Log.d("Movies", "     reviews: " + movie.getReviews().size());
         ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
-        reviewMaid.setReviews(movie.getReviews());
+        reviewMaid.setReviews(mMovie.getReviews());
 
-        Log.d("Movies", "     videos: " + movie.getVideos().size());
         VideoMaid videoMaid = (VideoMaid)mBoss.getMaid(VideoHelper.NAME_ID);
-        videoMaid.setVideos(movie.getVideos());
+        videoMaid.setVideos(mMovie.getVideos());
 
-        //ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
-        //reviewMaid.updateReviews(movie.getReviews());
-
-        Log.d("Movies", "     overview: " + movie.getOverview());
 
         //set activity layout
         activity.setContentView(DetailHelper.DETAIL_LAYOUT_ID);
@@ -214,7 +228,6 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
         //create FragmentPagerAdapter for viewPager
         DetailAdapter adapter = new DetailAdapter(this, mFragmentManager, mFragmentRegistry);
-        Log.d("Movies", "     adapter: " + adapter.toString());
 
         //get viewPager
         ViewPager viewPager = (ViewPager)activity.findViewById(DetailHelper.DETAIL_PAGER_ID);
@@ -244,7 +257,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
     public void postResume(){
 
         //check orientation change status
-        if(!mBoss.getOrientationChanged()){
+        if(!mBoss.getOrientationChanged()) {
             //NOT an orientation change event, update fragment view
             //displayFragment();
         }
@@ -370,16 +383,13 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  * @param item - movie item data of current movie being viewed
  */
     public void updateDetails(MovieItem item){
-        Log.d("Movies", "DetailKeeper.updateDetails");
         //get Maid responsible for displaying the type of movies requested
         InfoMaid infoMaid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
         infoMaid.updateViews(item);
 
-        Log.d("Movies", "     reviews: " + item.getReviews().size());
         ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
         reviewMaid.updateReviews(item.getReviews());
 
-        Log.d("Movies", "     videos: " + item.getVideos().size());
         VideoMaid videoMaid = (VideoMaid)mBoss.getMaid(VideoHelper.NAME_ID);
         videoMaid.updateVideos(item.getVideos());
 
