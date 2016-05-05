@@ -1,0 +1,83 @@
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/crd_review"
+    android:layout_width="300dp"
+    android:layout_height="200dp"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="0dp"
+    card_view:cardMaxElevation="0dp"
+    android:layout_margin="5dp">
+
+
+    <ImageView
+        android:src="@drawable/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="7dp"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        >
+
+        <ImageView android:id="@+id/dia_cast_img_actor"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:layout_marginLeft="7dp"
+            android:layout_weight="2"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="7dp"
+            android:layout_weight="3"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="7dp"
+                android:paddingLeft="7dp"
+                android:text="Actor:"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:background="@color/powderBlueish_20"/>
+            <TextView android:id="@+id/dia_cast_txt_actor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+                android:paddingLeft="7dp"
+                android:text="actor"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:background="@color/powderBlueish_20"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="7dp"
+                android:paddingLeft="7dp"
+                android:text="Character:"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:background="@color/powderBlueish_20"/>
+            <TextView android:id="@+id/dia_cast_txt_character"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+                android:paddingLeft="7dp"
+                android:text="character"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:background="@color/powderBlueish_20"/>
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
