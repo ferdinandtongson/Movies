@@ -1,7 +1,6 @@
 package me.makeachoice.movies.controller.housekeeper.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,7 @@ import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
  *      ViewHolder
  *
  */
-public class NameAdapter extends BaseAdapter {
+public class NameAdapter extends BaseAdapter{
 
 /**************************************************************************************************/
 /**
@@ -36,23 +35,30 @@ public class NameAdapter extends BaseAdapter {
  */
 /**************************************************************************************************/
 
-    //mContext - current context
-    private Context mContext;
+    //mBridge - class implementing Bridge interface
+    private Bridge mBridge;
 
     //mNames - array list of names
     private ArrayList<String> mNames = new ArrayList<>();
+
+    //Implemented communication line to any MyHouseKeeper class
+    public interface Bridge{
+        //get Context of current Activity
+        Context getActivityContext();
+    }
+
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
  * NamAdapter - constructor
- * @param context - current activity context
+ * @param bridge - class implementing Bridge interface
  * @param names - list of string names
  */
-    public NameAdapter(Context context, ArrayList<String> names){
+    public NameAdapter(Bridge bridge, ArrayList<String> names){
         //current activity context
-        mContext = context;
+        mBridge = bridge;
 
         //clear array list
         mNames.clear();
@@ -66,10 +72,10 @@ public class NameAdapter extends BaseAdapter {
 /**************************************************************************************************/
 /**
  * Getters:
- *      int getItemCount() - get number of names in the list
+ *      int getCount() - get number of names in the list
  *      String getItem(int) - get name in the given list position
  *      long getItemId(int) - return 0
- *      View getView(int,View,ViewGroup) - update views displayed in listView
+ *      View getView(int,View,ViewGroup) - get views to be displayed in listView
  */
 /**************************************************************************************************/
 /**
@@ -93,55 +99,44 @@ public class NameAdapter extends BaseAdapter {
         return mNames.get(position);
     }
 
-    /**
-     * long getItemId(int) - return 0
-     * @param position - position in the list
-     * @return - 0, no id number for names
-     */
-    @Override
+/**
+ * long getItemId(int) - return 0
+ * @param position - position in the list
+ * @return - 0, no id number for names
+ */
+@Override
     public long getItemId(int position){
         //no unique id number for names
         return 0;
     }
 
-    /**
-     * View getView(int,View,ViewGroup)- update the items in the listView
-     * @param position - position of item in list
-     * @param convertView - item view contained in the listview
-     * @param parent - listView
-     * @return - updated item view
-     */
+/**
+ * View getView(int,View,ViewGroup)- get views to be displayed in listview
+ * @param position - position of item in list
+ * @param convertView - item view contained in the listview
+ * @param parent - listView
+ * @return - updated item view
+ */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("Movie", "NameAdapter.getView");
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(InfoHelper.ITEM_NAME_LAYOUT_ID,
-                    parent, false);
+            //view is null, inflate view
+            convertView = LayoutInflater.from(mBridge.getActivityContext())
+                    .inflate(InfoHelper.ITEM_NAME_LAYOUT_ID, parent, false);
+
+            //create viewHolder for new convertView
             ViewHolder viewHolder = new ViewHolder();
 
+            //attach viewHolder to convertView via tag
             convertView.setTag(viewHolder);
         }
 
-        updateName(convertView, mNames, position);
+        //update child views
+        updateName(convertView, mNames.get(position));
 
         // Return the completed view to render on screen
         return convertView;
-    }
-
-    private void updateName(View convertView, ArrayList<String> nameList, int position){
-        //get the data item for this position
-        String name = nameList.get(position);
-
-        //get viewHolder
-        ViewHolder viewHolder = (ViewHolder)convertView.getTag();
-
-        //get textView to display cast members' name
-        TextView txtName = (TextView)viewHolder.getView(
-                convertView, InfoHelper.ITEM_NAME_TXT_NAME_ID);
-
-        //set name to textView
-        txtName.setText(name);
     }
 
 /**************************************************************************************************/
@@ -157,11 +152,38 @@ public class NameAdapter extends BaseAdapter {
  * @param names - lst of names to be displayed
  */
     public void setNames(ArrayList<String> names){
-        Log.d("Movies", "NameAdapter.setNames");
+        //clear list array
         mNames.clear();
-        Log.d("Movies", "     clear");
+
+        //add names to list array
         mNames.addAll(names);
-        Log.d("Movies", "     add names");
+    }
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Class Methods
+ *      void updateName(View,ArrayList<String>,int) - update textView child to display name
+ */
+/**************************************************************************************************/
+
+/**
+ * void updateName(View,ArrayList<String>,int) - update textView child to display name
+ * @param convertView - view holding the child views
+ * @param name - name to display in textView
+ */
+    private void updateName(View convertView, String name){
+
+        //get viewHolder
+        ViewHolder viewHolder = (ViewHolder)convertView.getTag();
+
+        //get textView to display cast members' name
+        TextView txtName = (TextView)viewHolder.getView(
+                convertView, InfoHelper.ITEM_NAME_TXT_NAME_ID);
+
+        //set name to textView
+        txtName.setText(name);
     }
 
 /**************************************************************************************************/
@@ -207,4 +229,7 @@ public class NameAdapter extends BaseAdapter {
         }
 
     }
+
+/**************************************************************************************************/
+
 }
