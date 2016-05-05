@@ -1,11 +1,15 @@
 package me.makeachoice.movies.controller.housekeeper.maid;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,6 +20,7 @@ import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.housekeeper.adapter.NameAdapter;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
+import me.makeachoice.movies.view.dialog.CastDialog;
 import me.makeachoice.movies.view.fragment.InfoFragment;
 import me.makeachoice.movies.model.item.CastItem;
 import me.makeachoice.movies.model.item.MovieItem;
@@ -48,8 +53,15 @@ import me.makeachoice.movies.model.item.MovieItem;
  *      View createView(LayoutInflater, ViewGroup, Bundle);
  *      void createActivity(Bundle, View);
  *
+ * Implements NameAdapter.Bridge:
+ *      Context getActivityContext()
+ *
+ * Implements AdapterView.OnItemClickListener
+ *      void onItemClick(AdapterView,View,int,long)
+ *
  */
-public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
+public class InfoMaid extends MyMaid implements InfoFragment.Bridge, NameAdapter.Bridge,
+        AdapterView.OnItemClickListener{
 
 /**************************************************************************************************/
 /**
@@ -102,7 +114,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         ArrayList<String> names = new ArrayList<>();
 
         //initialize adapter used to hold cast member names
-        mCastAdapter = new NameAdapter(mBridge.getActivityContext(), names);
+        mCastAdapter = new NameAdapter(this, names);
 
     }
 
@@ -111,12 +123,19 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 /**************************************************************************************************/
 /**
  * Getters:
- *      - None -
+ *      Context getActivityContext() - get current Activity context
  *
  * Setters:
  *      void setMovie(MovieItem) - set movie data used by fragment
  */
 /**************************************************************************************************/
+/**
+ * Context getActivityContext() - get current Activity context
+ * @return - current Activity context
+ */
+    public Context getActivityContext(){
+    return mBridge.getActivityContext();
+}
 
 /**
  * void setMovie(MovieItem) - set movie data used by fragment
@@ -126,6 +145,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
         mMovie = item;
     }
 
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
@@ -246,6 +266,9 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
             mCastAdapter.setNames(prepareNames(item.getCast()));
         }
 
+        //set onItemClick listener for listview
+        listView.setOnItemClickListener(this);
+
         // Assign adapter to ListView
         listView.setAdapter(mCastAdapter);
     }
@@ -332,6 +355,36 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge{
 
         //return list of names
         return names;
+    }
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Implement AdapterView.OnItemClickListener
+ */
+/**************************************************************************************************/
+/**
+ * void onItemClick(AdapterView,View,int,long) - onItemClick event when user clicks on cast
+ * member name. When clicked, will display a dialog giving more information about the actor.
+ * @param parent - adapterView holding list of names
+ * @param v - child view displaying the cast member name
+ * @param position - position of the item clicked in the list
+ * @param id - id number of the item clicked in the list
+ */
+    public void onItemClick(AdapterView parent, View v, int position, long id) {
+        //get current activity
+        Activity activity = (Activity)mBridge.getActivityContext();
+
+        //create review dialog with review item data selected
+        CastDialog mDialog = new CastDialog(activity, mMovie.getCast().get(position));
+
+        //make dialog background transparent
+        mDialog.getWindow().setBackgroundDrawable
+                (new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        //show dialog
+        mDialog.show();
     }
 
 /**************************************************************************************************/
