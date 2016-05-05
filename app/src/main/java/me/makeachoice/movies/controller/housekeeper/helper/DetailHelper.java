@@ -95,14 +95,34 @@ public class DetailHelper extends MyHelper{
  */
 /**************************************************************************************************/
 
-    //DIA_REVIEW_LAYOUT_ID - layout id of DialogReview
+    //DIA_REVIEW_LAYOUT_ID - layout id of ReviewDialog
     public static final int DIA_REVIEW_LAYOUT_ID = R.layout.review_dialog;
 
-    //DIA_REVIEW_TXT_AUTHOR - child view id of DialogReview used to display author of review
+    //DIA_REVIEW_TXT_AUTHOR - child view id of ReviewDialog used to display author of review
     public static final int DIA_REVIEW_TXT_AUTHOR = R.id.dia_txt_review_author;
 
-    //DIA_REVIEW_TXT_REVIEW - child view id of DialogReview used to display review of movie
+    //DIA_REVIEW_TXT_REVIEW - child view id of ReviewDialog used to display review of movie
     public static final int DIA_REVIEW_TXT_REVIEW = R.id.dia_txt_review;
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * CastDialog layout and child view ids
+ */
+    /**************************************************************************************************/
+
+    //DIA_CAST_LAYOUT_ID - layout id of CastDialog
+    public static final int DIA_CAST_LAYOUT_ID = R.layout.cast_dialog;
+
+    //DIA_CAST_IMG_ACTOR - child view id of CastDialog used to display image of actor
+    public static final int DIA_CAST_IMG_ACTOR = R.id.dia_cast_img_actor;
+
+    //DIA_CAST_TXT_ACTOR - child view id of CastDialog used to display name of actor
+    public static final int DIA_CAST_TXT_ACTOR = R.id.dia_cast_txt_actor;
+
+    //DIA_CAST_TXT_CHARACTER - child view id of CastDialog used to display character played by actor
+    public static final int DIA_CAST_TXT_CHARACTER = R.id.dia_cast_txt_character;
 
 /**************************************************************************************************/
 
