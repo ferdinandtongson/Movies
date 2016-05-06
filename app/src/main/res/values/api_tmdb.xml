@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="tmdb_scheme">http</string>
+    <string name="tmdb_scheme_secure">https</string>
     <string name="tmdb_authority">api.themoviedb.org</string>
     <string name="tmdb_api_version">3</string>
 
@@ -30,10 +31,14 @@
     <string name="tmdb_image_folder_p">p</string>
     <string name="tmdb_image_folder_w500">w500</string>
 
+    <string name="tmdb_authority_youtube_image">img.youtube.com</string>
+    <string name="tmdb_youtube_folder_vi">vi</string>
+    <string name="tmdb_youtube_path_thumbnail">0.jpg</string>
 
+    <string name="tmdb_authority_youtube">www.youtube.com</string>
+    <string name="tmdb_youtube_path_watch">watch</string>
+    <string name="tmdb_youtube_query_video">v</string>
 
-    <string name="tmdb_youtube_image_base_request">http://img.youtube.com/vi/</string>
-    <string name="tmdb_youtube_path_thumbnail">/0.jpg</string>
     <string name="tmdb_youtube">YouTube</string>
 
 </resources>
