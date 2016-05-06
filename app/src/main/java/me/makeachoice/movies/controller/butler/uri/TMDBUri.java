@@ -14,6 +14,11 @@ public class TMDBUri {
     private final int AUTHORITY = R.string.tmdb_authority;
     private final int API_VERSION = R.string.tmdb_api_version;
 
+    private final int AUTHORITY_IMAGE = R.string.tmdb_authority_image;
+    private final int IMAGE_FOLDER_T = R.string.tmdb_image_folder_t;
+    private final int IMAGE_FOLDER_P = R.string.tmdb_image_folder_p;
+    private final int IMAGE_FOLDER_W500 = R.string.tmdb_image_folder_w500;
+
     private final int PATH_MOVIE = R.string.tmdb_path_movie;
     private final int PATH_MOVIES = R.string.tmdb_path_movies;
     private final int PATH_GENRE = R.string.tmdb_path_genre;
@@ -130,6 +135,36 @@ public class TMDBUri {
 
         return builder.build().toString();
 
+    }
+
+    public String getImagePath(String poster, String apiKey){
+        poster = makeValidUriPath(poster);
+
+        // http://image.tmdb.org/t/p/w500/poster?api_key=apiKey
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(mButler.getActivityContext().getString(SCHEME))
+                .authority(mButler.getActivityContext().getString(AUTHORITY_IMAGE))
+                .appendPath(mButler.getActivityContext().getString(IMAGE_FOLDER_T))
+                .appendPath(mButler.getActivityContext().getString(IMAGE_FOLDER_P))
+                .appendPath(mButler.getActivityContext().getString(IMAGE_FOLDER_W500))
+                .appendPath(poster)
+                .appendQueryParameter(
+                        mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
+
+        return builder.build().toString();
+    }
+
+
+    private String makeValidUriPath(String path){
+        if(path != null){
+            String str = String.valueOf(path.charAt(0));
+            if(str.equals("/")){
+                int len = path.length();
+                path = path.substring(1, len);
+            }
+        }
+
+        return path;
     }
 
 
