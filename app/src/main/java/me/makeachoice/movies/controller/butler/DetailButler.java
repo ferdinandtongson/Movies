@@ -1,7 +1,6 @@
 package me.makeachoice.movies.controller.butler;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +44,6 @@ public class DetailButler extends MyButler{
  *      DetailWorker mDetailWorker - AsyncTask class that makes API calls to get Movie details
  *
  *      HashMap<Integer, MovieItem> mMovieMap - movie buffer holding movie items
- *      int mMovieId - TheMovieDB id number of Movie being requested
  */
 /**************************************************************************************************/
 
@@ -60,9 +58,6 @@ public class DetailButler extends MyButler{
 
     //mMovieMap - movie buffer holding movie items
     private HashMap<Integer, MovieItem> mMovieMap;
-
-    //mMovieRequest - current list of Movies being requested
-    private int mMovieId;
 
 /**************************************************************************************************/
 
@@ -183,9 +178,6 @@ public class DetailButler extends MyButler{
             mRequestBuffer.add(id);
         }
         else{
-            //save id number of movie being requested
-            mMovieId = id;
-
             //start working on the movie detail request
             startDetailRequest(id);
         }
@@ -216,7 +208,6 @@ public class DetailButler extends MyButler{
 
         //check if results were successful
         if(result){
-            Log.d("Movies", "DetailButler.workComplete");
             mBoss.updateDetailActivity(prepareMovieDetails(mDetailWorker.getMovie()));
         }
         else{
@@ -267,10 +258,13 @@ public class DetailButler extends MyButler{
     }
 
     private void prepareEmptyDetails(MovieItem movie){
+        String strEmpty = mBoss.getString(R.string.str_empty);
+
+
         ArrayList<GenreItem> emptyGenre = new ArrayList<>();
         GenreItem genreItem = new GenreItem();
         genreItem.setTMDBId(-1);
-        genreItem.setName("empty");
+        genreItem.setName(strEmpty);
 
         emptyGenre.add(genreItem);
         movie.setGenres(emptyGenre);
@@ -278,9 +272,9 @@ public class DetailButler extends MyButler{
         ArrayList<CastItem> emptyCast = new ArrayList<>();
 
         CastItem castItem = new CastItem();
-        castItem.character = "empty";
-        castItem.name = "empty";
-        castItem.profilePath = "empty";
+        castItem.character = strEmpty;
+        castItem.name = strEmpty;
+        castItem.profilePath = strEmpty;
 
         emptyCast.add(castItem);
         movie.setCast(emptyCast);
@@ -288,9 +282,9 @@ public class DetailButler extends MyButler{
         ArrayList<ReviewItem> emptyReview = new ArrayList<>();
 
         ReviewItem reviewItem = new ReviewItem();
-        reviewItem.author = "empty";
-        reviewItem.review = "empty";
-        reviewItem.reviewPath = "empty";
+        reviewItem.author = strEmpty;
+        reviewItem.review = strEmpty;
+        reviewItem.reviewPath = strEmpty;
 
         emptyReview.add(reviewItem);
         movie.setReviews(emptyReview);
@@ -298,9 +292,9 @@ public class DetailButler extends MyButler{
         ArrayList<VideoItem> emptyVideo = new ArrayList<>();
 
         VideoItem videoItem = new VideoItem();
-        videoItem.key = "empty";
-        videoItem.name = "empty";
-        videoItem.site = "empty";
+        videoItem.key = strEmpty;
+        videoItem.name = strEmpty;
+        videoItem.site = strEmpty;
         videoItem.size = -1;
 
         emptyVideo.add(videoItem);
@@ -388,6 +382,16 @@ public class DetailButler extends MyButler{
             item.name = mod.name;
             item.size = mod.size;
 
+            if(item.site.equalsIgnoreCase(mBoss.getString(R.string.tmdb_youtube))){
+                String baseUrl = mBoss.getString(R.string.tmdb_youtube_image_base_request);
+
+                //Uri.Builder builder = createUriBase();
+
+
+                item.thumbnailPath = baseUrl + item.key +
+                        mBoss.getString(R.string.tmdb_youtube_path_thumbnail);
+            }
+
             reviews.add(item);
         }
 
@@ -413,13 +417,9 @@ public class DetailButler extends MyButler{
     }
 
     private String processImagePath(String path){
-        Context ctx = mBoss.getActivityContext();
 
         //create valid poster path uri for TheMovieDB api
-        return ctx.getString(R.string.tmdb_image_base_request) +
-                path + "?" +
-                ctx.getString(R.string.tmdb_query_api_key) + "=" +
-                ctx.getString(R.string.api_key_tmdb);
+        return mTMDBUri.getImagePath(path, mTMDBKey);
     }
 
 /**************************************************************************************************/

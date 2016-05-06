@@ -422,11 +422,8 @@ public class PosterButler extends MyButler{
 
         //loop through the data models
         for(int i = 0; i < count; i++){
-            //create valid poster path uri for TheMovieDB api
-            String posterPath = ctx.getString(R.string.tmdb_image_base_request) +
-                    models.get(i).getPosterPath() + "?" +
-                    ctx.getString(R.string.tmdb_query_api_key) + "=" +
-                    ctx.getString(R.string.api_key_tmdb);
+            //get uri poster path
+            String posterPath = mTMDBUri.getImagePath(models.get(i).getPosterPath(), mTMDBKey);
 
             //create poster item from movie model
             PosterItem item = new PosterItem(models.get(i).getId(),
