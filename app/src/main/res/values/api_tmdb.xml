@@ -25,5 +25,15 @@
 
     <string name="tmdb_append_response_all">videos,reviews,similar,credits</string>
 
-    <string name="tmdb_image_base_request">http://image.tmdb.org/t/p/w500/</string>
+    <string name="tmdb_authority_image">image.tmdb.org</string>
+    <string name="tmdb_image_folder_t">t</string>
+    <string name="tmdb_image_folder_p">p</string>
+    <string name="tmdb_image_folder_w500">w500</string>
+
+
+
+    <string name="tmdb_youtube_image_base_request">http://img.youtube.com/vi/</string>
+    <string name="tmdb_youtube_path_thumbnail">/0.jpg</string>
+    <string name="tmdb_youtube">YouTube</string>
+
 </resources>
