@@ -21,7 +21,6 @@ import me.makeachoice.movies.R;
  */
 public class VideoHelper extends MyHelper{
 
-    //TODO - save HouseKeeper name to String resource file found at res/values
     //NAME_ID - unique name of instantiated MyHouseKeeper class
     public final static int NAME_ID = R.string.maid_detail_videos;
 
@@ -37,11 +36,11 @@ public class VideoHelper extends MyHelper{
  */
 /**************************************************************************************************/
 
-    //REVIEW_LAYOUT_ID is the layout used to display fragments
-    public static final int REVIEW_FRAGMENT_LAYOUT_ID = R.layout.review_fragment;
+    //VIDEO_LAYOUT_ID is the layout used to display fragments
+    public static final int VIDEO_FRAGMENT_LAYOUT_ID = R.layout.detail_fragment;
 
-    //REVIEW_REC_ID is container that holds the fragments
-    public static final int REVIEW_REC_ID = R.id.rec_review;
+    //VIDEO_REC_ID is container that holds the fragments
+    public static final int VIDEO_REC_ID = R.id.rec_detail;
 
     //XXX_TOOLBAR_ID is the toolbar used by Activity
     //public static final  int XXX_TOOLBAR_ID = R.id.toolbar;
@@ -63,8 +62,11 @@ public class VideoHelper extends MyHelper{
     //CARD_VIDEO_CRD_VIDEO_ID - cardView that holds the other views
     public final static int CARD_VIDEO_CRD_VIDEO_ID = R.id.crd_video;
 
-    //CARD_VIDEO_VDO_TRAILER_ID - textView child for the author of the review
-    public final static int CARD_VIDEO_VDO_TRAILER_ID = R.id.vdo_trailer;
+    //CARD_VIDEO_IMG_TRAILER_ID - textView child for the author of the review
+    public final static int CARD_VIDEO_IMG_TRAILER_ID = R.id.img_video_trailer;
+
+    //CARD_VIDEO_TXT_TITLE_ID - textView child for the author of the review
+    public final static int CARD_VIDEO_TXT_TITLE_ID = R.id.txt_video_title;
 
 /**************************************************************************************************/
 

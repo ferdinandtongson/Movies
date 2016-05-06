@@ -37,10 +37,10 @@ public class ReviewHelper extends MyHelper{
 /**************************************************************************************************/
 
     //REVIEW_LAYOUT_ID is the layout used to display fragments
-    public static final int REVIEW_FRAGMENT_LAYOUT_ID = R.layout.review_fragment;
+    public static final int REVIEW_FRAGMENT_LAYOUT_ID = R.layout.detail_fragment;
 
     //REVIEW_REC_ID is container that holds the fragments
-    public static final int REVIEW_REC_ID = R.id.rec_review;
+    public static final int REVIEW_REC_ID = R.id.rec_detail;
 
     //XXX_TOOLBAR_ID is the toolbar used by Activity
     //public static final  int XXX_TOOLBAR_ID = R.id.toolbar;
