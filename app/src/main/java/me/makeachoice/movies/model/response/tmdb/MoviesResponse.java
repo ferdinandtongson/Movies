@@ -1,6 +1,5 @@
 package me.makeachoice.movies.model.response.tmdb;
 
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -24,7 +23,6 @@ public class MoviesResponse {
 
 
     public MoviesResponse(){
-        Log.d("Movies", "TMDResponse");
         movies = new ArrayList<>();
     }
 
