@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.housekeeper.adapter.NameAdapter;
 import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.view.dialog.CastDialog;
 import me.makeachoice.movies.view.fragment.InfoFragment;
 import me.makeachoice.movies.model.item.CastItem;
@@ -296,8 +297,8 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge, NameAdapter
         //add poster image, placeholder image and error image
         Picasso.with(mBridge.getActivityContext())
                 .load(item.getPosterPath())
-                .placeholder(InfoHelper.INFO_PLACEHOLDER_IMG_ID)
-                .error(InfoHelper.INFO_PLACEHOLDER_IMG_ID)
+                .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
+                .error(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
                 .into(imgPoster);
     }
 
