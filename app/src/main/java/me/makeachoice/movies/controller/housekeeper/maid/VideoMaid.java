@@ -3,7 +3,6 @@ package me.makeachoice.movies.controller.housekeeper.maid;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,8 +13,8 @@ import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.housekeeper.adapter.RecyclerItemClickListener;
 import me.makeachoice.movies.controller.housekeeper.adapter.VideoRecycler;
-import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
+import me.makeachoice.movies.util.GridAutofitLayoutManager;
 import me.makeachoice.movies.view.fragment.ReviewFragment;
 import me.makeachoice.movies.model.item.VideoItem;
 
@@ -69,7 +68,7 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
 /**************************************************************************************************/
 
     //mViewHolder - holds all the child views of the fragment
-    private ReviewHelper.ViewHolder mViewHolder;
+    private VideoHelper.ViewHolder mViewHolder;
 
     //mBridge - class implementing Bridge, typically a MyHouseKeeper class
     private Bridge mBridge;
@@ -79,7 +78,7 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
-        //TODO - notify HouseKeeper a poster has been selected
+        //notifies HouseKeeper a video has been selected
         void onSelectedVideo(int position);
     }
 
@@ -174,7 +173,7 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
                            Bundle savedInstanceState){
 
         //return fragment
-        return inflater.inflate(ReviewHelper.REVIEW_FRAGMENT_LAYOUT_ID, container, false);
+        return inflater.inflate(VideoHelper.VIDEO_FRAGMENT_LAYOUT_ID, container, false);
     }
 
 /**
@@ -187,7 +186,7 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
 
         //get RecyclerView from ViewHolder
         RecyclerView recycler = (RecyclerView)mViewHolder.getView(layout,
-                ReviewHelper.REVIEW_REC_ID);
+                VideoHelper.VIDEO_REC_ID);
 
         //setHasFixedSize to true because 1)is true and 2)for optimization
         recycler.setHasFixedSize(true);
@@ -208,8 +207,8 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
 
         //create LayoutManager for RecyclerView, in this case a list type LayoutManager
         //TODO - need to change 240 to a dynamic variable
-        LinearLayoutManager manager =
-                new LinearLayoutManager(mBridge.getActivityContext());
+        GridAutofitLayoutManager manager =
+                new GridAutofitLayoutManager(mBridge.getActivityContext(), 240);
 
         //set layout manager of RecyclerView
         recycler.setLayoutManager(manager);
