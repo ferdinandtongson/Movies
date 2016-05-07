@@ -2,12 +2,6 @@ package me.makeachoice.movies.model.db.contract;
 
 import android.provider.BaseColumns;
 
-import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
-
-import me.makeachoice.movies.model.response.tmdb.GenreModel;
-
 /**
  * TheMovieDB sqlite Contract class. A companion class which explicitly specifies the layout of
  * the table schema related to TheMovieDB data.
