@@ -6,14 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
+import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
-import me.makeachoice.movies.model.item.ReviewItem;
 import me.makeachoice.movies.model.item.VideoItem;
 
 /**
@@ -134,12 +135,16 @@ public class VideoRecycler extends RecyclerView.Adapter<VideoRecycler.VideoHolde
  */
     @Override
     public void onBindViewHolder(VideoHolder holder, int position) {
+        //load thumbnail image to imageView
+        Picasso.with(mBridge.getActivityContext())
+                .load(mVideos.get(position).thumbnailPath)
+                .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
+                .error(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
+                .into(holder.mImgTrailer);
 
-        //set author
-        //holder.mTxtAuthor.setText(mReviews.get(position).author);
+        //set title of trialer
+        holder.mTxtTitle.setText(mVideos.get(position).name);
 
-        //set review
-        //holder.mTxtReview.setText(mReviews.get(position).review);
     }
 
 /**************************************************************************************************/
@@ -166,8 +171,10 @@ public class VideoRecycler extends RecyclerView.Adapter<VideoRecycler.VideoHolde
 
         //mCrdVideo - cardView that hold child views found below
         protected CardView mCrdVideo;
-        //mVdoTrailer - videoView that holds video trailers
-        protected VideoView mVdoTrailer;
+        //mImgTrailer - imageView that holds thumbnail image of trailer
+        protected ImageView mImgTrailer;
+        //mTxtTitle - textView that holds the title of the trailer
+        protected TextView mTxtTitle;
 
 /**************************************************************************************************/
 
@@ -182,8 +189,11 @@ public class VideoRecycler extends RecyclerView.Adapter<VideoRecycler.VideoHolde
             //set CardView object
             mCrdVideo = (CardView)recycleView.findViewById(VideoHelper.CARD_VIDEO_CRD_VIDEO_ID);
 
-            //set VideoView object
-            mVdoTrailer = (VideoView)recycleView.findViewById(VideoHelper.CARD_VIDEO_VDO_TRAILER_ID);
+            //set ImageView object
+            mImgTrailer = (ImageView)recycleView.findViewById(VideoHelper.CARD_VIDEO_IMG_TRAILER_ID);
+
+            //set TextView object
+            mTxtTitle = (TextView)recycleView.findViewById(VideoHelper.CARD_VIDEO_TXT_TITLE_ID);
 
         }
     }
