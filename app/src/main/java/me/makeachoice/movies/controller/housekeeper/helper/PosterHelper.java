@@ -39,6 +39,10 @@ public class PosterHelper extends MyHelper {
     //POSTER_REC_ID is the RecyclerView id used poster fragment
     public static final int POSTER_REC_ID = R.id.rec_poster;
 
+    //POSTER_TXT_NO_DATA_ID is the textView displayed when there is no data to display
+    public static final int POSTER_TXT_NO_DATA_ID = R.id.txt_poster_no_data;
+
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -68,5 +72,17 @@ public class PosterHelper extends MyHelper {
     public static final int POSTER_ERROR_IMG_ID = R.drawable.placeholder_error;
 
 /**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * String resource ids used
+ */
+/**************************************************************************************************/
+
+    //STR_NO_DATA_ID is the "No Data to Display" string id
+    public static final int STR_NO_DATA_ID = R.string.str_no_data;
+
+/**************************************************************************************************/
+
 
 }
