@@ -42,6 +42,9 @@ public class ReviewHelper extends MyHelper{
     //REVIEW_REC_ID is container that holds the fragments
     public static final int REVIEW_REC_ID = R.id.rec_detail;
 
+    //REVIEW_TXT_NO_DATA_ID is the textView displayed when there is no data to display
+    public static final int REVIEW_TXT_NO_DATA_ID = R.id.txt_detail_no_data;
+
     //XXX_TOOLBAR_ID is the toolbar used by Activity
     //public static final  int XXX_TOOLBAR_ID = R.id.toolbar;
 
@@ -69,5 +72,17 @@ public class ReviewHelper extends MyHelper{
     public final static int CARD_REVIEW_TXT_REVIEW_ID = R.id.txt_review;
 
 /**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * String resource ids used
+ */
+/**************************************************************************************************/
+
+    //STR_NO_DATA_ID is the "No Data to Display" string id
+    public static final int STR_NO_DATA_ID = R.string.str_no_data;
+
+/**************************************************************************************************/
+
 
 }

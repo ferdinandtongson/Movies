@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -61,6 +62,7 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
  *      ReviewHelper.ViewHolder mViewHolder - holds all the child views of the fragment
  *      Bridge mBridge - class implementing Bridge interface
  *      ReviewRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
+ *      TextView mTxtNoData - displayed when there is no data for RecyclerView
  *
  * Extends Bridge Interface:
  *      void onSelectedVideo(int)
@@ -75,6 +77,12 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
 
     //mRecycler - manages item views for the RecyclerView used in the Fragment
     private VideoRecycler mRecycler;
+
+    //mLayout - fragment layout
+    private View mLayout;
+
+    //mTxtNoData - displayed when there is no data for RecyclerView
+    private TextView mTxtNoData;
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
@@ -183,9 +191,21 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
  * @param layout - layout where child views reside
  */
     public void createActivity(Bundle savedInstanceState, View layout){
+        Log.d("Video", "VideoMaid.createActivity");
+        //get fragment layout
+        mLayout = layout;
+
+        //get "No Data" TextView from ViewHolder
+        mTxtNoData = (TextView)mViewHolder.getView(mLayout, VideoHelper.VIDEO_TXT_NO_DATA_ID);
+
+        //set "No Data" text in textView
+        mTxtNoData.setText(mBridge.getActivityContext().getString(VideoHelper.STR_NO_DATA_ID));
+
+        //check if there is data to display
+        displayNoData(mRecycler.getItemCount());
 
         //get RecyclerView from ViewHolder
-        RecyclerView recycler = (RecyclerView)mViewHolder.getView(layout,
+        RecyclerView recycler = (RecyclerView)mViewHolder.getView(mLayout,
                 VideoHelper.VIDEO_REC_ID);
 
         //setHasFixedSize to true because 1)is true and 2)for optimization
@@ -231,6 +251,11 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
  * @param videos - list of VideoItem data
  */
     public void updateVideos(ArrayList<VideoItem> videos){
+        Log.d("Video", "VideoMaid.updateVideos: " + videos.size());
+        if(mLayout != null){
+            //if layout not null, check if there is data to display
+            displayNoData(videos.size());
+        }
 
         //change movie trailers being displayed
         mRecycler.setVideos(videos);
@@ -238,6 +263,20 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
         //notify adapter that data has changed
         mRecycler.notifyDataSetChanged();
     }
+
+    private void displayNoData(int count){
+        //check if there are any reviews
+        if(count == 0){
+            //no reviews, display "No Data" text
+            mTxtNoData.setVisibility(View.VISIBLE);
+        }
+        else{
+            //have reviews, hid "No Data" text
+            mTxtNoData.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
 
 /**************************************************************************************************/
 }

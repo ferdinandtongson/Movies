@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -60,6 +62,7 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
  *      ReviewHelper.ViewHolder mViewHolder - holds all the child views of the fragment
  *      Bridge mBridge - class implementing Bridge interface
  *      ReviewRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
+ *      TextView mTxtNoData - displayed when there is no data for RecyclerView
  *
  * Extends Bridge Interface:
  *      void onSelectedReview(int)
@@ -74,6 +77,12 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
 
     //mRecycler - manages item views for the RecyclerView used in the Fragment
     private ReviewRecycler mRecycler;
+
+    //mLayout - fragment layout
+    private View mLayout;
+
+    //mTxtNoData - displayed when there is no data for RecyclerView
+    private TextView mTxtNoData;
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
@@ -184,9 +193,21 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
  * @param layout - layout where child views reside
  */
     public void createActivity(Bundle savedInstanceState, View layout){
+        Log.d("Video", "ReviewMaid.createActivity");
+        //get fragment layout
+        mLayout = layout;
+
+        //get "No Data" TextView from ViewHolder
+        mTxtNoData = (TextView)mViewHolder.getView(mLayout, ReviewHelper.REVIEW_TXT_NO_DATA_ID);
+
+        //set "No Data" text in textView
+        mTxtNoData.setText(mBridge.getActivityContext().getString(ReviewHelper.STR_NO_DATA_ID));
+
+        //check if there is data to display
+        displayNoData(mRecycler.getItemCount());
 
         //get RecyclerView from ViewHolder
-        RecyclerView recycler = (RecyclerView)mViewHolder.getView(layout,
+        RecyclerView recycler = (RecyclerView)mViewHolder.getView(mLayout,
                 ReviewHelper.REVIEW_REC_ID);
 
         //setHasFixedSize to true because 1)is true and 2)for optimization
@@ -231,12 +252,28 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
  * @param reviews - list of ReviewItem data
  */
     public void updateReviews(ArrayList<ReviewItem> reviews){
-
+        if(mLayout != null){
+            //if layout not null, check if there is data to display
+            displayNoData(reviews.size());
+        }
         //change movie reviews being displayed
         mRecycler.setReviews(reviews);
 
         //notify adapter that data has changed
         mRecycler.notifyDataSetChanged();
+    }
+
+    private void displayNoData(int count){
+        //check if there are any reviews
+        if(count == 0){
+            //no reviews, display "No Data" text
+            mTxtNoData.setVisibility(View.VISIBLE);
+        }
+        else{
+            //have reviews, hid "No Data" text
+            mTxtNoData.setVisibility(View.INVISIBLE);
+        }
+
     }
 
 /**************************************************************************************************/

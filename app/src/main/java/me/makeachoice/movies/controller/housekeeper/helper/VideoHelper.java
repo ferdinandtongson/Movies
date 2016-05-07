@@ -42,6 +42,9 @@ public class VideoHelper extends MyHelper{
     //VIDEO_REC_ID is container that holds the fragments
     public static final int VIDEO_REC_ID = R.id.rec_detail;
 
+    //VIDEO_TXT_NO_DATA_ID is the textView displayed when there is no data to display
+    public static final int VIDEO_TXT_NO_DATA_ID = R.id.txt_detail_no_data;
+
     //XXX_TOOLBAR_ID is the toolbar used by Activity
     //public static final  int XXX_TOOLBAR_ID = R.id.toolbar;
 
@@ -69,5 +72,17 @@ public class VideoHelper extends MyHelper{
     public final static int CARD_VIDEO_TXT_TITLE_ID = R.id.txt_video_title;
 
 /**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * String resource ids used
+ */
+/**************************************************************************************************/
+
+    //STR_NO_DATA_ID is the "No Data to Display" string id
+    public static final int STR_NO_DATA_ID = R.string.str_no_data;
+
+/**************************************************************************************************/
+
 
 }
