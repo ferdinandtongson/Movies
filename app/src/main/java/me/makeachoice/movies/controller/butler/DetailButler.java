@@ -383,13 +383,9 @@ public class DetailButler extends MyButler{
             item.size = mod.size;
 
             if(item.site.equalsIgnoreCase(mBoss.getString(R.string.tmdb_youtube))){
-                String baseUrl = mBoss.getString(R.string.tmdb_youtube_image_base_request);
 
-                //Uri.Builder builder = createUriBase();
-
-
-                item.thumbnailPath = baseUrl + item.key +
-                        mBoss.getString(R.string.tmdb_youtube_path_thumbnail);
+                item.thumbnailPath = mTMDBUri.getYouTubeThumbnailPath(item.key);
+                item.videoPath = mTMDBUri.getYouTubeVideoPath(item.key);
             }
 
             reviews.add(item);
