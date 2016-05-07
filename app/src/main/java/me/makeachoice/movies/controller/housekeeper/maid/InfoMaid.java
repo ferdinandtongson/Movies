@@ -39,8 +39,10 @@ import me.makeachoice.movies.model.item.MovieItem;
  *      NameAdapter - updates the cast listView
  *
  * Variables from MyMaid:
+ *      int mMaidId
  *      Bridge mBridge
  *      Fragment mFragment
+ *      View mLayout
  *
  * Methods from MyMaid:
  *      void initFragment()

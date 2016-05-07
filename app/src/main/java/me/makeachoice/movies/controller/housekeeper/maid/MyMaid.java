@@ -2,6 +2,7 @@ package me.makeachoice.movies.controller.housekeeper.maid;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.view.View;
 
 /**
  * MyMaid abstract class used to directly communicate with Fragments and with the managing
@@ -15,6 +16,7 @@ public abstract class MyMaid {
  *      int mMaidId - id number of instance Maid
  *      Bridge mBridge - class implementing Bridge, typically a HouseKeeper class
  *      Fragment mFragment - fragment being maintained by the Maid
+ *      View mLayout - fragment layout view holding the child views
  *
 /**************************************************************************************************/
 
@@ -26,6 +28,9 @@ public abstract class MyMaid {
 
     //mFragment - fragment being maintained by the Maid
     protected Fragment mFragment;
+
+    //mLayout - fragment layout view holding the child views
+    protected View mLayout;
 
 /**************************************************************************************************/
 /**
