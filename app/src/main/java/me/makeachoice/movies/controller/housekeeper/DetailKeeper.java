@@ -3,6 +3,7 @@ package me.makeachoice.movies.controller.housekeeper;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -25,7 +26,6 @@ import me.makeachoice.movies.controller.housekeeper.maid.ReviewMaid;
 import me.makeachoice.movies.controller.housekeeper.maid.VideoMaid;
 import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.view.dialog.ReviewDialog;
-
 
 /**
  * DetailKeeper is responsible for DetailActivity and all the Fragments contained with the activity.
@@ -78,19 +78,21 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 /**
  * Class Variables:
  *      DetailHelper.ViewHolder mViewHolder - holds all the child view of the Activity
+ *      MovieItem mMovie - movie item data to be displayed
  */
 /**************************************************************************************************/
 
     //mViewHolder - holds all the child views of the fragment
     private DetailHelper.ViewHolder mViewHolder;
 
+    //mMovie - movie item data to be displayed
     private MovieItem mMovie;
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * _templateKeeper - constructor, registers to Boss, initialize Maid and Fragment Assistant classes
+ * DetailKeeper - constructor, registers to Boss, initialize Maid and Fragment Assistant classes
  * and initializes class variables if any
  * @param boss - Boss class
  */
@@ -137,7 +139,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
  *      void onSelectedReview(int) [ReviewMaid only] - review selected, open dialog to see review
- *      void onSelectedVideo(int) [VideoMaid only] - video selected, open dialog to see video
+ *      void onSelectedVideo(int) [VideoMaid only] - start activity to display video selected
  */
 /**************************************************************************************************/
 /**
@@ -159,8 +161,19 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         mDialog.show();
     }
 
+/**
+ * void onSelectedVideo(int) - start activity to display video selected
+ * @param position - index position of selected video
+ */
     public void onSelectedVideo(int position){
-        Log.d("Movies", "DetailKeeper.onSelectedVideo: " + position);
+        //get url path of video selected
+        String videoPath = mMovie.getVideos().get(position).videoPath;
+
+        //create intent
+        Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse(videoPath));
+
+        //start activity to display video selected
+        mBoss.getActivityContext().startActivity(intent);
     }
 
 /**************************************************************************************************/
