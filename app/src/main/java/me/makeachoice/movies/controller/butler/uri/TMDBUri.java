@@ -6,18 +6,14 @@ import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.butler.MyButler;
 
 /**
- * Created by Usuario on 4/22/2016.
+ * TMDBUri builds uri values to call TheMovieDB api and YouTube video links
  */
 public class TMDBUri {
 
     private final int SCHEME = R.string.tmdb_scheme;
+    private final int SCHEME_SECURE = R.string.tmdb_scheme_secure;
     private final int AUTHORITY = R.string.tmdb_authority;
     private final int API_VERSION = R.string.tmdb_api_version;
-
-    private final int AUTHORITY_IMAGE = R.string.tmdb_authority_image;
-    private final int IMAGE_FOLDER_T = R.string.tmdb_image_folder_t;
-    private final int IMAGE_FOLDER_P = R.string.tmdb_image_folder_p;
-    private final int IMAGE_FOLDER_W500 = R.string.tmdb_image_folder_w500;
 
     private final int PATH_MOVIE = R.string.tmdb_path_movie;
     private final int PATH_MOVIES = R.string.tmdb_path_movies;
@@ -40,6 +36,20 @@ public class TMDBUri {
     private final static int QUERY_APPEND_RESPONSE = R.string.tmdb_query_append_response;
 
     private final static int APPEND_RESPONSE_ALL = R.string.tmdb_append_response_all;
+
+    private final int AUTHORITY_IMAGE = R.string.tmdb_authority_image;
+    private final int IMAGE_FOLDER_T = R.string.tmdb_image_folder_t;
+    private final int IMAGE_FOLDER_P = R.string.tmdb_image_folder_p;
+    private final int IMAGE_FOLDER_W500 = R.string.tmdb_image_folder_w500;
+
+    private final int AUTHORITY_YOUTUBE_IMAGE = R.string.tmdb_authority_youtube_image;
+    private final int YOUTUBE_FOLDER_VI = R.string.tmdb_youtube_folder_vi;
+    private final int YOUTUBE_PATH_THUMBNAIL = R.string.tmdb_youtube_path_thumbnail;
+
+    private final int AUTHORITY_YOUTUBE = R.string.tmdb_authority_youtube;
+    private final int YOUTUBE_PATH_WATCH = R.string.tmdb_youtube_path_watch;
+    private final int YOUTUBE_QUERY_VIDEO = R.string.tmdb_youtube_query_video;
+
 
     MyButler mButler;
     public TMDBUri(MyButler butler){
@@ -137,8 +147,8 @@ public class TMDBUri {
 
     }
 
-    public String getImagePath(String poster, String apiKey){
-        poster = makeValidUriPath(poster);
+    public String getImagePath(String imageId, String apiKey){
+        imageId = makeValidUriPath(imageId);
 
         // http://image.tmdb.org/t/p/w500/poster?api_key=apiKey
         Uri.Builder builder = new Uri.Builder();
@@ -147,13 +157,40 @@ public class TMDBUri {
                 .appendPath(mButler.getActivityContext().getString(IMAGE_FOLDER_T))
                 .appendPath(mButler.getActivityContext().getString(IMAGE_FOLDER_P))
                 .appendPath(mButler.getActivityContext().getString(IMAGE_FOLDER_W500))
-                .appendPath(poster)
+                .appendPath(imageId)
                 .appendQueryParameter(
                         mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
 
         return builder.build().toString();
     }
 
+    public String getYouTubeThumbnailPath(String videoId){
+        videoId = makeValidUriPath(videoId);
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(mButler.getActivityContext().getString(SCHEME))
+                .authority(mButler.getActivityContext().getString(AUTHORITY_YOUTUBE_IMAGE))
+                .appendPath(mButler.getActivityContext().getString(YOUTUBE_FOLDER_VI))
+                .appendPath(videoId)
+                .appendPath(mButler.getActivityContext().getString(YOUTUBE_PATH_THUMBNAIL));
+
+        return builder.build().toString();
+
+    }
+
+    public String getYouTubeVideoPath(String videoId){
+        videoId = makeValidUriPath(videoId);
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(mButler.getActivityContext().getString(SCHEME_SECURE))
+                .authority(mButler.getActivityContext().getString(AUTHORITY_YOUTUBE))
+                .appendPath(mButler.getActivityContext().getString(YOUTUBE_PATH_WATCH))
+                .appendQueryParameter(
+                        mButler.getActivityContext().getString(YOUTUBE_QUERY_VIDEO), videoId);
+
+        return builder.build().toString();
+
+    }
 
     private String makeValidUriPath(String path){
         if(path != null){
