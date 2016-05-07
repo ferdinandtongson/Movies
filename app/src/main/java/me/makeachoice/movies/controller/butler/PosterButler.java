@@ -74,8 +74,6 @@ public class PosterButler extends MyButler{
     //mUpcomingModles - array list of raw data of Upcoming Movies from TMDB
     private ArrayList<MovieModel> mUpcomingModels;
 
-    //mEmptyPosters - EmptyPoster data for PosterFragment
-    private ArrayList<PosterItem> mEmptyPosters;
     //mPopularPosters - Popular poster data for PosterFragment
     private ArrayList<PosterItem> mPopularPosters;
     //mTopRatedPosters - Top Rated poster data for PosterFragment
@@ -86,12 +84,6 @@ public class PosterButler extends MyButler{
     private ArrayList<PosterItem> mUpcomingPosters;
     //mFavoritePosters - Favorite poster data for PosterFragment
     private ArrayList<PosterItem> mFavoritePosters;
-
-    //EMPTY_POSTERS_COUNT - number of "empty" poster items to create
-    private int EMPTY_POSTERS_COUNT = 20;
-
-    //EMPTY_ID - id number of "empty" poster item
-    private int EMPTY_ID = -1;
 
 /**************************************************************************************************/
 
@@ -161,26 +153,6 @@ public class PosterButler extends MyButler{
         //buffer for PosterItems for Favorite movies
         mFavoritePosters = new ArrayList<>();
 
-        //buffer for PosterItems for "empty" movies, used when requested movie data fails or is empty
-        mEmptyPosters = new ArrayList<>();
-
-        //create "empty" poster items for mEmptyPosters buffer
-        for(int i = 0; i < EMPTY_POSTERS_COUNT; i++){
-            //create PosterItem
-            PosterItem item = new PosterItem();
-
-            //set Empty Id
-            item.setTMDBId(EMPTY_ID);
-            //set Empty title
-            item.setTitle(mBoss.getActivityContext().getString(PosterHelper.NAME_ID_EMPTY));
-            //set Poster path
-            item.setPosterPath("");
-            //set image
-            item.setImage(null);
-
-            //add PosterItem to buffer
-            mEmptyPosters.add(item);
-        }
     }
 
 /**************************************************************************************************/
@@ -312,7 +284,7 @@ public class PosterButler extends MyButler{
         makePosterRequest(request);
 
         //return "empty" poster buffer
-        return mEmptyPosters;
+        return new ArrayList<>();
     }
 
 /**
@@ -401,6 +373,7 @@ public class PosterButler extends MyButler{
             //TODO - need to handle event of a download failure
         }
 
+        //check if there are any pending request
         checkRequestBuffer();
 
     }
@@ -412,7 +385,6 @@ public class PosterButler extends MyButler{
  * @return - array list of PosterItem
  */
     private ArrayList<PosterItem> preparePosterItems(ArrayList<MovieModel> models){
-        Context ctx = mBoss.getActivityContext();
 
         //create an ArrayList to hold the list of poster items
         ArrayList<PosterItem> itemList = new ArrayList<>();
@@ -422,13 +394,14 @@ public class PosterButler extends MyButler{
 
         //loop through the data models
         for(int i = 0; i < count; i++){
+            //get MovieModel
+            MovieModel mod = models.get(i);
+
             //get uri poster path
-            String posterPath = mTMDBUri.getImagePath(models.get(i).getPosterPath(), mTMDBKey);
+            String posterPath = mTMDBUri.getImagePath(mod.getPosterPath(), mTMDBKey);
 
             //create poster item from movie model
-            PosterItem item = new PosterItem(models.get(i).getId(),
-                    models.get(i).getTitle(),
-                    posterPath);
+            PosterItem item = new PosterItem(mod.getId(), mod.getTitle(), posterPath);
 
             //add item into array list
             itemList.add(item);
