@@ -7,5 +7,7 @@ public class VideoItem {
     public String key;
     public String name;
     public String site;
+    public String thumbnailPath;
+    public String videoPath;
     public int size;
 }
