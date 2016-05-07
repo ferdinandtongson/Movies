@@ -4,10 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -34,8 +34,10 @@ import me.makeachoice.movies.view.fragment.PosterFragment;
  *      PosterHelper - holds all static resources (layout id, view ids, etc)
  *
  * Variables from MyMaid:
+ *      int mMaidId
  *      Bridge mBridge
  *      Fragment mFragment
+ *      View mLayout
  *
  * Methods from MyMaid:
  *      void initFragment()
@@ -59,8 +61,9 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 /**
  * Class Variables
  *      PosterHelper.ViewHolder mViewHolder - holds all the child views of the fragment
- *      Bridge mBridge - class implementing Bridge interface
+ *      Bridge mBridge - extends MyMaid.Bridge interface
  *      PosterRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
+ *      TextView mTxtNoData - displayed when there is no data for RecyclerView
  *
  * Extends Bridge Interface:
  *      void onSelectedPoster(int)
@@ -70,7 +73,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
     //mViewHolder - holds all the child views of the fragment
     private PosterHelper.ViewHolder mViewHolder;
 
-    //mBridge - class implementing Bridge, typically a MyHouseKeeper class
+    //mBridge - extends MyMaid.Bridge, typically a MyHouseKeeper class
     private Bridge mBridge;
 
     //mRecycler - manages item views for the RecyclerView used in the Fragment
@@ -175,7 +178,37 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  * @param layout - layout where child views reside
  */
     public void createActivity(Bundle savedInstanceState, View layout){
+        //get fragment layout
+        mLayout = layout;
 
+        //prepare "No Data" TextView
+        prepareNoDataTextView(mLayout);
+
+        //check if there is data to display
+        displayNoData(mRecycler.getItemCount());
+
+        //prepare RecyclerView
+        prepareRecycler(mLayout);
+    }
+
+/**
+ * void prepareNoDataTextView(View) - prepares the textView to display "No Data"
+ * @param layout - layout view holding the textView as a child view
+ */
+    private void prepareNoDataTextView(View layout){
+        //get "No Data" TextView from ViewHolder
+        TextView txtNoData = (TextView)mViewHolder
+                .getView(layout, PosterHelper.POSTER_TXT_NO_DATA_ID);
+
+        //set "No Data" text in textView
+        txtNoData.setText(mBridge.getActivityContext().getString(PosterHelper.STR_NO_DATA_ID));
+    }
+
+/**
+ * void prepareRecycler - prepares the recyclerView to display Video data
+ * @param layout - layout view holding the recyclerView as a child view
+ */
+    private void prepareRecycler(View layout) {
         //get RecyclerView from ViewHolder
         RecyclerView recycler = (RecyclerView)mViewHolder.getView(layout,
                 PosterHelper.POSTER_REC_ID);
@@ -190,7 +223,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-                                Log.d("Movies", "PosterFragment.onItemClick: " + position);
+                                //notify Bridge poster has been selected
                                 mBridge.onSelectedPoster(mMaidId, position);
                             }
                         })
@@ -208,13 +241,14 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         recycler.setAdapter(mRecycler);
     }
 
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
  * Public Methods:
- *      updatePosters(MovieJSON)
- *      getActivityContext()
+ *      void updatePosters(ArrayList<PosterItem>)
+ *      void displayNoData(int)
  */
 /**************************************************************************************************/
 /**
@@ -223,12 +257,37 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  * @param posters - list of PosterItem data
  */
     public void updatePosters(ArrayList<PosterItem> posters){
+        if(mLayout != null){
+            //if layout not null, check if there is data to display
+            displayNoData(posters.size());
+        }
 
         //change movie posters being displayed
         mRecycler.setPosters(posters);
 
         //notify adapter that data has changed
         mRecycler.notifyDataSetChanged();
+    }
+
+/**
+ * void displayNoData(int) - displays "No Data" message to user if there are no reviews
+ * @param count - number of reviews to display
+ */
+    private void displayNoData(int count){
+        //get "No Data" TextView from ViewHolder
+        TextView txtNoData = (TextView)mViewHolder
+                .getView(mLayout, PosterHelper.POSTER_TXT_NO_DATA_ID);
+
+        //check if there are any reviews
+        if(count == 0){
+            //no reviews, display "No Data" text
+            txtNoData.setVisibility(View.VISIBLE);
+        }
+        else{
+            //have reviews, hid "No Data" text
+            txtNoData.setVisibility(View.INVISIBLE);
+        }
+
     }
 
 /**************************************************************************************************/

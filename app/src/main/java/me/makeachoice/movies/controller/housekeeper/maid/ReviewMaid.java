@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +34,10 @@ import me.makeachoice.movies.model.item.ReviewItem;
  *      ReviewHelper - holds all static resources (layout id, view ids, etc)
  *
  * Variables from MyMaid:
+ *      int mMaidId
  *      Bridge mBridge
  *      Fragment mFragment
+ *      View mLayout
  *
  * Methods from MyMaid:
  *      void initFragment()
@@ -60,9 +61,8 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
 /**
  * Class Variables
  *      ReviewHelper.ViewHolder mViewHolder - holds all the child views of the fragment
- *      Bridge mBridge - class implementing Bridge interface
+ *      Bridge mBridge - extends MyMaid.Bridge interface
  *      ReviewRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
- *      TextView mTxtNoData - displayed when there is no data for RecyclerView
  *
  * Extends Bridge Interface:
  *      void onSelectedReview(int)
@@ -72,17 +72,11 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
     //mViewHolder - holds all the child views of the fragment
     private ReviewHelper.ViewHolder mViewHolder;
 
-    //mBridge - class implementing Bridge, typically a MyHouseKeeper class
+    //mBridge - extends MyMaid.Bridge, typically a MyHouseKeeper class
     private Bridge mBridge;
 
     //mRecycler - manages item views for the RecyclerView used in the Fragment
     private ReviewRecycler mRecycler;
-
-    //mLayout - fragment layout
-    private View mLayout;
-
-    //mTxtNoData - displayed when there is no data for RecyclerView
-    private TextView mTxtNoData;
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
@@ -193,21 +187,40 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
  * @param layout - layout where child views reside
  */
     public void createActivity(Bundle savedInstanceState, View layout){
-        Log.d("Video", "ReviewMaid.createActivity");
+
         //get fragment layout
         mLayout = layout;
 
-        //get "No Data" TextView from ViewHolder
-        mTxtNoData = (TextView)mViewHolder.getView(mLayout, ReviewHelper.REVIEW_TXT_NO_DATA_ID);
-
-        //set "No Data" text in textView
-        mTxtNoData.setText(mBridge.getActivityContext().getString(ReviewHelper.STR_NO_DATA_ID));
+        //prepare "No Data" TextView
+        prepareNoDataTextView(mLayout);
 
         //check if there is data to display
         displayNoData(mRecycler.getItemCount());
 
+        //prepare RecyclerView
+        prepareRecycler(mLayout);
+    }
+
+/**
+ * void prepareNoDataTextView(View) - prepares the textView to display "No Data"
+ * @param layout - layout view holding the textView as a child view
+ */
+    private void prepareNoDataTextView(View layout){
+        //get "No Data" TextView from ViewHolder
+        TextView txtNoData = (TextView)mViewHolder
+                .getView(layout, ReviewHelper.REVIEW_TXT_NO_DATA_ID);
+
+        //set "No Data" text in textView
+        txtNoData.setText(mBridge.getActivityContext().getString(ReviewHelper.STR_NO_DATA_ID));
+    }
+
+/**
+ * void prepareRecycler - prepares the recyclerView to display Video data
+ * @param layout - layout view holding the recyclerView as a child view
+ */
+    private void prepareRecycler(View layout) {
         //get RecyclerView from ViewHolder
-        RecyclerView recycler = (RecyclerView)mViewHolder.getView(mLayout,
+        RecyclerView recycler = (RecyclerView)mViewHolder.getView(layout,
                 ReviewHelper.REVIEW_REC_ID);
 
         //setHasFixedSize to true because 1)is true and 2)for optimization
@@ -236,14 +249,16 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
 
         //set RecyclerAdapter of RecyclerView
         recycler.setAdapter(mRecycler);
+
     }
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * Public Methods:
- *      updateReviews(ReviewItem)
+ * Class Methods:
+ *      void updateReviews(ArrayList<ReviewItem>)
+ *      void displayNoData(int)
  */
 /**************************************************************************************************/
 /**
@@ -263,15 +278,23 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
         mRecycler.notifyDataSetChanged();
     }
 
+/**
+ * void displayNoData(int) - displays "No Data" message to user if there are no reviews
+ * @param count - number of reviews to display
+ */
     private void displayNoData(int count){
+        //get "No Data" TextView from ViewHolder
+        TextView txtNoData = (TextView)mViewHolder
+                .getView(mLayout, ReviewHelper.REVIEW_TXT_NO_DATA_ID);
+
         //check if there are any reviews
         if(count == 0){
             //no reviews, display "No Data" text
-            mTxtNoData.setVisibility(View.VISIBLE);
+            txtNoData.setVisibility(View.VISIBLE);
         }
         else{
             //have reviews, hid "No Data" text
-            mTxtNoData.setVisibility(View.INVISIBLE);
+            txtNoData.setVisibility(View.INVISIBLE);
         }
 
     }
