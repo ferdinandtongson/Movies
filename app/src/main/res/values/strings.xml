@@ -12,6 +12,7 @@
     <string name="str_user_rating">User Rating</string>
     <string name="str_cast">Cast</string>
     <string name="str_empty">empty</string>
+    <string name="str_no_data">No Data to Display</string>
 
     <string name="key_movie_type">Movie Type</string>
     <string name="key_movie_index">Movie Index</string>
