@@ -108,6 +108,8 @@ public class TMDBContract extends MyContract{
         public static final String TABLE_NAME = "MovieVideo";
         public static final String COLUMN_VIDEO_ID = "videoId";
         public static final String COLUMN_VIDEO_KEY = "videoKey";
+        public static final String COLUMN_VIDEO_PATH = "videoPath";
+        public static final String COLUMN_VIDEO_IMAGE = "videoImage";
         public static final String COLUMN_VIDEO_NAME = "videoName";
         public static final String COLUMN_SITE = "site";
         public static final String COLUMN_VIDEO_SIZE = "videoSize";
@@ -118,6 +120,8 @@ public class TMDBContract extends MyContract{
                 MyContract.PAREN_OPEN + VideoEntry._ID + MyContract.PRIMARY_KEY +
                 COLUMN_VIDEO_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
                 COLUMN_VIDEO_KEY + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_VIDEO_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_VIDEO_IMAGE + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
                 COLUMN_VIDEO_NAME + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
                 COLUMN_SITE + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
                 COLUMN_VIDEO_SIZE + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
