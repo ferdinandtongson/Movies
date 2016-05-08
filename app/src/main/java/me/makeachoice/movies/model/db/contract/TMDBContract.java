@@ -13,7 +13,7 @@ import android.provider.BaseColumns;
  *      VideoEntry - videos of movies
  *      ReviewEntry - reviews of movies
  */
-public class TMDBContract {
+public class TMDBContract extends MyContract{
 
     public TMDBContract(){}
 
@@ -29,6 +29,13 @@ public class TMDBContract {
         public static final String TABLE_NAME = "MovieGenre";
         public static final String COLUMN_GENRE_ID = "genreId";
         public static final String COLUMN_NAME = "name";
+
+        public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
+                MyContract.PAREN_OPEN + GenreEntry._ID + MyContract.PRIMARY_KEY +
+                COLUMN_GENRE_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_NAME + MyContract.TEXT_TYPE + MyContract.PAREN_CLOSE;
+
+        public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
     }
 
 /**************************************************************************************************/
@@ -47,6 +54,19 @@ public class TMDBContract {
         public static final String COLUMN_ORDER = "order";
         public static final String COLUMN_ACTOR_PROFILE_PATH = "profilePath";
         public static final String COLUMN_MOVIE_ID = "movieId";
+
+        public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
+                MyContract.PAREN_OPEN + CastEntry._ID + MyContract.PRIMARY_KEY +
+                COLUMN_CAST_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_CHARACTER + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_CREDIT_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_ACTOR_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_ACTOR_NAME + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_ORDER + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_ACTOR_PROFILE_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_MOVIE_ID + MyContract.INTEGER_TYPE + MyContract.PAREN_CLOSE;
+
+        public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
     }
 
 /**************************************************************************************************/
@@ -64,6 +84,18 @@ public class TMDBContract {
         public static final String COLUMN_CREW_NAME = "crewName";
         public static final String COLUMN_CREW_PROFILE_PATH = "profilePath";
         public static final String COLUMN_MOVIE_ID = "movieId";
+
+        public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
+                MyContract.PAREN_OPEN + CrewEntry._ID + MyContract.PRIMARY_KEY +
+                COLUMN_CREDIT_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_DEPARTMENT + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_CREW_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_JOB + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_CREW_NAME + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_CREW_PROFILE_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_MOVIE_ID + MyContract.INTEGER_TYPE + MyContract.PAREN_CLOSE;
+
+        public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
     }
 
 /**************************************************************************************************/
@@ -80,6 +112,19 @@ public class TMDBContract {
         public static final String COLUMN_SITE = "site";
         public static final String COLUMN_VIDEO_SIZE = "videoSize";
         public static final String COLUMN_VIDEO_TYPE = "videoType";
+        public static final String COLUMN_MOVIE_ID = "movieId";
+
+        public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
+                MyContract.PAREN_OPEN + VideoEntry._ID + MyContract.PRIMARY_KEY +
+                COLUMN_VIDEO_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_VIDEO_KEY + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_VIDEO_NAME + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_SITE + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_VIDEO_SIZE + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_VIDEO_TYPE + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_MOVIE_ID + MyContract.INTEGER_TYPE + MyContract.PAREN_CLOSE;
+
+        public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
     }
 
 /**************************************************************************************************/
@@ -95,6 +140,16 @@ public class TMDBContract {
         public static final String COLUMN_CONTENT = "content";
         public static final String COLUMN_URL = "url";
         public static final String COLUMN_MOVIE_ID = "movieId";
+
+        public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
+                MyContract.PAREN_OPEN + ReviewEntry._ID + MyContract.PRIMARY_KEY +
+                COLUMN_REVIEW_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_AUTHOR + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_CONTENT + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_URL + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_MOVIE_ID + MyContract.INTEGER_TYPE + MyContract.PAREN_CLOSE;
+
+        public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
     }
 
 /**************************************************************************************************/
@@ -120,6 +175,26 @@ public class TMDBContract {
         public static final String COLUMN_HAS_VIDEO = "video";
         public static final String COLUMN_HOMEPAGE = "homepage";
         public static final String COLUMN_ADULT = "adult";
+
+        public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
+                MyContract.PAREN_OPEN + MovieEntry._ID + MyContract.PRIMARY_KEY +
+                COLUMN_MOVIE_ID + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_TITLE + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_OVERVIEW + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_RELEASE_DATE + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_IMBD_ID + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_ORIGINAL_TITLE + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_ORIGINAL_LANGUAGE + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_POPULARITY + MyContract.NUMERIC_TYPE + MyContract.COMMA_SEP +
+                COLUMN_VOTE_COUNT + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
+                COLUMN_VOTE_AVERAGE + MyContract.NUMERIC_TYPE + MyContract.COMMA_SEP +
+                COLUMN_POSTER_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_BACKDROP_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_HAS_VIDEO + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_HOMEPAGE + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
+                COLUMN_ADULT + MyContract.TEXT_TYPE + MyContract.PAREN_CLOSE;
+
+        public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
     }
 
 /**************************************************************************************************/
