@@ -51,7 +51,7 @@ public class TMDBContract extends MyContract{
         public static final String COLUMN_CREDIT_ID = "creditId";
         public static final String COLUMN_ACTOR_ID = "actorId";
         public static final String COLUMN_ACTOR_NAME = "actorName";
-        public static final String COLUMN_ORDER = "order";
+        public static final String COLUMN_ORDER = "castOrder";
         public static final String COLUMN_ACTOR_PROFILE_PATH = "profilePath";
         public static final String COLUMN_MOVIE_ID = "movieId";
 
