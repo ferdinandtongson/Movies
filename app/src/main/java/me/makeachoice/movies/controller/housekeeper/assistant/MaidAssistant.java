@@ -41,7 +41,7 @@ public class MaidAssistant{
         PosterMaid upcomingMaid = new PosterMaid(keeper, PosterHelper.NAME_ID_UPCOMING);
         PosterMaid favoriteMaid = new PosterMaid(keeper, PosterHelper.NAME_ID_FAVORITE);
 
-        ArrayList<PosterItem> posters = boss.getPosters(PosterHelper.NAME_ID_EMPTY);
+        ArrayList<PosterItem> posters = new ArrayList<>();
 
         //update posters
         popularMaid.updatePosters(posters);
