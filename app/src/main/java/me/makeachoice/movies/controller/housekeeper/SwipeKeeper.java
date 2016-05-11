@@ -333,8 +333,6 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
                 break;
             case 3: mBoss.getPosters(PosterHelper.NAME_ID_UPCOMING);
                 break;
-            case 4: mBoss.getPosters(PosterHelper.NAME_ID_EMPTY);
-                break;
             default: mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
                 break;
         }
