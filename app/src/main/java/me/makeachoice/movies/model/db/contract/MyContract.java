@@ -17,4 +17,8 @@ public class MyContract {
     protected static final String PAREN_CLOSE = ")";
 
     protected static final String DROP_TABLE = "DROP TABLE IF EXISTS ";
+    protected static final String SELECT_ALL = "SELECT * FROM ";
+    protected static final String WHERE = " WHERE ";
+    protected static final String UPDATE = "UPDATE ";
+    protected static final String REPLACE = "REPLACE INTO ";
 }
