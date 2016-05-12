@@ -3,7 +3,7 @@ package me.makeachoice.movies.controller.butler.uri;
 import android.net.Uri;
 
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.controller.butler.MyButler;
+import me.makeachoice.movies.controller.Boss;
 
 /**
  * TMDBUri builds uri values to call TheMovieDB api and YouTube video links
@@ -51,17 +51,17 @@ public class TMDBUri {
     private final int YOUTUBE_QUERY_VIDEO = R.string.tmdb_youtube_query_video;
 
 
-    MyButler mButler;
-    public TMDBUri(MyButler butler){
-        mButler = butler;
+    Boss mBoss;
+    public TMDBUri(Boss boss){
+        mBoss = boss;
     }
 
     private Uri.Builder createUriBase(){
         //http://api.themoviedb.org/3/
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme(mButler.getActivityContext().getString(SCHEME))
-                .authority(mButler.getActivityContext().getString(AUTHORITY))
-                .appendPath(mButler.getActivityContext().getString(API_VERSION));
+        builder.scheme(mBoss.getString(SCHEME))
+                .authority(mBoss.getString(AUTHORITY))
+                .appendPath(mBoss.getString(API_VERSION));
 
         return builder;
     }
@@ -70,10 +70,9 @@ public class TMDBUri {
         // movie/listType?api_key=apiKey
         //use MoviesResponse
         Uri.Builder builder = createUriBase();
-        builder.appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
-                .appendPath(mButler.getActivityContext().getString(listType))
-                .appendQueryParameter(
-                        mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
+        builder.appendPath(mBoss.getString(PATH_MOVIE))
+                .appendPath(mBoss.getString(listType))
+                .appendQueryParameter(mBoss.getString(QUERY_API_KEY), apiKey);
 
         return builder.build().toString();
     }
@@ -82,11 +81,10 @@ public class TMDBUri {
         // genre/genreId/movies?api_key=apiKey
         //use MoviesResponse
         Uri.Builder builder = createUriBase();
-        builder.appendPath(mButler.getActivityContext().getString(PATH_GENRE))
+        builder.appendPath(mBoss.getString(PATH_GENRE))
                 .appendPath(genreId)
-                .appendPath(mButler.getActivityContext().getString(PATH_MOVIES))
-                .appendQueryParameter(
-                        mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
+                .appendPath(mBoss.getString(PATH_MOVIES))
+                .appendQueryParameter(mBoss.getString(QUERY_API_KEY), apiKey);
 
         return builder.build().toString();
     }
@@ -95,10 +93,9 @@ public class TMDBUri {
     public String getMovieDetail(String movieId, String apiKey){
         // movie/movieId?api_key=apiKey
         Uri.Builder builder = createUriBase();
-        builder.appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
+        builder.appendPath(mBoss.getString(PATH_MOVIE))
                 .appendPath(movieId)
-                .appendQueryParameter(
-                        mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
+                .appendQueryParameter(mBoss.getString(QUERY_API_KEY), apiKey);
 
         return builder.build().toString();
     }
@@ -106,13 +103,11 @@ public class TMDBUri {
     public String getMovieDetailAll(String movieId, String apiKey){
         // movie/movieId?api_key=apiKey
         Uri.Builder builder = createUriBase();
-        builder.appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
+        builder.appendPath(mBoss.getString(PATH_MOVIE))
                 .appendPath(movieId)
-                .appendQueryParameter(
-                        mButler.getActivityContext().getString(QUERY_API_KEY), apiKey)
-                .appendQueryParameter(
-                        mButler.getActivityContext().getString(QUERY_APPEND_RESPONSE),
-                        mButler.getActivityContext().getString(APPEND_RESPONSE_ALL));
+                .appendQueryParameter(mBoss.getString(QUERY_API_KEY), apiKey)
+                .appendQueryParameter(mBoss.getString(QUERY_APPEND_RESPONSE),
+                        mBoss.getString(APPEND_RESPONSE_ALL));
 
         return builder.build().toString();
     }
@@ -124,11 +119,10 @@ public class TMDBUri {
         //videos: use VideosResponse
         //similar: use MoviesResponse
         Uri.Builder builder = createUriBase();
-        builder.appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
+        builder.appendPath(mBoss.getString(PATH_MOVIE))
                 .appendPath(movieId)
-                .appendPath(mButler.getActivityContext().getString(detailType))
-                .appendQueryParameter(
-                        mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
+                .appendPath(mBoss.getString(detailType))
+                .appendQueryParameter(mBoss.getString(QUERY_API_KEY), apiKey);
 
         return builder.build().toString();
     }
@@ -137,11 +131,10 @@ public class TMDBUri {
         // genre/movie/list?api_key=apiKey
         //use GenreResponse
         Uri.Builder builder = createUriBase();
-        builder.appendPath(mButler.getActivityContext().getString(PATH_GENRE))
-                .appendPath(mButler.getActivityContext().getString(PATH_MOVIE))
-                .appendPath(mButler.getActivityContext().getString(PATH_LIST))
-                .appendQueryParameter(
-                        mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
+        builder.appendPath(mBoss.getString(PATH_GENRE))
+                .appendPath(mBoss.getString(PATH_MOVIE))
+                .appendPath(mBoss.getString(PATH_LIST))
+                .appendQueryParameter(mBoss.getString(QUERY_API_KEY), apiKey);
 
         return builder.build().toString();
 
@@ -152,14 +145,13 @@ public class TMDBUri {
 
         // http://image.tmdb.org/t/p/w500/poster?api_key=apiKey
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme(mButler.getActivityContext().getString(SCHEME))
-                .authority(mButler.getActivityContext().getString(AUTHORITY_IMAGE))
-                .appendPath(mButler.getActivityContext().getString(IMAGE_FOLDER_T))
-                .appendPath(mButler.getActivityContext().getString(IMAGE_FOLDER_P))
-                .appendPath(mButler.getActivityContext().getString(IMAGE_FOLDER_W500))
+        builder.scheme(mBoss.getString(SCHEME))
+                .authority(mBoss.getString(AUTHORITY_IMAGE))
+                .appendPath(mBoss.getString(IMAGE_FOLDER_T))
+                .appendPath(mBoss.getString(IMAGE_FOLDER_P))
+                .appendPath(mBoss.getString(IMAGE_FOLDER_W500))
                 .appendPath(imageId)
-                .appendQueryParameter(
-                        mButler.getActivityContext().getString(QUERY_API_KEY), apiKey);
+                .appendQueryParameter(mBoss.getString(QUERY_API_KEY), apiKey);
 
         return builder.build().toString();
     }
@@ -168,11 +160,11 @@ public class TMDBUri {
         videoId = makeValidUriPath(videoId);
 
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme(mButler.getActivityContext().getString(SCHEME))
-                .authority(mButler.getActivityContext().getString(AUTHORITY_YOUTUBE_IMAGE))
-                .appendPath(mButler.getActivityContext().getString(YOUTUBE_FOLDER_VI))
+        builder.scheme(mBoss.getString(SCHEME))
+                .authority(mBoss.getString(AUTHORITY_YOUTUBE_IMAGE))
+                .appendPath(mBoss.getString(YOUTUBE_FOLDER_VI))
                 .appendPath(videoId)
-                .appendPath(mButler.getActivityContext().getString(YOUTUBE_PATH_THUMBNAIL));
+                .appendPath(mBoss.getString(YOUTUBE_PATH_THUMBNAIL));
 
         return builder.build().toString();
 
@@ -182,11 +174,10 @@ public class TMDBUri {
         videoId = makeValidUriPath(videoId);
 
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme(mButler.getActivityContext().getString(SCHEME_SECURE))
-                .authority(mButler.getActivityContext().getString(AUTHORITY_YOUTUBE))
-                .appendPath(mButler.getActivityContext().getString(YOUTUBE_PATH_WATCH))
-                .appendQueryParameter(
-                        mButler.getActivityContext().getString(YOUTUBE_QUERY_VIDEO), videoId);
+        builder.scheme(mBoss.getString(SCHEME_SECURE))
+                .authority(mBoss.getString(AUTHORITY_YOUTUBE))
+                .appendPath(mBoss.getString(YOUTUBE_PATH_WATCH))
+                .appendQueryParameter(mBoss.getString(YOUTUBE_QUERY_VIDEO), videoId);
 
         return builder.build().toString();
 
