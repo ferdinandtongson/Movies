@@ -161,6 +161,10 @@ public class SwipeActivity extends MyActivity {
 /**************************************************************************************************/
 
     public void finishActivity() {
+        //get Boss Application
+        Boss boss = (Boss) getApplicationContext();
+        boss.closeDatabase();
+
         //close activity
         this.finish();
         android.os.Process.killProcess(android.os.Process.myPid());
