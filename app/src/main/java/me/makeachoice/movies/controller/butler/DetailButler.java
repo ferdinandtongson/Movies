@@ -72,7 +72,7 @@ public class DetailButler extends MyButler{
         mBoss = boss;
 
         //builds TheMovieDB api uri strings
-        mTMDBUri = new TMDBUri(this);
+        mTMDBUri = new TMDBUri(mBoss);
 
         //flag to check if work is being done in the background
         mWorking = false;
