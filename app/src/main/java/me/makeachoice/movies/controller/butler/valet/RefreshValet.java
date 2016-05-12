@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.butler;
+package me.makeachoice.movies.controller.butler.valet;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.Boss;
+import me.makeachoice.movies.controller.butler.MyButler;
 import me.makeachoice.movies.controller.butler.worker.DBWorker;
 import me.makeachoice.movies.model.db.MovieDB;
 import me.makeachoice.movies.model.db.contract.RefreshContract;
@@ -17,7 +18,7 @@ import me.makeachoice.movies.model.item.RefreshItem;
 import me.makeachoice.movies.util.DateManager;
 
 /**
- * RefreshButler takes care of all the database request.
+ * RefreshValet takes care of all the database request.
  *
  * Variables from MyButler:
  *      Boss mBoss
@@ -28,7 +29,7 @@ import me.makeachoice.movies.util.DateManager;
  *      abstract public Context getActivityContext()
  *      abstract public void workComplete(Boolean)
  */
-public class RefreshButler extends MyButler implements DBWorker.Bridge {
+public class RefreshValet extends MyButler implements DBWorker.Bridge {
 
 /**************************************************************************************************/
 /**
@@ -56,7 +57,7 @@ public class RefreshButler extends MyButler implements DBWorker.Bridge {
  * initialize data buffers, if any
  * @param boss - Boss class
  */
-    public RefreshButler(Boss boss){
+    public RefreshValet(Boss boss){
         //Application context
         mBoss = boss;
 
@@ -78,7 +79,7 @@ public class RefreshButler extends MyButler implements DBWorker.Bridge {
     }
 
     public void requestDB(){
-        Log.d("Movies", "RefreshButler.requestDB");
+        Log.d("Movies", "RefreshValet.requestDB");
         if(!mWorking){
             Log.d("Movies", "     start worker");
             mRequest = DB_OPEN;
@@ -144,7 +145,7 @@ public class RefreshButler extends MyButler implements DBWorker.Bridge {
     }
 
     public void databaseReady(SQLiteDatabase db){
-        Log.d("Movies", "RefreshButler.databaseReady: " + db.toString());
+        Log.d("Movies", "RefreshValet.databaseReady: " + db.toString());
         //work has finished
         mWorking = false;
         mDB = db;
@@ -166,7 +167,7 @@ public class RefreshButler extends MyButler implements DBWorker.Bridge {
 
     public boolean refreshPosters(int request){
         String movieList = mBoss.getString(request);
-        Log.d("Movies", "RefreshButler.checkRefresh: " + movieList);
+        Log.d("Movies", "RefreshValet.checkRefresh: " + movieList);
         //get refreshItem from HashMap buffer
         RefreshItem item = mRefreshMap.get(movieList);
 
