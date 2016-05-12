@@ -60,7 +60,7 @@ public class RefreshButler extends MyButler implements DBWorker.Bridge {
         //Application context
         mBoss = boss;
 
-        //initialize URI builder
+        //initialize access to db
         mMovieDB = new MovieDB(mBoss);
 
         mWorker = new DBWorker(this, mMovieDB);
@@ -225,6 +225,9 @@ public class RefreshButler extends MyButler implements DBWorker.Bridge {
 
             //execute sql, update refresh table with new data
             mDB.execSQL(updateRefresh);
+
+            //close database
+            closeDatabase();
 
             //add new refresh data to HashMap buffer
             addToRefreshMap(movieList, refreshDate.getTime());
