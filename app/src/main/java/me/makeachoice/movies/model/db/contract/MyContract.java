@@ -8,6 +8,7 @@ public class MyContract {
     protected static final String NUMERIC_TYPE = " NUM";
     protected static final String INTEGER_TYPE = " INT";
     protected static final String REAL_TYPE = " REAL";
+    protected static final String BLOB_TYPE = " BLOB";
     protected static final String NONE_TYPE = "";
     protected static final String COMMA_SEP = ",";
 
