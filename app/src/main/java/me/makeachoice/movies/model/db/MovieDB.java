@@ -96,22 +96,4 @@ public class MovieDB extends SQLiteOpenHelper{
     public void deleteDatabase(Context context){
         context.deleteDatabase(DATABASE_NAME);
     }
-
-
-    public void insertRefreshData(ArrayList<RefreshItem> refreshData){
-        Log.d("Movies", "MovieDB.insertRefreshData: " + refreshData.size());
-        SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        int count = refreshData.size();
-        for(int i = 0; i < count; i++){
-            RefreshItem item = refreshData.get(i);
-            values.put(RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_LIST, item.movieList);
-            values.put(RefreshContract.RefreshEntry.COLUMN_NAME_DATE_REFRESH, item.dateRefresh);
-            database.insert(RefreshContract.RefreshEntry.TABLE_NAME, null, values);
-        }
-        database.close();
-
-    }
-
 }
