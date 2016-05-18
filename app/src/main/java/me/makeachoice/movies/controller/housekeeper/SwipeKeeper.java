@@ -153,12 +153,13 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 /**************************************************************************************************/
 /**
  * SwipeActivity.Bridge implementations:
- *      void create(Bundle savedInstanceState) - create activity layout
+ *      void create(Bundle) - create activity layout
  *          void createViewPager(MyActivity,int) - create ViewPager and SwipeAdapter objects
- *      void createOptionsMenu(Menu menu) - create menu for toolbar
- *      void postResume() - both activity and fragments have resumed
+ *      void createOptionsMenu(Menu menu) - does nothing
+ *      void postResume() - does nothing
+ *      void saveInstanceState(Bundle) - save instance state to bundle
  *      void backPressed() - back button has been pressed
- *      void optionsItemSelected(MenuItem item) - menu item has been selected
+ *      void optionsItemSelected(MenuItem item) - does nothing
  */
 /**************************************************************************************************/
 /**
