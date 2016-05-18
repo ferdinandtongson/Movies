@@ -11,7 +11,6 @@ import java.util.HashMap;
 
 import me.makeachoice.movies.view.MyActivity;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.assistant.FragmentAssistant;
 import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
 
 /**
@@ -20,6 +19,19 @@ import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
  *
  */
 public abstract class MyHouseKeeper {
+
+/**************************************************************************************************/
+/**
+ * Class Variables:
+ *      Boss mBoss - application context object
+ *      FragmentManager mFragmentManager - manages fragments for the MyHouseKeeper
+ *      MaidAssistant mMaidAssistant - initializes and registers all Maids used by the HouseKeeper
+ *      HashMap<Integer, Fragment> mFragmentRegistry - registered fragments used by the HouseKeeper
+ *      Toolbar mToolbar - activity toolbar
+ *      FloatingActionButton mFab - floating action button
+ */
+/**************************************************************************************************/
+
     //mBoss - application context object
     protected Boss mBoss;
 
@@ -28,9 +40,6 @@ public abstract class MyHouseKeeper {
 
     //mMaidAssistant - initializes and registers all Maids used by the HouseKeeper
     protected MaidAssistant mMaidAssistant;
-
-    //mFragAssistant - assists in the transitions between fragments
-    protected FragmentAssistant mFragAssistant;
 
     //mFragmentRegistry - registered fragments used by the HouseKeeper
     protected HashMap<Integer, Fragment> mFragmentRegistry;
@@ -41,25 +50,40 @@ public abstract class MyHouseKeeper {
     //mFab - floating action button
     protected FloatingActionButton mFab;
 
-
-    public Context getActivityContext(){
-        return mBoss.getActivityContext();
-    }
-    public int getOrientation(){ return mBoss.getOrientation(); }
-
-    /**
-     * void registerFragment(Integer, Fragment) - register Fragments maintained by Maid classes
-     * @param key - id number of Maid
-     * @param fragment - fragment maintained by Maid
-     */
-    public void registerFragment(Integer key, Fragment fragment){
-        //put fragment into hash map registry
-        mFragmentRegistry.put(key, fragment);
-    }
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * Toolbar getToolbar() inflates the toolbar from the layout and then sets it into the Activity.
+ * Getters:
+ *      Context getActivityContext() - return current Activity Context
+ *      int getOrientation() - return current orientation (portrait = 1, landscape = 2)
+ *      Toolbar getToolbar(MyActivity,int) - inflates and return toolBar object
+ *      FloatingActionButton getFloatButton(MyActivity,int,View.OnClickListener) - inflates and
+ *          return FloatingActionButton object
+ *
+ * Setters:
+ *      - None -
+ */
+/**************************************************************************************************/
+/**
+ * Context getActivityContext() - return current Activity Context
+ * @return - activity context
+ */
+    public Context getActivityContext(){
+        return mBoss.getActivityContext();
+    }
+
+/**
+ * int getOrientation() - return current phone orientation (portrait = 1, landscape = 2)
+ * @return - current phone orientation
+ */
+    public int getOrientation(){ return mBoss.getOrientation(); }
+
+/**
+ * Toolbar getToolbar(MyActivity,int) - inflates and return toolBar object
+ * @param activity - current activity being shown to user
+ * @param toolbarId - layout resource id of toolbar object
+ * @return - toolBar object
  */
     public Toolbar getToolbar(MyActivity activity, int toolbarId){
 
@@ -73,8 +97,12 @@ public abstract class MyHouseKeeper {
     }
 
 /**
- * FloatingActionButton getFloatButton() inflates the floating action button layout and sets Event
- * Listener
+ * FloatingActionButton getFloatButton(MyActivity,int,View.OnClickListener) - inflates and return
+ * FloatingActionButton object
+ * @param activity - current activity being show to user
+ * @param fabId - layout resource id of floatingActionButton object
+ * @param listener - View.OnClickListener to listen for onClick events from fab
+ * @return - floatingActionButton object
  */
     public FloatingActionButton getFloatButton(MyActivity activity, int fabId,
                                                 View.OnClickListener listener){
@@ -85,6 +113,8 @@ public abstract class MyHouseKeeper {
 
         return fab;
     }
+
+/**************************************************************************************************/
 
 
 }
