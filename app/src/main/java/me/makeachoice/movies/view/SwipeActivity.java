@@ -33,7 +33,7 @@ import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
  *      Bridge mBridge
  *
  * Methods from MyActivity:
- *      setOrientationChangeFlag(Boss)
+ *      void setOrientationChangeFlag(Boss)
  *      abstract void finishActivity()
  *
  * Bridge Interface from MyActivity:
@@ -48,18 +48,27 @@ public class SwipeActivity extends MyActivity {
 
 /**************************************************************************************************/
 /**
- * void onCreate() is called when the Activity is first being created or during a configuration
- * change (i.e. orientation change). Creates Boss and Bridge class, inflates the Activity
- * layout and the toolbar and floating action button (if any).
- *
- * @param savedInstanceState - saved instance states saved before the fragment was detached.
+ * Activity LifeCycle calls:
+ *      void onCreate(Bundle) - start of Activity lifecycle
+ *      boolean onCreateOptionsMenu(Menu) - create Option Menu toolbar, if any
+ *      void onPostResume() - called after the activity and fragments have all resumed
+ *      void onSaveInstanceState(Bundle) - save instance state to bundle, if any
+ *      void onBackPressed() - called when the User press the "Back" button
+ *      boolean onOptionItemSelected(MenuItem) - called when a menu item is clicked on by the user
+ */
+/**************************************************************************************************/
+/**
+ * void onCreate(Bundle) -  start of Activity lifecycle when Activity is created or a configuration
+ * change (i.e. orientation change). Saves activity context and orientation status to Boss and
+ * activates the HouseKeeper for this Activity.
+ * @param savedInstanceState - saved instance states.
  */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //get Boss Application
-        Boss boss = (Boss) getApplicationContext();
+        Boss boss = (Boss)getApplicationContext();
 
         //register Activity context with Boss
         boss.activityCreated(this);
@@ -86,18 +95,19 @@ public class SwipeActivity extends MyActivity {
     }
 
 /**
- * onSaveInstanceState(...) is called any time before onDestroy( ) and is where you can save
- * instance states by placing them into a bundle
- *
- * @param saveState - bundle object used to save any instance states
+ * boolean onCreateOptionsMenu(Menu) - create OptionMeun Toolbar, if any
+ * @param menu - action bar menu object
+ * @return boolean - by default returns true
  */
     @Override
-    public void onSaveInstanceState(Bundle saveState) {
-        super.onSaveInstanceState(saveState);
-        mBridge.saveInstanceState(saveState);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        //send to HouseKeeper to manage creation of toolbar
+        mBridge.createOptionsMenu(this, menu);
+        return true;
     }
 
-/**
+    /**
  * void onPostResume() is called after the activity and fragments have all resumed. Fragments
  * are resumed with the activity's onResume() method but they are not guaranteed to have
  * been resumed. Another approach is to use onResumeFragment()
@@ -110,7 +120,18 @@ public class SwipeActivity extends MyActivity {
     }
 
 /**
- * void onBackPressed() is called when the User press the "Back" button
+ * onSaveInstanceState(Bundle) - called any time before onDestroy( ) and is where you can save
+ * instance states by placing them into a bundle
+ * @param saveState - bundle object used to save any instance states
+ */
+    @Override
+    public void onSaveInstanceState(Bundle saveState){
+        super.onSaveInstanceState(saveState);
+        mBridge.saveInstanceState(saveState);
+    }
+
+/**
+ * void onBackPressed() - called when the User press the "Back" button
  */
     @Override
     public void onBackPressed() {
@@ -118,26 +139,8 @@ public class SwipeActivity extends MyActivity {
         mBridge.backPressed(this);
     }
 
-/**************************************************************************************************/
-
-/**************************************************************************************************/
 /**
- * boolean onCreateOptionsMenu(Menu) is called if an action bar is present
- *
- * @param menu - action bar menu object
- * @return boolean - by default returns true
- */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        //send to HouseKeeper to manage creation of toolbar
-        mBridge.createOptionsMenu(this, menu);
-        return true;
-    }
-
-/**
- * boolean onOptionItemSelected(MenuItem) is called when a menu item is clicked on by the user
- *
+ * boolean onOptionItemSelected(MenuItem) - called when a menu item is clicked on by the user
  * @param item - menu item clicked on
  * @return boolean - by default returns false
  */
@@ -150,23 +153,31 @@ public class SwipeActivity extends MyActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
 /**************************************************************************************************/
 
 
 /**************************************************************************************************/
 /**
- * Implemented abstract methods from MyActivity:
- *      void finishActivity()
+ * MyActivity abstract class:
+ *      void finishActivity() - called when user finishes with App
  */
 /**************************************************************************************************/
-
+/**
+ * void finishActivity - called when user finishes with App. Notifies Boss to do any final
+ * clean up then finishes the activity and kills the activity processor.
+ */
     public void finishActivity() {
         //get Boss Application
         Boss boss = (Boss) getApplicationContext();
-        boss.closeDatabase();
+
+        //notify Boss to do any final clean up of App
+        boss.onFinish();
 
         //close activity
         this.finish();
+
+        //kill activity process
         android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
