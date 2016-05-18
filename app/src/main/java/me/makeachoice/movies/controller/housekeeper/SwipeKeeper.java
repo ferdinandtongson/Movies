@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,6 @@ import me.makeachoice.movies.controller.housekeeper.adapter.SwipeAdapter;
  *      Boss mBoss
  *      FragmentManager mFragmentManager
  *      MaidAssistant mMaidAssistant
- *      FragmentAssistant mFragAssistant
  *      HashMap<Integer, Fragment> mFragmentRegistry
  *      Toolbar mToolbar
  *      FloatingActionButton mFab
@@ -56,7 +56,7 @@ import me.makeachoice.movies.controller.housekeeper.adapter.SwipeAdapter;
  *      Toolbar getToolbar(MyActivity, int)
  *      FloatingActionButton getFloatButton(MyActivity, int, View.OnClickListener)
  *
- * Implements MainActivity.Bridge
+ * Implements SwipeActivity.Bridge
  *      void create(Bundle savedInstanceState)
  *      void postResume()
  *      void backPressed()
@@ -65,34 +65,51 @@ import me.makeachoice.movies.controller.housekeeper.adapter.SwipeAdapter;
  *
  * Implements SwipeAdapter.Bridge
  *      Context getActivityContext() - implemented by MyHouseKeeper
- *      void onFragmentChange(int) - called when a fragment change occurs because of a "swipe" event
  *
- * Implements Maid.Bridge
+ * Implements PosterMaid.Bridge
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
  *      void onSelectedPoster(int, int) - movie poster selected [PosterMaid.Bridge]
  *
+ * Implements ViewPager.OnPageChangeListener
+ *      void onPageScrollStateChanged(int)
+ *      void onPageScrolled(int,float,int)
+ *      onPageSelected(int)
  */
 public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, SwipeAdapter.Bridge,
-        PosterMaid.Bridge{
+        PosterMaid.Bridge, ViewPager.OnPageChangeListener{
 
 /**************************************************************************************************/
 /**
  * Class Variables:
  *      SwipeHelper.ViewHolder mViewHolder - holds all the child view of the Activity
+ *      int mMovieIndex - index of current movie list being shown
+ *      View.OnClickListener mFabListener - onClick listener for FloatingActionButton
  */
 /**************************************************************************************************/
 
     //mViewHolder - holds all the child views of the fragment
     private SwipeHelper.ViewHolder mViewHolder;
 
+    //mMovieIndex - index of current movie list being shown
+    private int mMovieIndex;
+
+    //mFabListener - onClick listener for FloatingActionButton
+    private View.OnClickListener mFabListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onFABClick();
+        }
+    };
+
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
-    /**
-     * SwipeKeeper - constructor, registers to Boss and initialize Maids
-     * @param boss - Boss class
-     */
+/**
+ * SwipeKeeper - constructor, registers to Boss and initialize Maids
+ * @param boss - Boss class
+ */
     public SwipeKeeper(Boss boss){
 
         //set Boss
@@ -113,6 +130,8 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         //initialize all Maids used by the SwipeKeeper
         mMaidAssistant.hireSwipeMaids(mBoss, this);
 
+        //initialize movie index
+        mMovieIndex = 0;
     }
 
 /**************************************************************************************************/
@@ -133,21 +152,9 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 
 /**************************************************************************************************/
 /**
- * Maid.Bridge implementations:
- *      Context getActivityContext() - implemented by MyHouseKeeper
- *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
- *      xxx onSomeCustomMaidMethod() [SomeMaid only]
- */
-/**************************************************************************************************/
-
-    //- NONE -
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * Implements Bridge Interface from MainActivity:
+ * SwipeActivity.Bridge implementations:
  *      void create(Bundle savedInstanceState) - create activity layout
+ *          void createViewPager(MyActivity,int) - create ViewPager and SwipeAdapter objects
  *      void createOptionsMenu(Menu menu) - create menu for toolbar
  *      void postResume() - both activity and fragments have resumed
  *      void backPressed() - back button has been pressed
@@ -155,16 +162,23 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  */
 /**************************************************************************************************/
 /**
- * void create(Bundle) - called when onCreate is called in the activity. Sets the activity layout,
- * fragmentManager and toolbar for the activity as well as checks for network connectivity.
+ * void create(MyActivity, Bundle) - called when onCreate is called in the activity. Sets the
+ * activity layout, fragmentManager and other child views of the activity
  *
- * NOTE: Both FragmentManager and Toolbar are context sensitive and need to be recreated every time
+ * NOTE: Both FragmentManager and FAB are context sensitive and need to be recreated every time
  * onCreate() is called in the Activity
+ * @param activity - current activity being shown
  * @param savedInstanceState - instant state values
  */
     public void create(MyActivity activity, Bundle savedInstanceState){
         if(savedInstanceState != null){
-            //TODO - need to save instances. Movie request type maybe?
+            //get movieIndex of last shown movieList
+            mMovieIndex = savedInstanceState.getInt(
+                    mBoss.getString(SwipeHelper.KEY_MOVIE_INDEX));
+        }
+        else{
+            //default movie index = 0
+            mMovieIndex = 0;
         }
 
         //set activity layout
@@ -173,51 +187,55 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         //fragmentManager is context sensitive, need to recreate every time onCreate() is called
         mFragmentManager = activity.getSupportFragmentManager();
 
-        //TODO - set toolbar layout, create Helper
-        //Create toolbar with creation of Activity
-        //mToolbar = getToolbar(activity, SwipeHelper.SWIPE_TOOLBAR_ID);
+        //Fab is context sensitive, need to recreate everytime onCreate() is called
+        mFab = getFloatButton(activity, SwipeHelper.SWIPE_FAB_ID, mFabListener);
 
-        //check for connectivity
-        if(!mBoss.hasNetworkConnection()){
-            //do something if no network found
-        }
+        //create ViewPager and SwipeAdapter
+        createViewPager(activity, mMovieIndex);
+    }
 
+/**
+ * void createViewPager(MyActivity,int) - create ViewPager and SwipeAdapter objects
+ * @param activity - current Activity
+ * @param pageIndex - index of page to be displayed in the ViewPager
+ */
+    private void createViewPager(MyActivity activity, int pageIndex){
         //create FragmentPagerAdapter for viewPager
         SwipeAdapter adapter = new SwipeAdapter(this, mFragmentManager, mFragmentRegistry);
 
         //get viewPager
         ViewPager viewPager = (ViewPager)activity.findViewById(SwipeHelper.SWIPE_PAGER_ID);
 
+        //SwipeKeeper implements ViewPager.OnPageChangeListener interface
+        viewPager.addOnPageChangeListener(this);
+
         //set adapter in viewPager
         viewPager.setAdapter(adapter);
 
+        //set current movie fragment to view
+        viewPager.setCurrentItem(pageIndex);
+
+        //check if movie fragment index is 0
+        if(pageIndex == 0){
+            //if index = 0, call onPageSelected to update fragment
+            onPageSelected(pageIndex);
+        }
     }
 
 /**
- * void createOptionsMenu(Menu) - called if a toolbar is present in the activity.
+ * void createOptionsMenu(Menu) - does nothing
+ * @param activity - current activity being shown
  * @param menu - will hold menu items
  */
     public void createOptionsMenu(MyActivity activity, Menu menu){
-        //TODO - need to enable toolbar
-        // Inflate the menu; this adds items to the toolbar if it is present.
-        //activity.getMenuInflater().inflate(SwipeHelper.SWIPE_MENU, menu);
+        //does nothing
     }
 
 /**
- * void postResume() - called when onPostResume() is called in the Activity signalling that
- * both the Activity and Fragments have resumed and can now be manipulated.
- *
- * If orientation change has occurred, old fragment will automatically be added. No need to commit
- * the fragment again. This stops the double calling of onCreateView() method in Fragment classes.
- * Remember to setRetainInstance(true) in Fragment to retain data!!
+ * void postResume() - does nothing
  */
     public void postResume(){
-
-        //check orientation change status
-        if(!mBoss.getOrientationChanged()){
-            //NOT an orientation change event, update fragment view
-            //displayFragment();
-        }
+        //does nothing
     }
 
 /**
@@ -225,7 +243,8 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  * @param inState - bundle to save instance states
  */
     public void saveInstanceState(Bundle inState){
-        //TODO - need to save instance state. Movie request type maybe?
+        //save current movieIndex
+        inState.putInt(mBoss.getString(SwipeHelper.KEY_MOVIE_INDEX), mMovieIndex);
     }
 
 /**
@@ -240,45 +259,32 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
     }
 
 /**
- * void onOptionsItemSelected(MenuItem) - listens for an onOptionsItemSelected event from the
- * menu list contained in the toolbar view
- *
- * Menu will list movies by most popular, highest rated, now playing, upcoming
- *
+ * void onOptionsItemSelected(MenuItem) - does nothing
+ * @param activity - current activity being shown
  * @param item - menu item selected in the toolbar
  */
     public void optionsItemSelected(MyActivity activity, MenuItem item){
-        //get id of item selected from ActionBar
-        int id = item.getItemId();
-
-        //type of movie requested
-        int movieRequest;
-
-        //identify menu selection
-        /*if (id == MainHelper.MENU_ITEM01) {
-            //requested most popular movies
-            //movieRequest = PosterButler.MOVIE_REQUEST_MOST_POPULAR;
-        }
-        else if (id == MainHelper.MENU_ITEM02) {
-            //requested most popular movies
-            //movieRequest = PosterButler.MOVIE_REQUEST_MOST_POPULAR;
-        }
-        else if (id == MainHelper.MENU_ITEM03) {
-            //requested now playing movies
-            //movieRequest = PosterButler.MOVIE_REQUEST_NOW_PLAYING;
-        }
-        else{
-            //requested upcoming movies
-            movieRequest = PosterButler.MOVIE_REQUEST_UPCOMING;
-        }*/
-
+        //does nothing
     }
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
+ * SwipeAdapter.Bridge implementations:
+ *      Context getActivityContext() - implemented by MyHouseKeeper
+ */
+/**************************************************************************************************/
+
+    //Context getActivityContext() - implemented by MyHouseKeeper
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
  * PosterMaid.Bridge implementations:
+ *      Context getActivityContext() - implemented by MyHouseKeeper
+ *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
  *      void onSelectedPoster(int position) [PosterMaid] - onSelectPoster event
  */
 /**************************************************************************************************/
@@ -303,55 +309,113 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 
         //start DetailActivity
         mBoss.getActivityContext().startActivity(intent);
-
-
     }
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * SwipeAdapter.Bridge implementations:
- *      void onFragmentChange(int position) - fragment being viewed changed, swipe event happened
+ * ViewPager.OnPageChangeListener implementations:
+ *      void onPageSelected(int) - current fragment being viewed by ViewPager adapter
+ *      void onPageScrollStateChanged(int) - does nothing
+ *      void onPageScrolled(int,float,int) - does nothing
  */
 /**************************************************************************************************/
 /**
- * void onFragmentChange(int) - SwipeAdapter Bridge implementation, called when a swipe event
- * happens causing the Fragment being viewed to be changed. Gets poster data from Boss, if
- * poster data is not available, an AsyncTask will start and updatePoster() will be called
- * when the task is done.
- * @param position - position of fragment being displayed
+ * void onPageSelected(int) - update fragment being viewed by ViewPager adapter. Checks with Boss
+ * if poster data is in local buffer, if not will start an AsyncTask to get it from the database or
+ * make an API call. After AsyncTask is complete, will call updatePosters() method
+ * @param position - index of fragment being viewed by user
  */
-    public void onFragmentChange(int position){
-        //get movie data from Boss, if null will start AsyncTask to get data, calls updatePoster
+    public void onPageSelected(int position){
+        //initialize arrayList to hold poster items
+        ArrayList<PosterItem> posters;
+
+        //get type of posters being displayed
+        int posterType;
+
+        //get poster list from Boss, if empty will start AsyncTask to get poster data, calls
+        //updatePosters() after AsyncTask completes
         switch (position) {
-            case 0: mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
+            //get Most Popular posters
+            case 0: posters = mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
+                posterType = PosterHelper.NAME_ID_MOST_POPULAR;
                 break;
-            case 1: mBoss.getPosters(PosterHelper.NAME_ID_TOP_RATED);
+            //get Top Rated posters
+            case 1: posters = mBoss.getPosters(PosterHelper.NAME_ID_TOP_RATED);
+                posterType = PosterHelper.NAME_ID_TOP_RATED;
                 break;
-            case 2: mBoss.getPosters(PosterHelper.NAME_ID_NOW_PLAYING);
+            //get Now Playing posters
+            case 2: posters = mBoss.getPosters(PosterHelper.NAME_ID_NOW_PLAYING);
+                posterType = PosterHelper.NAME_ID_NOW_PLAYING;
                 break;
-            case 3: mBoss.getPosters(PosterHelper.NAME_ID_UPCOMING);
+            //get Upcoming posters
+            case 3: posters = mBoss.getPosters(PosterHelper.NAME_ID_UPCOMING);
+                posterType = PosterHelper.NAME_ID_UPCOMING;
                 break;
-            default: mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
+            //default request Favorite
+            default: posters = mBoss.getPosters(PosterHelper.NAME_ID_FAVORITE);
+                posterType = PosterHelper.NAME_ID_FAVORITE;
                 break;
         }
 
+        //check poster list size
+        if(posters.size() > 0){
+            //have poster in local buffer, update Poster fragment
+            updatePosters(posters, posterType);
+        }
     }
 
 /**
- * void updatePoster(ArrayList<PosterItem>, int) - called when a Movie request AsyncTask has
- * finished. The Maid handling the type of movie posters request will be notified and the Maid
- * will update the posters in the Fragment the Maid is maintaining.
+ * void onPageScrollStateChanged(int) - does nothing
+ * @param state - state of page scroll
+ */
+    public void onPageScrollStateChanged(int state){
+        //does nothing
+    }
+
+/**
+ * void onPageScrolled(int,float,int) - does nothing
+ * @param position - initial position
+ * @param positionOffset - change of position
+ * @param positionOffsetPixels - change of pixel position
+ */
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
+        //does nothing
+    }
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Class Methods:
+ *      void updatePoster(ArrayList<PosterItem>,int) - update poster fragment with poster item data
+ *      void onFABClick - floatingActionButton is clicked, refresh poster item data
+ */
+/**************************************************************************************************/
+/**
+ * void updatePoster(ArrayList<PosterItem>, int) - update poster fragment with poster item data. If
+ * poster item data is buffered will be called onPageSelected(). If there is no poster item data
+ * buffered, Boss will start an AsyncTask to get the data either from the database or through an
+ * API call. Once that task is done, this method will be called.
  * @param posters - list of PosterItem data requested
- * @param request - type of Movies requested
+ * @param request - type of movie posters requested
  */
     public void updatePosters(ArrayList<PosterItem> posters, int request){
-        //get Maid responsible for displaying the type of movies requested
+        //get Maid responsible for displaying the type of movie posters requested
         PosterMaid maid = ((PosterMaid)mBoss.getMaid(request));
 
-        //update posters being displayed by the Fragment being maintained by the Maid
+        //update the Fragment being maintained by the Maid
         maid.updatePosters(posters);
+    }
+
+/**
+ * void onFABClick() - the floatingActionButton has been clicked, user want to refresh poster
+ * item data.
+ */
+    public void onFABClick(){
+        //make API call to get fresh poster item data for current poster fragment
+        mBoss.refreshPosters(mMovieIndex);
     }
 
 /**************************************************************************************************/
