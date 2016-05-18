@@ -116,5 +116,25 @@ public abstract class MyHouseKeeper {
 
 /**************************************************************************************************/
 
+/**************************************************************************************************/
+/**
+ * Class Method:
+ *      void registerFragment(Integer,Fragment) - registers fragment to hashMap buffer
+ */
+/**************************************************************************************************/
+/**
+ * void registerFragment(Integer,Fragment) - registers fragment to hashMap buffer
+ * @param id - id number used as key
+ * @param fragment - fragment put into buffer
+ */
+    public void registerFragment(Integer id, Fragment fragment){
+        if(mFragmentRegistry == null){
+            mFragmentRegistry = new HashMap<>();
+        }
+
+        mFragmentRegistry.put(id, fragment);
+    }
+
+/**************************************************************************************************/
 
 }
