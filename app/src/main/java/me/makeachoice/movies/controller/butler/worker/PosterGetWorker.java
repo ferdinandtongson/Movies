@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import me.makeachoice.movies.model.db.contract.PosterContract;
 import me.makeachoice.movies.model.item.PosterItem;
 
-/**************************************************************************************************/
-
 /**
  * PosterGetWorker - gets poster item data from the database, extends AsyncTask<>
  *
@@ -20,6 +18,7 @@ import me.makeachoice.movies.model.item.PosterItem;
  *      Boolean doInBackground(String...)
  *      void onProgressUpdate(Void...)
  *      Boolean onPostExecute(ArrayList<PosterItem>)
+ *      void onCancelled()
  *
  */
 public class PosterGetWorker extends AsyncTask<String, Void, ArrayList<PosterItem>> {
@@ -48,11 +47,11 @@ public class PosterGetWorker extends AsyncTask<String, Void, ArrayList<PosterIte
 
 /**************************************************************************************************/
 /**
- * DetailWorker - constructor
- * @param bridge - bridge communication used by Butler class
+ * PosterGetWorker - constructor
+ * @param bridge - bridge communication used by Valet class
  */
     public PosterGetWorker(Bridge bridge){
-        //Butler making the API request
+        //Class implementing Bridge interface
         mBridge = bridge;
 
     }
@@ -75,7 +74,7 @@ public class PosterGetWorker extends AsyncTask<String, Void, ArrayList<PosterIte
 
 /**************************************************************************************************/
 /**
- * Implemented Abstract Class methods
+ * Implemented AsyncTask methods
  *      void onPreExecute() - method inherited from AsyncTask; runs on UI Thread. Does nothing.
  *      Boolean doInBackground(String...) - method inherited from AsyncTask; runs on a background
  *          Thread. Access the database to get poster Item data
@@ -210,5 +209,5 @@ public class PosterGetWorker extends AsyncTask<String, Void, ArrayList<PosterIte
         return posters;
     }
 
-
+/**************************************************************************************************/
 }
