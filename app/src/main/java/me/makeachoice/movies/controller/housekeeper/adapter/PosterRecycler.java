@@ -149,7 +149,7 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
     private void updatePoster(PosterHolder holder, int position){
 
         //get poster bitmap image from posterItem
-        Bitmap bitmap = mPosters.get(position).getImage();
+        Bitmap bitmap = mPosters.get(position).getPoster();
 
         //check if bitmap exists
         if(bitmap != null){
