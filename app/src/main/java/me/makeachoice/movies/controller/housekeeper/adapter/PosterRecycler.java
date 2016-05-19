@@ -1,6 +1,7 @@
 package me.makeachoice.movies.controller.housekeeper.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -132,17 +133,31 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
     @Override
     public void onBindViewHolder(PosterHolder holder, int position) {
 
-        //add poster title
+        //update poster title textView
         holder.mTxtTitle.setText(mPosters.get(position).getTitle());
 
-        //TODO - need to get bitmap from Picasso use Picasso.with(context).load(url).get();
-        if(mPosters.get(position).getPosterPath().equals("")){
-            //add poster image, placeholder image and error image
-            Picasso.with(mBridge.getActivityContext())
-                    .load(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
-                    .into(holder.mImgPoster);
+        //update poster image imageView
+        updatePoster(holder, position);
+
+    }
+
+/**
+ * void updatePoster(PosterHolder,int) - update imageView with poster image
+ * @param holder - ViewHolder class; PosterHolder
+ * @param position - position of the imageView being updated
+ */
+    private void updatePoster(PosterHolder holder, int position){
+
+        //get poster bitmap image from posterItem
+        Bitmap bitmap = mPosters.get(position).getImage();
+
+        //check if bitmap exists
+        if(bitmap != null){
+            //bitmap exist, set imageView with bitmap
+            holder.mImgPoster.setImageBitmap(bitmap);
         }
         else{
+            //bitmap does NOT exist, use picasso to get poster image from internet
             Picasso.with(mBridge.getActivityContext())
                     .load(mPosters.get(position).getPosterPath())
                     .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
