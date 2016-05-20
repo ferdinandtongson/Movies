@@ -345,20 +345,20 @@ public class PosterValet implements PosterSaveWorker.Bridge, PosterGetWorker.Bri
     }
 
 /**
- * void checkRetrieveBuffer() - check retrieve buffer for any pending retrieval requests. First
- * removes previous request from buffer that just completed then checks the first item in the buffer
+ * void checkRetrieveBuffer() - check retrieve buffer for any pending retrieval requests.
  */
     private void checkRetrieveBuffer(){
-        //checks if buffer is not empty
-        if(!mRetrieveBuffer.isEmpty()){
-            //not empty, remove request from buffer that has just completed
-            mRetrieveBuffer.remove(0);
-        }
 
         //check size of buffer
         if(mRetrieveBuffer.size() > 0){
+            //get requested poster type
+            int posterType = mRetrieveBuffer.get(0);
+
+            //remove request from buffer
+            mRetrieveBuffer.remove(0);
+
             //buffer is not empty, make poster request from first item in the buffer
-            requestPosters(mRetrieveBuffer.get(0));
+            requestPosters(posterType);
         }
     }
 
@@ -367,19 +367,22 @@ public class PosterValet implements PosterSaveWorker.Bridge, PosterGetWorker.Bri
  * previous request from buffer that just completed then checks the first item in the buffer
  */
     private void checkSaveBuffer(){
-        //check if "save" buffer is empty
-        if(!mSaveBuffer.isEmpty()){
-            //is not empty, remove just completed save request from buffer
-            mSaveBuffer.remove(0);
-
-            //remove just completed save request from buffer
-            mSaveTypeBuffer.remove(0);
-        }
-
         //check request buffer
         if (mSaveTypeBuffer.size() > 0) {
+            //get list from save buffer
+            ArrayList<PosterItem> tmpList = new ArrayList<>(mSaveBuffer.get(0));
+
+            //get poster typ from save type buffer
+            int movieType = mSaveTypeBuffer.get(0);
+
+            //remove list from save request from buffer
+            mSaveBuffer.remove(0);
+
+            //remove type from save type buffer
+            mSaveTypeBuffer.remove(0);
+
             //has pending save request, save data to database
-            savePostersToDB(mSaveBuffer.get(0), mSaveTypeBuffer.get(0));
+            savePostersToDB(tmpList, movieType);
         }
     }
 
