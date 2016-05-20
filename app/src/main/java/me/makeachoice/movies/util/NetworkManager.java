@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.butler.valet;
+package me.makeachoice.movies.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,10 +11,10 @@ import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.Boss;
 
 /**
- * NetworkValet is in charge of checking for network connectivity and alerting the user if there
+ * NetworkManager is in charge of checking for network connectivity and alerting the user if there
  * is Not any.
  */
-public class NetworkValet {
+public class NetworkManager {
 
 /**************************************************************************************************/
 /**
@@ -47,7 +47,7 @@ public class NetworkValet {
     //mPositiveListener - positive response in AlertDialog
     DialogInterface.OnClickListener mPositiveListener = new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int id) {
-            if(hasConnection()){
+            if(hasConnection(mBoss.getActivityContext())){
                 //TODO - need to handle network reconnected
                 //mBoss.updateMainActivity();
             }
@@ -66,10 +66,10 @@ public class NetworkValet {
 
 /**************************************************************************************************/
 /**
- * NetworkValet - constructor
+ * NetworkManager - constructor
  * @param boss - Boss class
  */
-    public NetworkValet(Boss boss){
+    public NetworkManager(Boss boss){
         //set Boss
         mBoss = boss;
 
@@ -110,10 +110,11 @@ public class NetworkValet {
  * user of the situation.
  * @return - status of network connection, true or false
  */
-    public boolean hasConnection(){
+    public static boolean hasConnection(Context context){
+
         //get Connectivity Manger
         ConnectivityManager connMgr = (ConnectivityManager)
-                mBoss.getActivityContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         //get access to network information from phone
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -124,10 +125,7 @@ public class NetworkValet {
             return true;
         }
         else{
-            //show "No Network" AlertDialog
-            showNoNetworkDialog();
-
-            //we have no network coonection, return false
+            //we have no network connection, return false
             return false;
         }
 
@@ -142,7 +140,7 @@ public class NetworkValet {
 /**
  * void showNoNetworkDialog() - show AlertDialog telling user there is no network connection
  */
-    private void showNoNetworkDialog(){
+    public void showNoNetworkDialog(){
 
         //initialize AlertDialog builder to build AlertDialog
         AlertDialog.Builder builder =
@@ -161,7 +159,7 @@ public class NetworkValet {
         builder.setNegativeButton(mStrClose, mNegativeListener);
 
         //dialog is not cancelable, user must press one of the buttons
-        builder.setCancelable(false);
+        builder.setCancelable(true);
 
         //create AlertDialog
         AlertDialog alertDialog = builder.create();
@@ -169,6 +167,8 @@ public class NetworkValet {
         //show dialog
         alertDialog.show();
     }
+
+    private AlertDialog mDialog;
 
 /**************************************************************************************************/
 
