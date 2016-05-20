@@ -1,8 +1,6 @@
 package me.makeachoice.movies.controller.butler.valet;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.HashMap;
 
@@ -19,12 +17,16 @@ public class RefreshValet{
 /**************************************************************************************************/
 /**
  * Class Variables:
- *      RefreshContract mRefreshContract - contract class for the movie refresh table
+ *      Boss mBoss - Boss class
+ *      RefreshContract mContract - contract class for the movie refresh table
  */
 /**************************************************************************************************/
 
-    //mRefreshContract - contract class for the movie refresh table
-    private RefreshContract mRefreshContract;
+    //mBoss - Boss class
+    Boss mBoss;
+
+    //mContract - contract class for the movie refresh table
+    private RefreshContract mContract;
 
 
 /**************************************************************************************************/
@@ -36,8 +38,9 @@ public class RefreshValet{
  * @param boss - Boss class
  */
     public RefreshValet(Boss boss){
+        mBoss = boss;
 
-        mRefreshContract = new RefreshContract();
+        mContract = new RefreshContract();
 
     }
 
@@ -55,12 +58,12 @@ public class RefreshValet{
 /**
  * HashMap<String, RefreshItem> getRefreshMap() - get refreshMap from database
  */
-    public HashMap<String, RefreshItem> getRefreshMap(SQLiteDatabase db){
+    public HashMap<Integer, RefreshItem> getRefreshMap(){
         //get Select All query for the movie refresh table
         String query = RefreshContract.RefreshEntry.SELECT_ALL;
 
         //run query, get cursor
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = mBoss.getDatabase().rawQuery(query, null);
 
         //check if cursor is null or cursor count is zero
         if(cursor != null && cursor.getCount() != 0){
@@ -73,16 +76,15 @@ public class RefreshValet{
     }
 
 /**
- * void setRefresh(SQLiteDatabase,RefreshItem) - save refresh item into database
- * @param db - SQLiteDatabase object
- * @param item - refresh item to save
+ * void setRefresh(RefreshItem) - save refresh item into database
+ * @param movieType - movie type being refreshed
  */
-    public void setRefresh(SQLiteDatabase db, RefreshItem item){
-        String whereClause = RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_LIST + " = '" +
-                item.movieList + "'";
+    public void setRefresh(int movieType, Long refreshDate){
+        String whereClause = RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_TYPE + " = '" +
+                mBoss.getString(movieType) + "'";
 
-        db.update(RefreshContract.RefreshEntry.TABLE_NAME,
-                mRefreshContract.getContentValues(item), whereClause, null);
+        mBoss.getDatabase().update(RefreshContract.RefreshEntry.TABLE_NAME,
+                mContract.getContentValues(movieType, refreshDate), whereClause, null);
     }
 
 
@@ -101,31 +103,28 @@ public class RefreshValet{
  * @param cursor - cursor containing refresh data from database
  * @return - refresh item hashMap
  */
-    private HashMap<String, RefreshItem> prepareRefreshMap(Cursor cursor){
+    private HashMap<Integer, RefreshItem> prepareRefreshMap(Cursor cursor){
         //initialize refresh buffer
-        HashMap<String, RefreshItem> refreshMap = new HashMap<>();
+        HashMap<Integer, RefreshItem> refreshMap = new HashMap<>();
 
         //get number of movie lists to refresh
         int count = cursor.getCount();
 
+        //valid query, move to first item in cursor
+        cursor.moveToFirst();
+
         //loop through list
         for(int i = 0; i < count; i++){
-            //valid query, move to first item in cursor
-            cursor.moveToFirst();
 
             //create refresh item object
             RefreshItem item = new RefreshItem();
             //get movie list name
-            item.movieList = cursor.getString(RefreshContract.RefreshEntry.INDEX_MOVIE_LIST);
+            item.movieType = cursor.getInt(RefreshContract.RefreshEntry.INDEX_MOVIE_TYPE);
             //get refresh date
             item.dateRefresh = cursor.getLong(RefreshContract.RefreshEntry.INDEX_DATE_REFRESH);
 
-            Log.d("Refresh", "     index 0: " + cursor.getInt(0));
-            Log.d("Refresh", "     index 1: " + cursor.getString(1));
-            Log.d("Refresh", "     index 2: " + cursor.getLong(2));
-
             //add refreshItem to hashMap with movieList name as key
-            refreshMap.put(item.movieList, item);
+            refreshMap.put(item.movieType, item);
 
             //move to next cursor
             cursor.moveToNext();
