@@ -1,8 +1,8 @@
-package me.makeachoice.movies.controller.butler.worker;
+package me.makeachoice.movies.controller.modelside.worker;
 
 import android.os.AsyncTask;
 
-import me.makeachoice.movies.controller.butler.MyButler;
+import me.makeachoice.movies.controller.modelside.MyButler;
 
 /**
  * MyWorker abstract class - used to run threads, network calls or background work to process data

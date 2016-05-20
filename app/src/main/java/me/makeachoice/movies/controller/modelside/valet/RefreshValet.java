@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.butler.valet;
+package me.makeachoice.movies.controller.modelside.valet;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

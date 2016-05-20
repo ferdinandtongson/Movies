@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.butler.staff;
+package me.makeachoice.movies.controller.modelside.staff;
 
 import java.util.Date;
 import java.util.HashMap;

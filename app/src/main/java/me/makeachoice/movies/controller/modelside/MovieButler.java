@@ -1,12 +1,12 @@
-package me.makeachoice.movies.controller.butler;
+package me.makeachoice.movies.controller.modelside;
 
 import android.content.Context;
 
 import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.butler.uri.TMDBUri;
-import me.makeachoice.movies.controller.butler.worker.MovieWorker;
+import me.makeachoice.movies.controller.modelside.uri.TMDBUri;
+import me.makeachoice.movies.controller.modelside.worker.MovieWorker;
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;

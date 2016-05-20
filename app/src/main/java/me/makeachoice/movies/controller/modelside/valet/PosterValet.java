@@ -1,12 +1,12 @@
-package me.makeachoice.movies.controller.butler.valet;
+package me.makeachoice.movies.controller.modelside.valet;
 
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
-import me.makeachoice.movies.controller.butler.worker.PosterGetWorker;
-import me.makeachoice.movies.controller.butler.worker.PosterSaveWorker;
+import me.makeachoice.movies.controller.modelside.worker.PosterGetWorker;
+import me.makeachoice.movies.controller.modelside.worker.PosterSaveWorker;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.db.contract.PosterContract;
 import me.makeachoice.movies.model.item.PosterItem;

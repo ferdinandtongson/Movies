@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.butler;
+package me.makeachoice.movies.controller.modelside;
 
 import android.content.Context;
 
@@ -7,8 +7,8 @@ import java.util.HashMap;
 
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.butler.uri.TMDBUri;
-import me.makeachoice.movies.controller.butler.worker.DetailWorker;
+import me.makeachoice.movies.controller.modelside.uri.TMDBUri;
+import me.makeachoice.movies.controller.modelside.worker.DetailWorker;
 import me.makeachoice.movies.model.item.CastItem;
 import me.makeachoice.movies.model.item.GenreItem;
 import me.makeachoice.movies.model.item.MovieItem;

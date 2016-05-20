@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.butler.uri;
+package me.makeachoice.movies.controller.modelside.uri;
 
 import android.net.Uri;
 

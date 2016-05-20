@@ -1,10 +1,10 @@
-package me.makeachoice.movies.controller.butler.staff;
+package me.makeachoice.movies.controller.modelside.staff;
 
 import java.util.ArrayList;
 
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.butler.uri.TMDBUri;
+import me.makeachoice.movies.controller.modelside.uri.TMDBUri;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;

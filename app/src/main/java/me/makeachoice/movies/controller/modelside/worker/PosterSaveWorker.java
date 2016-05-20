@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.butler.worker;
+package me.makeachoice.movies.controller.modelside.worker;
 
 import android.content.ContentValues;
 import android.database.Cursor;
