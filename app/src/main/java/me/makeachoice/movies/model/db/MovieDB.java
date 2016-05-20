@@ -8,7 +8,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.R;
+import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.model.db.contract.PosterContract;
 import me.makeachoice.movies.model.db.contract.RefreshContract;
 import me.makeachoice.movies.model.db.contract.TMDBContract;
@@ -43,7 +43,6 @@ public class MovieDB extends SQLiteOpenHelper{
         db.execSQL(TMDBContract.CastEntry.CREATE_TABLE);
         db.execSQL(TMDBContract.ReviewEntry.CREATE_TABLE);
         db.execSQL(TMDBContract.VideoEntry.CREATE_TABLE);
-        //db.close();
 
         initializeDB(db);
     }
@@ -53,22 +52,22 @@ public class MovieDB extends SQLiteOpenHelper{
         ArrayList<RefreshItem> refresh = new ArrayList<>();
 
         RefreshItem popularItem = new RefreshItem();
-        popularItem.movieList = mContext.getString(R.string.maid_poster_most_popular);
+        popularItem.movieType = PosterHelper.NAME_ID_MOST_POPULAR;
         popularItem.dateRefresh = 0l;
         refresh.add(popularItem);
 
         RefreshItem topRatedItem = new RefreshItem();
-        topRatedItem.movieList = mContext.getString(R.string.maid_poster_top_rated);
+        topRatedItem.movieType = PosterHelper.NAME_ID_TOP_RATED;
         topRatedItem.dateRefresh = 0l;
         refresh.add(topRatedItem);
 
         RefreshItem nowPlayingItem = new RefreshItem();
-        nowPlayingItem.movieList = mContext.getString(R.string.maid_poster_now_playing);
+        nowPlayingItem.movieType = PosterHelper.NAME_ID_NOW_PLAYING;
         nowPlayingItem.dateRefresh = 0l;
         refresh.add(nowPlayingItem);
 
         RefreshItem upcomingItem = new RefreshItem();
-        upcomingItem.movieList = mContext.getString(R.string.maid_poster_upcoming);
+        upcomingItem.movieType = PosterHelper.NAME_ID_UPCOMING;
         upcomingItem.dateRefresh = 0l;
         refresh.add(upcomingItem);
 
@@ -77,7 +76,7 @@ public class MovieDB extends SQLiteOpenHelper{
         int count = refresh.size();
         for(int i = 0; i < count; i++){
             RefreshItem item = refresh.get(i);
-            values.put(RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_LIST, item.movieList);
+            values.put(RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_TYPE, item.movieType);
             values.put(RefreshContract.RefreshEntry.COLUMN_NAME_DATE_REFRESH, item.dateRefresh);
             db.insert(RefreshContract.RefreshEntry.TABLE_NAME, null, values);
         }
