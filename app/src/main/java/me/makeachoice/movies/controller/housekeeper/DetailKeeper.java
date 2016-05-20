@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import java.util.HashMap;
 
+import me.makeachoice.movies.util.NetworkManager;
 import me.makeachoice.movies.view.DetailActivity;
 import me.makeachoice.movies.view.MyActivity;
 import me.makeachoice.movies.controller.Boss;
@@ -235,7 +236,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         //mFab = getFloatButton(activity, _templateHelper.MAIN_FAB_ID), xxOnClickListener)
 
         //check for connectivity
-        if(!mBoss.hasNetworkConnection()){
+        if(!NetworkManager.hasConnection(mBoss.getActivityContext())){
             //do something if no network found
         }
 
