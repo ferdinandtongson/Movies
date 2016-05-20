@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import me.makeachoice.movies.R;
+import me.makeachoice.movies.util.NetworkManager;
 import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.housekeeper.adapter.RecyclerItemClickListener;
 import me.makeachoice.movies.util.GridAutofitLayoutManager;
@@ -91,6 +93,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 /**
  * PosterMaid - constructor
  * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
+ * @param id - id number of maid
  */
     public PosterMaid(Bridge bridge, int id){
         //get id number for maid instance
@@ -143,7 +146,9 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
  */
 /**************************************************************************************************/
 /**
- * void initFragment() - initialize Fragment, give name of Maid to fragment
+ * void initFragment(int) - initialize Fragment, give name of Maid to fragment
+ * @param id - id number of maid managing this fragment
+ * @return - fragment object
  */
     protected Fragment initFragment(int id){
         //create PosterFragment
@@ -247,8 +252,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 /**************************************************************************************************/
 /**
  * Public Methods:
- *      void updatePosters(ArrayList<PosterItem>)
- *      void displayNoData(int)
+ *      void updatePosters(ArrayList<PosterItem>) - update recyclerView with new poster data
  */
 /**************************************************************************************************/
 /**
@@ -269,9 +273,19 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         mRecycler.notifyDataSetChanged();
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
 /**
- * void displayNoData(int) - displays "No Data" message to user if there are no reviews
- * @param count - number of reviews to display
+ * Class Methods:
+ *      void displayNoData(int) - displays "No Data" message to user if there are no posters
+ *      String noDataMessage() - type of "No Data" message to display
+ */
+/**************************************************************************************************/
+/**
+ * void displayNoData(int) - displays "No Data" message to user if there are no posters and hid
+ * "No Data" display if there are posters to display
+ * @param count - number of posters to display
  */
     private void displayNoData(int count){
         //get "No Data" TextView from ViewHolder
@@ -280,12 +294,39 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 
         //check if there are any reviews
         if(count == 0){
-            //no reviews, display "No Data" text
+            //no posters, set message "No Data" message
+            txtNoData.setText(noDataMessage());
+            //display "No Data" text
             txtNoData.setVisibility(View.VISIBLE);
         }
         else{
-            //have reviews, hid "No Data" text
+            //have posters, hid "No Data" text
             txtNoData.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+/**
+ * String noDataMessage() - type of "no Data" message to display. If there is no network, will
+ *  display "No Network Connection" and if it is simple no data will display "No Data to Display"
+ * @return - type of string message to display
+ */
+    private String noDataMessage(){
+
+        //check if we have connection
+        if(NetworkManager.hasConnection(mBridge.getActivityContext())) {
+            //we have connection just no data
+            return mBridge.getActivityContext().getString(R.string.str_no_data);
+        }
+        else{
+            if(mMaidId != PosterHelper.NAME_ID_FAVORITE){
+                //we have no network connection
+                return mBridge.getActivityContext().getString(R.string.str_no_network);
+            }
+            else{
+                //displaying Favorites does Not require network connection
+                return mBridge.getActivityContext().getString(R.string.str_no_data);
+            }
         }
 
     }
