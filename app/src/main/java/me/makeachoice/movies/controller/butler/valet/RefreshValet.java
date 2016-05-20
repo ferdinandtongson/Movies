@@ -80,8 +80,8 @@ public class RefreshValet{
  * @param movieType - movie type being refreshed
  */
     public void setRefresh(int movieType, Long refreshDate){
-        String whereClause = RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_TYPE + " = '" +
-                mBoss.getString(movieType) + "'";
+        String whereClause = RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_TYPE + " = " +
+                movieType;
 
         mBoss.getDatabase().update(RefreshContract.RefreshEntry.TABLE_NAME,
                 mContract.getContentValues(movieType, refreshDate), whereClause, null);
