@@ -1,7 +1,5 @@
 package me.makeachoice.movies.controller.butler.staff;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 import me.makeachoice.movies.R;
@@ -13,19 +11,20 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
  * PosterStaff maintains the buffer objects holding PosterItem data
+ *
+ * It uses other classes to assist in the upkeep of the Activity:
+ *      Boss - Boss class
+ *      TMDBUri - uri builder to make API calls to TheMovieDB
+ *      PosterHelper - get static Poster resource ids
  */
-public class PosterStaff {
+public class PosterStaff{
 
 /**************************************************************************************************/
 /**
  * Class Variables:
+ *      Boss mBoss - Boss object
  *      String mTMDBKey - the key used to access TheMovieDB api
  *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
- *
- *      ArrayList<MovieModel> mPopularModels - Popular Movie raw data from TMDB
- *      ArrayList<MovieModel> mTopRatedModels - Top Rated Movie raw data from TMDB
- *      ArrayList<MovieModel> mNowPlayingModels - Now Playing Movie raw data from TMDB
- *      ArrayList<MovieModel> mUpcomingModels - Upcoming Movie raw data from TMDB
  *
  *      ArrayList<PosterItem> mEmptyPosters - Empty poster data for PosterFragment
  *      ArrayList<PosterItem> mPopularPosters - Popular poster data for PosterFragment
@@ -36,6 +35,8 @@ public class PosterStaff {
  */
 /**************************************************************************************************/
 
+    //mBoss - Boss object
+    private Boss mBoss;
     //mTMDBKey - the key used to access TheMovieDB api
     private String mTMDBKey;
     //mUri - class that builds TheMovieDB api uri strings
@@ -56,12 +57,13 @@ public class PosterStaff {
 
 /**************************************************************************************************/
 /**
- * PosterStaff - constructor, registers to Boss
+ * PosterStaff - constructor, get TMDBUri builder and TMDBKey (TMDB = TheMovieDB) and initialize
  * data buffers.
  * @param boss - Boss class
  */
     public PosterStaff(Boss boss){
-        Log.d("Start", "     PosterStaff - constructor");
+        //get Boss class
+        mBoss = boss;
 
         //builds TheMovieDB api uri strings
         mTMDBUri = new TMDBUri(boss);
@@ -73,6 +75,14 @@ public class PosterStaff {
         initBuffers();
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Initialization Methods:
+ *      void initBuffers() - initialize poster Item arrayList buffers
+ */
+/**************************************************************************************************/
 /**
  * void initBuffers() - initialize buffers to hold PosterItems
  */
@@ -96,8 +106,6 @@ public class PosterStaff {
  * Getters:
  *      PosterItem getPoster(int, int) - get a poster item from the buffer
  *      ArrayList<PosterItem> getPosters(int) - get requested poster item buffer
- * Setters:
- *      - None -
  */
 /**************************************************************************************************/
 /**
@@ -133,103 +141,47 @@ public class PosterStaff {
 /**
  * ArrayList<PosterItem> getPosters(int) - get requested poster item buffer. If the buffer is
  * empty and empty arrayList is returned instead.
- * @param request - poster buffer request
+ * @param movieType - poster movie type requested
  * @return - poster item buffer, either data requested or "empty" buffer
  */
-    public ArrayList<PosterItem> getPosters(int request){
+    public ArrayList<PosterItem> getPosters(int movieType){
         //check which type of posters being requested
-        switch (request){
+        switch (movieType){
             case PosterHelper.NAME_ID_MOST_POPULAR:
-                //check Popular movie poster buffer if not empty
-                if(mPopularPosters.size() > 0){
-                    //return Popular movie poster buffer
-                    return mPopularPosters;
-                }
-                break;
+                //return Most Popular movie poster buffer
+                return mPopularPosters;
             case PosterHelper.NAME_ID_TOP_RATED:
-                //check Top Rated movie poster buffer if not empty
-                if(mTopRatedPosters.size() > 0){
-                    //return Top Rated movie poster buffer
-                    return mTopRatedPosters;
-                }
-                break;
+                //return Top Rated movie poster buffer
+                return mTopRatedPosters;
             case PosterHelper.NAME_ID_NOW_PLAYING:
-                //check Now Playing movie poster buffer if not empty
-                if(mNowPlayingPosters.size() > 0){
-                    //return Now Playing movie poster buffer
-                    return mNowPlayingPosters;
-                }
-                break;
+                //return Now Playing movie poster buffer
+                return mNowPlayingPosters;
             case PosterHelper.NAME_ID_UPCOMING:
-                //check Upcoming movie poster buffer if not empty
-                if(mUpcomingPosters.size() > 0){
-                    //return Upcoming movie poster buffer
-                    return mUpcomingPosters;
-                }
-                break;
+                //return Upcoming movie poster buffer
+                return mUpcomingPosters;
             case PosterHelper.NAME_ID_FAVORITE:
-                //check Favorite movie poster buffer if not empty
-                if(mFavoritePosters.size() > 0){
-                    //return Favorite movie poster buffer
-                    return mFavoritePosters;
-                }
-                break;
+                //return Favorite movie poster buffer
+                return mFavoritePosters;
         }
 
         //return "empty" poster buffer
         return new ArrayList<>();
     }
 
-
-
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * Class methods
- *      void prepareAndSavePosters(ArrayList<MovieModel>) - convert MovieModels to posterItems
- *      void savePosters(ArrayList<PosterItem>, int) - save PosterItems to buffer
- *      void onFinish() - nulls all of the data in the arrayList buffers
+ * Setters:
+ *      void setPosters(ArrayList<PosterItem>, int) - save PosterItems to buffer
  */
 /**************************************************************************************************/
 /**
- * void preparePosters(int, ArrayList<MovieModel>) - convert MovieModel data to PosterItem data.
- * @param models - MovieModel data
- * @param movieType - type of movie model
- */
-    public void prepareAndSavePosters(ArrayList<MovieModel> models, int movieType){
-
-        //create an ArrayList to hold the list of poster items
-        ArrayList<PosterItem> itemList = new ArrayList<>();
-
-        //number of Movie data models
-        int count = models.size();
-
-        //loop through the data models
-        for(int i = 0; i < count; i++){
-            //get MovieModel
-            MovieModel mod = models.get(i);
-
-            //get uri poster path
-            String posterPath = mTMDBUri.getImagePath(mod.getPosterPath(), mTMDBKey);
-
-            //create poster item from movie model
-            PosterItem item = new PosterItem(mod.getId(), mod.getTitle(), posterPath);
-
-            //add item into array list
-            itemList.add(item);
-        }
-
-        //save poster item data to appropriate buffer
-        savePosters(itemList, movieType);
-    }
-
-/**
- * void savePosters(ArrayList<PosterItem>, int) - save PosterItems to buffer
+ * void setPosters(ArrayList<PosterItem>, int) - save PosterItems to buffer
  * @param posters - PosterItems to be saved to buffer
  * @param movieType - type of PosterItems to save
  */
-    public void savePosters(ArrayList<PosterItem> posters, int movieType){
+    public void setPosters(ArrayList<PosterItem> posters, int movieType){
         //check type of PosterItems to save
         switch (movieType) {
             case PosterHelper.NAME_ID_MOST_POPULAR:
@@ -256,15 +208,68 @@ public class PosterStaff {
 
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Class methods
+ *      void preparePosters(ArrayList<MovieModel>) - convert MovieModels to posterItems
+ *      void onFinish() - nulls all of the data in the arrayList buffers
+ */
+/**************************************************************************************************/
+/**
+ * void preparePosters(ArrayList<MovieModel>) - convert MovieModel data to PosterItem data.
+ * @param models - MovieModel data
+ */
+    public ArrayList<PosterItem> preparePosters(ArrayList<MovieModel> models){
+        //create an ArrayList to hold the list of poster items
+        ArrayList<PosterItem> itemList = new ArrayList<>();
+
+        //number of Movie data models
+        int count = models.size();
+
+        //loop through the data models
+        for(int i = 0; i < count; i++){
+            //get MovieModel
+            MovieModel mod = models.get(i);
+
+            //get uri poster path
+            String posterPath = mTMDBUri.getImagePath(mod.getPosterPath(), mTMDBKey);
+
+            //create poster item from movie model
+            PosterItem item = new PosterItem(mod.getId(), mod.getTitle(), posterPath);
+
+            //add item into array list
+            itemList.add(item);
+        }
+
+        //return poster item list
+        return itemList;
+    }
+
 /**
  * void onFinish() - nulls all of the data in the arrayList buffers
  */
     public void onFinish(){
+        //clear and null Most Popular poster buffer
         mPopularPosters.clear();
+        mPopularPosters = null;
+
+        //clear and null Top Rated poster buffer
         mTopRatedPosters.clear();
+        mTopRatedPosters = null;
+
+        //clear and null Now Playing poster buffer
         mNowPlayingPosters.clear();
+        mNowPlayingPosters = null;
+
+        //clear and null Upcoming poster buffer
         mUpcomingPosters.clear();
+        mUpcomingPosters = null;
+
+        //clear and null Favorite poster buffer
         mFavoritePosters.clear();
+        mFavoritePosters = null;
     }
 
 /**************************************************************************************************/
