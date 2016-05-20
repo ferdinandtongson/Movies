@@ -1,26 +1,22 @@
 package me.makeachoice.movies.controller.butler.staff;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
-import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.butler.uri.TMDBUri;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
  * MovieStaff maintains the buffer objects holding MovieModel data
+ *
+ * It uses other classes to assist in the upkeep of the buffers:
+ *      PosterHelper - get static Poster resource ids
  */
 public class MovieStaff {
 
 /**************************************************************************************************/
 /**
  * Class Variables:
- *      String mTMDBKey - the key used to access TheMovieDB api
- *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
- *
  *      ArrayList<MovieModel> mPopularModels - Popular Movie raw data from TMDB
  *      ArrayList<MovieModel> mTopRatedModels - Top Rated Movie raw data from TMDB
  *      ArrayList<MovieModel> mNowPlayingModels - Now Playing Movie raw data from TMDB
@@ -28,50 +24,44 @@ public class MovieStaff {
  */
 /**************************************************************************************************/
 
-    //mTMDBKey - the key used to access TheMovieDB api
-    private String mTMDBKey;
-    //mUri - class that builds TheMovieDB api uri strings
-    private TMDBUri mTMDBUri;
-
     //mPopularModels - array list of raw data of Popular Movies from TMDB
     private ArrayList<MovieModel> mPopularModels;
     //mTopRatedModels - array list of raw data of Top Rated Movies from TMDB
     private ArrayList<MovieModel> mTopRatedModels;
     //mNowPlayingModels - array list of raw data of Now Playing Movies from TMDB
     private ArrayList<MovieModel> mNowPlayingModels;
-    //mUpcomingModles - array list of raw data of Upcoming Movies from TMDB
+    //mUpcomingModels - array list of raw data of Upcoming Movies from TMDB
     private ArrayList<MovieModel> mUpcomingModels;
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * PosterStaff - constructor, registers to Boss
- * data buffers.
+ * PosterStaff - constructor, initialize movie model buffers
  * @param boss - Boss class
  */
     public MovieStaff(Boss boss){
-        Log.d("Start", "     MovieStaff - constructor");
-
-        //builds TheMovieDB api uri strings
-        mTMDBUri = new TMDBUri(boss);
-
-        //get TheMovieDB api key from resource file
-        mTMDBKey = boss.getString(R.string.api_key_tmdb);
-
         //initialize buffers
         initBuffers();
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Initialization Methods:
+ *      void initBuffers() - initialize movie model arrayList buffers
+ */
+/**************************************************************************************************/
 /**
  * void initBuffers() - initialize buffers to hold MovieModel data
  */
     private void initBuffers(){
-        //buffer for MovieModels for Popular movies
+        //buffer for MovieModels for Most Popular movies
         mPopularModels = new ArrayList<>();
         //buffer for MovieModels for Top Rated movies
         mTopRatedModels = new ArrayList<>();
-        //buffer for MovieModels for NowPlaying movies
+        //buffer for MovieModels for Now Playing movies
         mNowPlayingModels = new ArrayList<>();
         //buffer for MovieModels for Upcoming movies
         mUpcomingModels = new ArrayList<>();
@@ -83,9 +73,7 @@ public class MovieStaff {
 /**
  * Getters:
  *      MovieModel getMovie(int, int) - get a movie model from the buffer
- *
- * Setters:
- *      - None -
+ *      ArrayList<MovieModel> getMovieModels(int) - get the list of movie models requested
  */
 /**************************************************************************************************/
 /**
@@ -109,9 +97,6 @@ public class MovieStaff {
             case PosterHelper.NAME_ID_UPCOMING:
                 //get movie model from Upcoming buffer
                 return mUpcomingModels.get(position);
-            case PosterHelper.NAME_ID_FAVORITE:
-                //TODO - need to handle Favorite movie request
-                return null;
             default:
                 return null;
         }
@@ -120,12 +105,12 @@ public class MovieStaff {
 
 /**
  * ArrayList<MovieModel> getMovieModels(int) - get the list of movie models requested
- * @param request - type of MovieModels
+ * @param movieType - type of MovieModels
  * @return - list of movie models requested
  */
-    public ArrayList<MovieModel> getModels(int request){
-        //check type of MovieModels to save
-        switch (request) {
+    public ArrayList<MovieModel> getModels(int movieType){
+        //check type of MovieModels to get
+        switch (movieType) {
             case PosterHelper.NAME_ID_MOST_POPULAR:
                 //return Most Popular movie models
                 return mPopularModels;
@@ -140,27 +125,26 @@ public class MovieStaff {
                 return mUpcomingModels;
         }
 
+        //invalid request, return empty list
         return new ArrayList<MovieModel>();
     }
 
-
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * Class methods
- *      void saveMovieModels(int, ArrayList<MovieModel>) - save MovieModels to buffer
- *      void onFinish() - nulls all of the data in the arrayList buffers
+ * Setters:
+ *      void setMovieModels(ArrayList<MovieModel>, int) - set MovieModels to buffer
  */
 /**************************************************************************************************/
 /**
- * void saveMovieModels(int,ArrayList<MovieModel>) - save MovieModels to buffer
- * @param request - type of MovieModels to save
+ * void setMovieModels(ArrayList<MovieModel>, int) - set MovieModels to buffer
+ * @param movieType - type of MovieModels to save
  * @param movieModels - MovieModels to be saved to buffer
  */
-    public void saveMovieModels(ArrayList<MovieModel> movieModels, int request){
+    public void setMovieModels(ArrayList<MovieModel> movieModels, int movieType){
         //check type of MovieModels to save
-        switch (request) {
+        switch (movieType) {
             case PosterHelper.NAME_ID_MOST_POPULAR:
                 //save movie models to Popular buffer
                 mPopularModels = new ArrayList<>(movieModels);
@@ -180,14 +164,33 @@ public class MovieStaff {
         }
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Class methods
+ *      void onFinish() - nulls all of the data in the arrayList buffers
+ */
+/**************************************************************************************************/
 /**
  * void onFinish() - nulls all of the data in the arrayList buffers
  */
     public void onFinish(){
+        //clear and null Most Popular buffer
         mPopularModels.clear();
+        mPopularModels = null;
+
+        //clear and null Top Rated buffer
         mTopRatedModels.clear();
+        mTopRatedModels = null;
+
+        //clear and null Now Playing buffer
         mNowPlayingModels.clear();
+        mNowPlayingModels = null;
+
+        //clear and null Upcoming buffer
         mUpcomingModels.clear();
+        mUpcomingModels = null;
     }
 
 /**************************************************************************************************/

@@ -12,8 +12,7 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
 /**
  * PosterStaff maintains the buffer objects holding PosterItem data
  *
- * It uses other classes to assist in the upkeep of the Activity:
- *      Boss - Boss class
+ * It uses other classes to assist in the upkeep of the buffers:
  *      TMDBUri - uri builder to make API calls to TheMovieDB
  *      PosterHelper - get static Poster resource ids
  */
@@ -22,7 +21,6 @@ public class PosterStaff{
 /**************************************************************************************************/
 /**
  * Class Variables:
- *      Boss mBoss - Boss object
  *      String mTMDBKey - the key used to access TheMovieDB api
  *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
  *
@@ -35,8 +33,6 @@ public class PosterStaff{
  */
 /**************************************************************************************************/
 
-    //mBoss - Boss object
-    private Boss mBoss;
     //mTMDBKey - the key used to access TheMovieDB api
     private String mTMDBKey;
     //mUri - class that builds TheMovieDB api uri strings
@@ -62,9 +58,6 @@ public class PosterStaff{
  * @param boss - Boss class
  */
     public PosterStaff(Boss boss){
-        //get Boss class
-        mBoss = boss;
-
         //builds TheMovieDB api uri strings
         mTMDBUri = new TMDBUri(boss);
 
