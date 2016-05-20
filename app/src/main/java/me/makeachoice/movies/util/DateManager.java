@@ -4,23 +4,53 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by Usuario on 5/11/2016.
+ * DateManager - handles date operations
  */
 public class DateManager {
+
+/**************************************************************************************************/
+/**
+ * Static Methods:
+ *      Date currentDate() - gets the current system date
+ *      Date addDaysToDate(int) - calculates the future date given number of days added
+ */
+/**************************************************************************************************/
+/**
+ * Date currentDate() - gets teh current system date
+ * @return - current system date
+ */
     public static Date currentDate(){
         return new Date(System.currentTimeMillis());
     }
 
-    public static Date addDaysToDate(Date date, int days){
+/**
+ * Date addDaysToDate(int) - calculates the future date given number of days added
+ * @param addDays - number of days to add to current system date
+ * @return - future date with given number of days added
+ */
+    public static Date addDaysToDate(int addDays){
+        //get calendar instance
         Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
+
+        //convert current system date to calendar object
+        cal.setTime(currentDate());
+
+        //get year of current date
         int year = cal.get(Calendar.YEAR);
+
+        //get month of current date
         int month = cal.get(Calendar.MONTH);
+
+        //get day of current date
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        cal.set(year, month, day + 1);
+        //set calendar date with added days
+        cal.set(year, month, day + addDays);
 
+        //return date
         return cal.getTime();
     }
+
+/**************************************************************************************************/
 
 }
