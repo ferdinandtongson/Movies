@@ -5,7 +5,7 @@ package me.makeachoice.movies.model.item;
  */
 public class RefreshItem {
 
-    public String movieList;
+    public int movieType;
 
     public Long dateRefresh;
 
