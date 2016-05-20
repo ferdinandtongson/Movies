@@ -3,7 +3,7 @@ package me.makeachoice.movies.controller.butler.staff;
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
+import me.makeachoice.movies.controller.viewside.maid.MyMaid;
 
 /**
  * MaidStaff maintains the buffer objects holding MyMaid classes.

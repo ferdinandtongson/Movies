@@ -1,19 +1,19 @@
-package me.makeachoice.movies.controller.housekeeper.assistant;
+package me.makeachoice.movies.controller.viewside.assistant;
 
 import java.util.ArrayList;
 
 import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.DetailKeeper;
-import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
-import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
-import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
-import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
-import me.makeachoice.movies.controller.housekeeper.maid.ReviewMaid;
-import me.makeachoice.movies.controller.housekeeper.maid.VideoMaid;
+import me.makeachoice.movies.controller.viewside.DetailKeeper;
+import me.makeachoice.movies.controller.viewside.SwipeKeeper;
+import me.makeachoice.movies.controller.viewside.helper.InfoHelper;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.helper.ReviewHelper;
+import me.makeachoice.movies.controller.viewside.helper.VideoHelper;
+import me.makeachoice.movies.controller.viewside.maid.InfoMaid;
+import me.makeachoice.movies.controller.viewside.maid.PosterMaid;
+import me.makeachoice.movies.controller.viewside.maid.ReviewMaid;
+import me.makeachoice.movies.controller.viewside.maid.VideoMaid;
 
 /**
  * MaidAssistant will assist the HouseKeeper class with initializing and registering the Maids.

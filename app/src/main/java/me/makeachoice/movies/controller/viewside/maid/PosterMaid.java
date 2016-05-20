@@ -1,9 +1,8 @@
-package me.makeachoice.movies.controller.housekeeper.maid;
+package me.makeachoice.movies.controller.viewside.maid;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,26 +11,29 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.controller.housekeeper.adapter.RecyclerItemClickListener;
-import me.makeachoice.movies.controller.housekeeper.adapter.ReviewRecycler;
-import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
-import me.makeachoice.movies.view.fragment.ReviewFragment;
-import me.makeachoice.movies.model.item.ReviewItem;
+import me.makeachoice.movies.R;
+import me.makeachoice.movies.util.NetworkManager;
+import me.makeachoice.movies.model.item.PosterItem;
+import me.makeachoice.movies.controller.viewside.adapter.RecyclerItemClickListener;
+import me.makeachoice.movies.util.GridAutofitLayoutManager;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.adapter.PosterRecycler;
+import me.makeachoice.movies.view.fragment.PosterFragment;
 
 /**
- * ReviewMaid initializes and takes care of communicating with the Fragment that hold the list of
- * reviews for a given movie
+ * PosterMaid initializes and takes care of communicating with the Fragment that hold the
+ * list of poster Movies the user can select from.
  *
  * Its main purpose is to upkeep and handle events and request from the Fragment and if the Maid
  * cannot handle a request or an event, it will pass it onto the HouseKeeper.
  *
- * The ReviewMaid is only aware of the Fragment and the views at the fragment level. It is NOT
+ * The PosterMaid is only aware of the Fragment and the views at the fragment level. It is NOT
  * aware of the view above it (the Activity containing the Fragment).
  *
- * It uses other classes to assist in the upkeep of the Fragment:
- *      ReviewFragment - handles the Fragment lifecycle
- *      ReviewRecycler - RecyclerView adapter used to display the list of reviews
- *      ReviewHelper - holds all static resources (layout id, view ids, etc)
+ * It uses other classes to assist in the upkeeping of the Fragment:
+ *      PosterFragment - handles the Fragment lifecycle
+ *      PosterRecycler - RecyclerView adapter used to display the list of movie posters
+ *      PosterHelper - holds all static resources (layout id, view ids, etc)
  *
  * Variables from MyMaid:
  *      int mMaidId
@@ -47,51 +49,53 @@ import me.makeachoice.movies.model.item.ReviewItem;
  *      void registerFragment(String, Fragment)
  *      int getOrientation()
  *
- * Implements ReviewFragment.Bridge
+ * Implements PosterFragment.Bridge
  *      View createView(LayoutInflater, ViewGroup, Bundle);
  *      void createActivity(Bundle, View);
  *
- * Implements ReviewRecycler.Bridge
+ * Implements PosterRecycler.Bridge
  *      Context getActivityContext()
  *
  */
-public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewRecycler.Bridge{
+public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterRecycler.Bridge{
 
 /**************************************************************************************************/
 /**
  * Class Variables
- *      ReviewHelper.ViewHolder mViewHolder - holds all the child views of the fragment
+ *      PosterHelper.ViewHolder mViewHolder - holds all the child views of the fragment
  *      Bridge mBridge - extends MyMaid.Bridge interface
- *      ReviewRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
+ *      PosterRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
+ *      TextView mTxtNoData - displayed when there is no data for RecyclerView
  *
  * Extends Bridge Interface:
- *      void onSelectedReview(int)
+ *      void onSelectedPoster(int)
  */
 /**************************************************************************************************/
 
     //mViewHolder - holds all the child views of the fragment
-    private ReviewHelper.ViewHolder mViewHolder;
+    private PosterHelper.ViewHolder mViewHolder;
 
     //mBridge - extends MyMaid.Bridge, typically a MyHouseKeeper class
     private Bridge mBridge;
 
     //mRecycler - manages item views for the RecyclerView used in the Fragment
-    private ReviewRecycler mRecycler;
+    private PosterRecycler mRecycler;
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
-        //notify HouseKeeper that a review has been selected
-        void onSelectedReview(int position);
+        //notify HouseKeeper a poster has been selected
+        void onSelectedPoster(int id, int position);
     }
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * ReviewMaid - constructor
+ * PosterMaid - constructor
  * @param bridge - class implementing Bridge interface, typically a MyHouseKeeper class
+ * @param id - id number of maid
  */
-    public ReviewMaid(Bridge bridge, int id){
+    public PosterMaid(Bridge bridge, int id){
         //get id number for maid instance
         mMaidId = id;
 
@@ -102,10 +106,10 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
         mFragment = initFragment(id);
 
         //initialize RecyclerView Adapter
-        mRecycler = new ReviewRecycler(this);
+        mRecycler = new PosterRecycler(this);
 
         //initialize ViewHolder
-        mViewHolder = new ReviewHelper.ViewHolder();
+        mViewHolder = new PosterHelper.ViewHolder();
 
         //registers fragment PosterMaid is assigned to maintain
         mBridge.registerFragment(id, mFragment);
@@ -117,29 +121,19 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
 /**************************************************************************************************/
 /**
  * Getters:
- *      Context getActivityContext() - required as part of ReviewRecycler.Bridge interface
+ *      Context getActivityContext() - required as part of PosterRecycler.Bridge interface
  *
  * Setters:
- *      void setReviews(ArrayList<ReviewItem> - set data to be displayed by the RecyclerView
+ *      - None -
  */
 /**************************************************************************************************/
 /**
  * Context getActivityContext() - get current Activity context, implemented for
- * ReviewRecycler.Bridge
+ * PosterRecycler.Bridge
  * @return - current Activity context
  */
     public Context getActivityContext(){
-        //get current Activity context
         return mBridge.getActivityContext();
-    }
-
-/**
- * void setReviews(ArrayList<ReviewItem>) - set data to be displayed by the RecyclerView
- * @param reviews - list of review data
- */
-    public void setReviews(ArrayList<ReviewItem> reviews){
-        //set review data for recycler
-        mRecycler.setReviews(reviews);
     }
 
 /**************************************************************************************************/
@@ -152,11 +146,13 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
  */
 /**************************************************************************************************/
 /**
- * void initFragment() - initialize Fragment, give name of Maid to fragment
+ * void initFragment(int) - initialize Fragment, give name of Maid to fragment
+ * @param id - id number of maid managing this fragment
+ * @return - fragment object
  */
     protected Fragment initFragment(int id){
-        //create ReviewFragment
-        ReviewFragment fragment = new ReviewFragment();
+        //create PosterFragment
+        PosterFragment fragment = new PosterFragment();
 
         //send Maid id number to fragment
         fragment.setMaidId(id);
@@ -166,7 +162,7 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
     }
 
 /**
- * View createView(LayoutInflater, ViewGroup, Bundle) - is called by ReviewFragment when
+ * View createView(LayoutInflater, ViewGroup, Bundle) - is called by PosterFragment when
  * onCreateView(...) is called in that class. Prepares the Fragment View to be presented.
  * @param inflater - layoutInflater to inflate the xml fragment layout resource file
  * @param container - view that will hold the fragment view
@@ -177,17 +173,16 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
                            Bundle savedInstanceState){
 
         //return fragment
-        return inflater.inflate(ReviewHelper.REVIEW_FRAGMENT_LAYOUT_ID, container, false);
+        return inflater.inflate(PosterHelper.POSTER_FRAGMENT_LAYOUT_ID, container, false);
     }
 
 /**
- * void createActivity(Bundle, View) - is called by ReviewFragment when onCreateActivity(...)
+ * void createActivity(Bundle, View) - is called by PosterFragment when onCreateActivity(...)
  * is called in that class. Sets child views in fragment before being seen by the user
  * @param savedInstanceState - saved instance states
  * @param layout - layout where child views reside
  */
     public void createActivity(Bundle savedInstanceState, View layout){
-
         //get fragment layout
         mLayout = layout;
 
@@ -208,10 +203,10 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
     private void prepareNoDataTextView(View layout){
         //get "No Data" TextView from ViewHolder
         TextView txtNoData = (TextView)mViewHolder
-                .getView(layout, ReviewHelper.REVIEW_TXT_NO_DATA_ID);
+                .getView(layout, PosterHelper.POSTER_TXT_NO_DATA_ID);
 
         //set "No Data" text in textView
-        txtNoData.setText(mBridge.getActivityContext().getString(ReviewHelper.STR_NO_DATA_ID));
+        txtNoData.setText(mBridge.getActivityContext().getString(PosterHelper.STR_NO_DATA_ID));
     }
 
 /**
@@ -221,7 +216,7 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
     private void prepareRecycler(View layout) {
         //get RecyclerView from ViewHolder
         RecyclerView recycler = (RecyclerView)mViewHolder.getView(layout,
-                ReviewHelper.REVIEW_REC_ID);
+                PosterHelper.POSTER_REC_ID);
 
         //setHasFixedSize to true because 1)is true and 2)for optimization
         recycler.setHasFixedSize(true);
@@ -233,23 +228,49 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-                                //notify Bridge that a review has been selected
-                                mBridge.onSelectedReview(position);
+                                //notify Bridge poster has been selected
+                                mBridge.onSelectedPoster(mMaidId, position);
                             }
                         })
         );
 
-
-        //create LayoutManager for RecyclerView, in this case a list type LayoutManager
-        LinearLayoutManager manager =
-                new LinearLayoutManager(mBridge.getActivityContext());
+        //create LayoutManager for RecyclerView, in this case a Grid type LayoutManager
+        //TODO - need to change 240 to a dynamic variable
+        GridAutofitLayoutManager manager =
+                new GridAutofitLayoutManager(mBridge.getActivityContext(), 240);
 
         //set layout manager of RecyclerView
         recycler.setLayoutManager(manager);
 
         //set RecyclerAdapter of RecyclerView
         recycler.setAdapter(mRecycler);
+    }
 
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Public Methods:
+ *      void updatePosters(ArrayList<PosterItem>) - update recyclerView with new poster data
+ */
+/**************************************************************************************************/
+/**
+ * void updatePosters(PosterItem) - called by HouseKeep to inform Maid that changes to the data
+ * being displayed in the fragment has occurred.
+ * @param posters - list of PosterItem data
+ */
+    public void updatePosters(ArrayList<PosterItem> posters){
+        if(mLayout != null){
+            //if layout not null, check if there is data to display
+            displayNoData(posters.size());
+        }
+
+        //change movie posters being displayed
+        mRecycler.setPosters(posters);
+
+        //notify adapter that data has changed
+        mRecycler.notifyDataSetChanged();
     }
 
 /**************************************************************************************************/
@@ -257,44 +278,55 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
 /**************************************************************************************************/
 /**
  * Class Methods:
- *      void updateReviews(ArrayList<ReviewItem>)
- *      void displayNoData(int)
+ *      void displayNoData(int) - displays "No Data" message to user if there are no posters
+ *      String noDataMessage() - type of "No Data" message to display
  */
 /**************************************************************************************************/
 /**
- * void updateReviews(ReviewItem) - called by HouseKeep to inform Maid that changes to the data
- * being displayed in the fragment has occurred.
- * @param reviews - list of ReviewItem data
- */
-    public void updateReviews(ArrayList<ReviewItem> reviews){
-        if(mLayout != null){
-            //if layout not null, check if there is data to display
-            displayNoData(reviews.size());
-        }
-        //change movie reviews being displayed
-        mRecycler.setReviews(reviews);
-
-        //notify adapter that data has changed
-        mRecycler.notifyDataSetChanged();
-    }
-
-/**
- * void displayNoData(int) - displays "No Data" message to user if there are no reviews
- * @param count - number of reviews to display
+ * void displayNoData(int) - displays "No Data" message to user if there are no posters and hid
+ * "No Data" display if there are posters to display
+ * @param count - number of posters to display
  */
     private void displayNoData(int count){
         //get "No Data" TextView from ViewHolder
         TextView txtNoData = (TextView)mViewHolder
-                .getView(mLayout, ReviewHelper.REVIEW_TXT_NO_DATA_ID);
+                .getView(mLayout, PosterHelper.POSTER_TXT_NO_DATA_ID);
 
         //check if there are any reviews
         if(count == 0){
-            //no reviews, display "No Data" text
+            //no posters, set message "No Data" message
+            txtNoData.setText(noDataMessage());
+            //display "No Data" text
             txtNoData.setVisibility(View.VISIBLE);
         }
         else{
-            //have reviews, hid "No Data" text
+            //have posters, hid "No Data" text
             txtNoData.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+/**
+ * String noDataMessage() - type of "no Data" message to display. If there is no network, will
+ *  display "No Network Connection" and if it is simple no data will display "No Data to Display"
+ * @return - type of string message to display
+ */
+    private String noDataMessage(){
+
+        //check if we have connection
+        if(NetworkManager.hasConnection(mBridge.getActivityContext())) {
+            //we have connection just no data
+            return mBridge.getActivityContext().getString(R.string.str_no_data);
+        }
+        else{
+            if(mMaidId != PosterHelper.NAME_ID_FAVORITE){
+                //we have no network connection
+                return mBridge.getActivityContext().getString(R.string.str_no_network);
+            }
+            else{
+                //displaying Favorites does Not require network connection
+                return mBridge.getActivityContext().getString(R.string.str_no_data);
+            }
         }
 
     }

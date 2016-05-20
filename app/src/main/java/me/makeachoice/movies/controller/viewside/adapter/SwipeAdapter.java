@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.adapter;
+package me.makeachoice.movies.controller.viewside.adapter;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -8,12 +8,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 
 /**
- * DetailAdapter extends FragmentPagerAdapter and is used to display fragments as pages where users
+ * SwipeAdapter extends FragmentPagerAdapter and is used to display fragments as pages where users
  * can swipe between the different pages.
  *
  * FragmentPageAdapter is used because there is a fixed number of pages to be displayed.
@@ -24,7 +22,7 @@ import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
  *      CharSequence getPageTitle(int)
  *
  */
-public class DetailAdapter extends FragmentPagerAdapter {
+public class SwipeAdapter extends FragmentPagerAdapter {
 
 /**************************************************************************************************/
 /**
@@ -40,7 +38,7 @@ public class DetailAdapter extends FragmentPagerAdapter {
 /**************************************************************************************************/
 
     //set number of fragments to be viewed
-    static final int NUM_FRAGMENT = 3;
+    static final int NUM_FRAGMENT = 5;
 
     //list of fragments to be viewed
     private ArrayList<Fragment> mFragments;
@@ -55,47 +53,79 @@ public class DetailAdapter extends FragmentPagerAdapter {
     public interface Bridge{
         //get Context of current Activity
         Context getActivityContext();
-        //fragment being displayed has changed
-        void onFragmentChange(int position);
     }
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
-    /**
-     * SwipeAdapter - constructor
-     * @param bridge - class implementing Bridge interface
-     * @param fm - fragment manager
-     * @param fragmentMap - hashMap containing fragments to be displayed
-     */
-    public DetailAdapter(Bridge bridge, FragmentManager fm,
-                         HashMap<Integer, Fragment> fragmentMap) {
+/**
+ * SwipeAdapter - constructor
+ * @param bridge - class implementing Bridge interface
+ * @param fm - fragment manager
+ * @param fragmentMap - hashMap containing fragments to be displayed
+ */
+    public SwipeAdapter(Bridge bridge, FragmentManager fm,
+                        HashMap<Integer, Fragment> fragmentMap) {
         super(fm);
 
         //get Bridge
         mBridge = bridge;
 
+        //add fragments to fragment list
+        initializeFragmentList(fragmentMap);
+
+        //add titles to title list
+        initializeTitleList();
+
+    }
+
+/**************************************************************************************************/
+/**
+ * Initialization Methods:
+ *      void initializeFragmentList(HashMap<Integer,Fragment>) - add fragments to fragment list
+ *      void initializeTitleList() - add titles to title list
+ */
+/**************************************************************************************************/
+/**
+ * void initializeFragmentList(HashMap<Integer,Fragment>) - add fragments to fragment list
+ * @param fragmentMap - hashMap containing fragments for the list
+ */
+    private void initializeFragmentList(HashMap<Integer, Fragment> fragmentMap){
         //initialize fragment array list
         mFragments = new ArrayList<>();
 
-        //add fragments to array list
-        mFragments.add(fragmentMap.get(InfoHelper.NAME_ID));
-        mFragments.add(fragmentMap.get(ReviewHelper.NAME_ID));
-        mFragments.add(fragmentMap.get(VideoHelper.NAME_ID));
-        //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_UPCOMING));
-        //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_FAVORITE));
+        //add Most Popular poster fragment
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_MOST_POPULAR));
+        //add Top Rated poster fragment
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_TOP_RATED));
+        //add Now Playing poster fragment
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_NOW_PLAYING));
+        //add Upcoming poster fragment
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_UPCOMING));
+        //add Favorite poster fragment
+        mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_FAVORITE));
+    }
 
+/**
+ * void initializeTitleList() - add titles to title list
+ */
+    private void initializeTitleList(){
         //get context
         Context ctx = mBridge.getActivityContext();
 
         //initialize title array list
         mTitles = new ArrayList<>();
-        mTitles.add(ctx.getString(InfoHelper.NAME_ID));
-        mTitles.add(ctx.getString(ReviewHelper.NAME_ID));
-        mTitles.add(ctx.getString(VideoHelper.NAME_ID));
-        //mTitles.add(ctx.getString(PosterHelper.NAME_ID_UPCOMING));
-        //mTitles.add(ctx.getString(PosterHelper.NAME_ID_FAVORITE));
 
+        //add Most Popular title
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_MOST_POPULAR));
+        //add Top Rated title
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_TOP_RATED));
+        //add Now Playing title
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_NOW_PLAYING));
+        //add Upcoming title
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_UPCOMING));
+        //add Favorite title
+        mTitles.add(ctx.getString(PosterHelper.NAME_ID_FAVORITE));
     }
 
 /**************************************************************************************************/
@@ -113,15 +143,13 @@ public class DetailAdapter extends FragmentPagerAdapter {
 /**************************************************************************************************/
 /**
  * Fragment getItem(int) - called when the user does a "swipe" action causing the next fragment
- * to be shown.
+ * to be shown. Depending on how setOffscreenPageLimit() is defined (default 1), getItem will call
+ * the current fragment and the fragments before (if any) and after the show fragment
  * @param i - current adapter position being shown
- * @return Fragment - fragment being displayed
+ * @return Fragment - fragment being called
  */
     @Override
     public Fragment getItem(int i) {
-        //notify Bridge that fragment has been changed
-        mBridge.onFragmentChange(i);
-
         //return fragment
         return mFragments.get(i);
     }

@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.helper;
+package me.makeachoice.movies.controller.viewside.helper;
 
 import me.makeachoice.movies.R;
 

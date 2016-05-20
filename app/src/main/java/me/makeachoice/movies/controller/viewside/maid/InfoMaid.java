@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.maid;
+package me.makeachoice.movies.controller.viewside.maid;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,9 +18,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.controller.housekeeper.adapter.NameAdapter;
-import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.adapter.NameAdapter;
+import me.makeachoice.movies.controller.viewside.helper.InfoHelper;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.view.dialog.CastDialog;
 import me.makeachoice.movies.view.fragment.InfoFragment;
 import me.makeachoice.movies.model.item.CastItem;

@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.adapter;
+package me.makeachoice.movies.controller.viewside.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -13,8 +13,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.helper.VideoHelper;
 import me.makeachoice.movies.model.item.VideoItem;
 
 /**

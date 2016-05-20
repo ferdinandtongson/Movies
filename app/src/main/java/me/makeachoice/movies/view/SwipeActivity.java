@@ -5,7 +5,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
+import me.makeachoice.movies.controller.viewside.helper.SwipeHelper;
 
 /**
  * SwipeActivity allows users to swipe through a various list of Posters set in a GridView fragment.

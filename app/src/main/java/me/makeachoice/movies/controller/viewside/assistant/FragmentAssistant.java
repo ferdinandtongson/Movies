@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.assistant;
+package me.makeachoice.movies.controller.viewside.assistant;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

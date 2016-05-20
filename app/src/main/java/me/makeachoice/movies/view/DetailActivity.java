@@ -6,7 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
+import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
 
 /**
  * DetailActivity allows the user to swipe through Detailed information about a selected movie. It

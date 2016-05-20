@@ -1,25 +1,20 @@
-package me.makeachoice.movies.controller.housekeeper.adapter;
+package me.makeachoice.movies.controller.viewside.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.model.item.PosterItem;
-import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.helper.ReviewHelper;
+import me.makeachoice.movies.model.item.ReviewItem;
 
 /**
- * PosterRecycler extends RecyclerView.Adapter and is used to display the image of a poster and
- * its' title
+ * ReviewRecycler extends RecyclerView.Adapter and is used to display the reviews made for a movie
  *
  * Methods from RecyclerView.Adapter:
  *      int getItemCount()
@@ -27,14 +22,14 @@ import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
  *      void onBindViewHolder(ViewHolder, int)
  *
  * Inner Class:
- *      PosterHolder extends RecyclerView.ViewHolder
+ *      ReviewHolder extends RecyclerView.ViewHolder
  */
-public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHolder> {
+public class ReviewRecycler extends RecyclerView.Adapter<ReviewRecycler.ReviewHolder> {
 
 /**************************************************************************************************/
 /**
  * Class Variables
- *      ArrayList<PosterItem> mPosters - array list of poster data
+ *      ArrayList<ReviewItem> mReviews - array list of review data
  *      Bridge mBridge - class implementing Bridge interface, typically a Maid class
  *
  * Interface:
@@ -42,8 +37,8 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  */
 /**************************************************************************************************/
 
-    //mPosters - an array list of poster item data consumed by the adapter
-    private ArrayList<PosterItem> mPosters;
+    //mReviews - an array list of review item data consumed by the adapter
+    private ArrayList<ReviewItem> mReviews;
 
     //mBridge - class implementing Bridge, typically a Maid class
     private Bridge mBridge;
@@ -61,8 +56,8 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  * PosterRecycler - constructor
  * @param bridge - class implementing Bridge interface
  */
-    public PosterRecycler(Bridge bridge){
-        //set poster item data
+    public ReviewRecycler(Bridge bridge){
+        //set bridge communication
         mBridge = bridge;
     }
 
@@ -74,25 +69,28 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  *      int getItemCount()
  *
  * Setters:
- *      void setPosters(ArrayList<PosterItem>)
+ *      void setReviews(ArrayList<ReviewItem>)
  */
 /**************************************************************************************************/
 /**
- * int getItemCount() - get number of poster items in adapter
- * @return int - number of poster items in adapter
+ * int getItemCount() - get number of review items in adapter
+ * @return int - number of review items in adapter
  */
     @Override
     public int getItemCount(){
-        //return number of poster items
-        return mPosters.size();
+        if(mReviews != null){
+            //return number of review items
+            return mReviews.size();
+        }
+        return 0;
     }
 
 /**
- * void setPosters(ArrayList<PosterItem>) - get data to be display by the RecyclerView
- * @param posters - list of poster data
+ * void setReviews(ArrayList<ReviewItem>) - get data to be display by the RecyclerView
+ * @param reviews - list of review data
  */
-    public void setPosters(ArrayList<PosterItem> posters){
-        mPosters = posters;
+    public void setReviews(ArrayList<ReviewItem> reviews){
+        mReviews = reviews;
     }
 
 /**************************************************************************************************/
@@ -110,60 +108,34 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  * inflated layout and is only called when a new view must be created.
  * @param viewGroup - parent view that will hold the itemView, RecyclerView
  * @param i - position of the itemView
- * @return - ViewHolder class; PosterHolder
+ * @return - ViewHolder class; ReviewHolder
  */
     @Override
-    public PosterHolder onCreateViewHolder(ViewGroup viewGroup, int i){
+    public ReviewHolder onCreateViewHolder(ViewGroup viewGroup, int i){
 
         //inflate the itemView
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
-                inflate(PosterHelper.POSTER_CARD_LAYOUT_ID, viewGroup, false);
+                inflate(ReviewHelper.CARD_REVIEW_LAYOUT_ID, viewGroup, false);
 
 
         //return ViewHolder
-        return new PosterHolder(itemView);
+        return new ReviewHolder(itemView);
     }
 
 /**
  * void onBindViewHolder(ViewHolder, int) - where we bind our data to the views
- * @param holder - ViewHolder class; PosterHolder
+ * @param holder - ViewHolder class; ReviewHolder
  * @param position - position of the itemView being bound
  */
     @Override
-    public void onBindViewHolder(PosterHolder holder, int position) {
+    public void onBindViewHolder(ReviewHolder holder, int position) {
 
-        //update poster title textView
-        holder.mTxtTitle.setText(mPosters.get(position).getTitle());
+        //set author
+        holder.mTxtAuthor.setText(mReviews.get(position).author);
 
-        //update poster image imageView
-        updatePoster(holder, position);
-
-    }
-
-/**
- * void updatePoster(PosterHolder,int) - update imageView with poster image
- * @param holder - ViewHolder class; PosterHolder
- * @param position - position of the imageView being updated
- */
-    private void updatePoster(PosterHolder holder, int position){
-
-        //get poster bitmap image from posterItem
-        Bitmap bitmap = mPosters.get(position).getPoster();
-
-        //check if bitmap exists
-        if(bitmap != null){
-            //bitmap exist, set imageView with bitmap
-            holder.mImgPoster.setImageBitmap(bitmap);
-        }
-        else{
-            //bitmap does NOT exist, use picasso to get poster image from internet
-            Picasso.with(mBridge.getActivityContext())
-                    .load(mPosters.get(position).getPosterPath())
-                    .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
-                    .error(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
-                    .into(holder.mImgPoster);
-        }
+        //set review
+        holder.mTxtReview.setText(mReviews.get(position).review);
     }
 
 /**************************************************************************************************/
@@ -174,45 +146,46 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
 
 /**************************************************************************************************/
 /**
- * PosterHolder - extends RecyclerView.ViewHolder, a design pattern to increase performance. It
+ * ReviewHolder - extends RecyclerView.ViewHolder, a design pattern to increase performance. It
  * holds the references to the UI components for each item in a ListView or GridView
  */
 /**************************************************************************************************/
 
 
-    public static class PosterHolder extends RecyclerView.ViewHolder{
+    public static class ReviewHolder extends RecyclerView.ViewHolder{
 
 /**************************************************************************************************/
 /**
- * Child Views of the used by the PosterRecycler
+ * Child Views of the used by the ReviewRecycler
  */
 /**************************************************************************************************/
 
-        //mCrdPoster - cardView that hold child views found below
-        protected CardView mCrdPoster;
-        //mTxtTitle - textView that show the title of the poster
-        protected TextView mTxtTitle;
-        //mImgPoster - imageView that holds the image of the poster
-        protected ImageView mImgPoster;
+        //mCrdReview - cardView that hold child views found below
+        protected CardView mCrdReview;
+        //mTxtAuthor - textView that show the author of the review
+        protected TextView mTxtAuthor;
+        //mTxtReview - textView that show the review of the movie
+        protected TextView mTxtReview;
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * PosterHolder - constructor
+ * ReviewHolder - constructor
  * @param recycleView - item layout containing the child views
  */
-        public PosterHolder(View recycleView){
+        public ReviewHolder(View recycleView){
             super(recycleView);
 
             //set CardView object
-            mCrdPoster = (CardView)recycleView.findViewById(PosterHelper.POSTER_ITEM_CRD_ID);
+            mCrdReview = (CardView)recycleView.findViewById(ReviewHelper.CARD_REVIEW_CRD_REVIEW_ID);
 
-            //set TextView object used to display title of poster
-            mTxtTitle = (TextView)recycleView.findViewById(PosterHelper.POSTER_ITEM_TXT_ID);
+            //set TextView object used to display author of the review
+            mTxtAuthor = (TextView)recycleView.findViewById(ReviewHelper.CARD_REVIEW_TXT_AUTHOR_ID);
 
-            //set ImageView object used to display image of poster
-            mImgPoster = (ImageView)recycleView.findViewById(PosterHelper.POSTER_ITEM_IMG_ID);
+            //set TextView object used to display review of the movie
+            mTxtReview = (TextView)recycleView.findViewById(ReviewHelper.CARD_REVIEW_TXT_REVIEW_ID);
+
         }
     }
 

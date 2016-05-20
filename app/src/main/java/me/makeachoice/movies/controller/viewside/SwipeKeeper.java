@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper;
+package me.makeachoice.movies.controller.viewside;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +15,12 @@ import me.makeachoice.movies.view.MyActivity;
 import me.makeachoice.movies.view.SwipeActivity;
 import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
-import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
-import me.makeachoice.movies.controller.housekeeper.maid.PosterMaid;
-import me.makeachoice.movies.controller.housekeeper.adapter.SwipeAdapter;
+import me.makeachoice.movies.controller.viewside.assistant.MaidAssistant;
+import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.helper.SwipeHelper;
+import me.makeachoice.movies.controller.viewside.maid.PosterMaid;
+import me.makeachoice.movies.controller.viewside.adapter.SwipeAdapter;
 
 /**
  * SwipeKeeper is responsible for SwipeActivity and all the Fragments contained with the activity.

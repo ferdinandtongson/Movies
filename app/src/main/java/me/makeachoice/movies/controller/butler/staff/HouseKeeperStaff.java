@@ -3,11 +3,11 @@ package me.makeachoice.movies.controller.butler.staff;
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.DetailKeeper;
-import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
-import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
-import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
+import me.makeachoice.movies.controller.viewside.DetailKeeper;
+import me.makeachoice.movies.controller.viewside.MyHouseKeeper;
+import me.makeachoice.movies.controller.viewside.SwipeKeeper;
+import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
+import me.makeachoice.movies.controller.viewside.helper.SwipeHelper;
 
 /**
  * HouseKeeperStaff maintains the buffer objects holding MyHouseKeeper classes.

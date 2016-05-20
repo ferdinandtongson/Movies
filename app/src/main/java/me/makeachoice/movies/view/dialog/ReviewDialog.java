@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
 
-import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
+import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
 import me.makeachoice.movies.model.item.ReviewItem;
 
 

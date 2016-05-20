@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.maid;
+package me.makeachoice.movies.controller.viewside.maid;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,9 +11,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.controller.housekeeper.adapter.RecyclerItemClickListener;
-import me.makeachoice.movies.controller.housekeeper.adapter.VideoRecycler;
-import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
+import me.makeachoice.movies.controller.viewside.adapter.RecyclerItemClickListener;
+import me.makeachoice.movies.controller.viewside.adapter.VideoRecycler;
+import me.makeachoice.movies.controller.viewside.helper.VideoHelper;
 import me.makeachoice.movies.util.GridAutofitLayoutManager;
 import me.makeachoice.movies.view.fragment.ReviewFragment;
 import me.makeachoice.movies.model.item.VideoItem;

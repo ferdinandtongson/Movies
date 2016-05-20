@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.maid;
+package me.makeachoice.movies.controller.viewside.maid;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;

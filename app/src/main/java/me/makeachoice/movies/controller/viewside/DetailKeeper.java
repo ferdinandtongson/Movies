@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper;
+package me.makeachoice.movies.controller.viewside;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,15 +16,15 @@ import me.makeachoice.movies.util.NetworkManager;
 import me.makeachoice.movies.view.DetailActivity;
 import me.makeachoice.movies.view.MyActivity;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
-import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.ReviewHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.VideoHelper;
-import me.makeachoice.movies.controller.housekeeper.maid.InfoMaid;
-import me.makeachoice.movies.controller.housekeeper.adapter.DetailAdapter;
-import me.makeachoice.movies.controller.housekeeper.maid.ReviewMaid;
-import me.makeachoice.movies.controller.housekeeper.maid.VideoMaid;
+import me.makeachoice.movies.controller.viewside.assistant.MaidAssistant;
+import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
+import me.makeachoice.movies.controller.viewside.helper.InfoHelper;
+import me.makeachoice.movies.controller.viewside.helper.ReviewHelper;
+import me.makeachoice.movies.controller.viewside.helper.VideoHelper;
+import me.makeachoice.movies.controller.viewside.maid.InfoMaid;
+import me.makeachoice.movies.controller.viewside.adapter.DetailAdapter;
+import me.makeachoice.movies.controller.viewside.maid.ReviewMaid;
+import me.makeachoice.movies.controller.viewside.maid.VideoMaid;
 import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.view.dialog.ReviewDialog;
 

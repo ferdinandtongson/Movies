@@ -8,7 +8,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.db.contract.PosterContract;
 import me.makeachoice.movies.model.db.contract.RefreshContract;
 import me.makeachoice.movies.model.db.contract.TMDBContract;

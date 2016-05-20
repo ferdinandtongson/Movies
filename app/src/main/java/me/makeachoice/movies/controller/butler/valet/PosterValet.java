@@ -7,7 +7,7 @@ import java.util.concurrent.Executor;
 
 import me.makeachoice.movies.controller.butler.worker.PosterGetWorker;
 import me.makeachoice.movies.controller.butler.worker.PosterSaveWorker;
-import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.db.contract.PosterContract;
 import me.makeachoice.movies.model.item.PosterItem;
 

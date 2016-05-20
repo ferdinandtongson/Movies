@@ -9,10 +9,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
-import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.item.CastItem;
-import me.makeachoice.movies.model.item.ReviewItem;
 
 
 /**

@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper.adapter;
+package me.makeachoice.movies.controller.viewside.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.makeachoice.movies.controller.housekeeper.helper.InfoHelper;
+import me.makeachoice.movies.controller.viewside.helper.InfoHelper;
 
 /**
  * NamAdapter extends BaseAdapter and is used to display a simple textViw child.

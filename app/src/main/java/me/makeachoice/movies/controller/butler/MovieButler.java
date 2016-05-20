@@ -8,7 +8,7 @@ import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.butler.uri.TMDBUri;
 import me.makeachoice.movies.controller.butler.worker.MovieWorker;
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
 import me.makeachoice.movies.util.NetworkManager;
 

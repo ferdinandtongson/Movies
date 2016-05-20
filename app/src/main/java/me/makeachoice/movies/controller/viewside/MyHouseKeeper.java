@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.housekeeper;
+package me.makeachoice.movies.controller.viewside;
 
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 import me.makeachoice.movies.view.MyActivity;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.housekeeper.assistant.MaidAssistant;
+import me.makeachoice.movies.controller.viewside.assistant.MaidAssistant;
 
 /**
  * MyHouseKeeper abstract class - used to directly communicate with Activities, MyMaid classes and
