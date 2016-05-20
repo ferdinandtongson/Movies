@@ -186,8 +186,14 @@ public class PosterGetWorker extends AsyncTask<String, Void, ArrayList<PosterIte
 
             //get byte[] from database
             byte[] image = cursor.getBlob(PosterContract.INDEX_BITMAP);
-            //decode byte[] array to bitmap
-            bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+
+            if(image != null){
+                //decode byte[] array to bitmap
+                bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+            }
+            else{
+                bitmap = null;
+            }
 
             //set byte[] to poster item
             item.setPosterBytes(image);
