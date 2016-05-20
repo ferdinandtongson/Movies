@@ -10,9 +10,9 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.makeachoice.movies.view.DetailActivity;
-import me.makeachoice.movies.view.MyActivity;
-import me.makeachoice.movies.view.SwipeActivity;
+import me.makeachoice.movies.view.activity.DetailActivity;
+import me.makeachoice.movies.view.activity.MyActivity;
+import me.makeachoice.movies.view.activity.SwipeActivity;
 import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.viewside.assistant.MaidAssistant;

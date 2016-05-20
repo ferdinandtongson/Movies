@@ -1,4 +1,4 @@
-package me.makeachoice.movies.view;
+package me.makeachoice.movies.view.activity;
 
 import android.os.Bundle;
 import android.util.Log;
