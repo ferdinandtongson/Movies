@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.viewside.DetailKeeper;
-import me.makeachoice.movies.controller.viewside.SwipeKeeper;
+import me.makeachoice.movies.controller.viewside.housekeeper.DetailKeeper;
+import me.makeachoice.movies.controller.viewside.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.viewside.helper.InfoHelper;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.controller.viewside.helper.ReviewHelper;

@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.viewside;
+package me.makeachoice.movies.controller.viewside.housekeeper;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -3,9 +3,9 @@ package me.makeachoice.movies.controller.butler.staff;
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.Boss;
-import me.makeachoice.movies.controller.viewside.DetailKeeper;
-import me.makeachoice.movies.controller.viewside.MyHouseKeeper;
-import me.makeachoice.movies.controller.viewside.SwipeKeeper;
+import me.makeachoice.movies.controller.viewside.housekeeper.DetailKeeper;
+import me.makeachoice.movies.controller.viewside.housekeeper.MyHouseKeeper;
+import me.makeachoice.movies.controller.viewside.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
 import me.makeachoice.movies.controller.viewside.helper.SwipeHelper;
 

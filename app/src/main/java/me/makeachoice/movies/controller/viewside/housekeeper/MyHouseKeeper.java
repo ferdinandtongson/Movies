@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.viewside;
+package me.makeachoice.movies.controller.viewside.housekeeper;
 
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
