@@ -63,7 +63,7 @@ public class DetailButler extends MyButler{
 
 /**************************************************************************************************/
 /**
- * PosterButler - constructor, registers to Boss, initialize URI builder, get API key and initialize
+ * MovieButler - constructor, registers to Boss, initialize URI builder, get API key and initialize
  * data buffers.
  * @param boss - Boss class
  */

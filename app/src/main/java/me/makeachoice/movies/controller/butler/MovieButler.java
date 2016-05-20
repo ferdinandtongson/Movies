@@ -31,7 +31,7 @@ import me.makeachoice.movies.util.NetworkManager;
  *      abstract public Context getActivityContext()
  *      abstract public void workComplete(Boolean)
  */
-public class PosterButler extends MyButler{
+public class MovieButler extends MyButler{
 
 /**************************************************************************************************/
 /**
@@ -59,11 +59,11 @@ public class PosterButler extends MyButler{
 
 /**************************************************************************************************/
 /**
- * PosterButler - constructor, registers to Boss, initialize URI builder, get API key and initialize
+ * MovieButler - constructor, registers to Boss, initialize URI builder, get API key and initialize
  * request buffer.
  * @param boss - Boss class
  */
-    public PosterButler(Boss boss){
+    public MovieButler(Boss boss){
         //Application context
         mBoss = boss;
 

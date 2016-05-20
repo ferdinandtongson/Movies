@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Executor;
 
+import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.butler.staff.MovieStaff;
 import me.makeachoice.movies.controller.butler.staff.RefreshStaff;
 import me.makeachoice.movies.controller.butler.valet.PosterValet;
@@ -20,7 +21,6 @@ import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.model.db.MovieDB;
 import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.butler.DetailButler;
-import me.makeachoice.movies.controller.butler.PosterButler;
 import me.makeachoice.movies.controller.housekeeper.DetailKeeper;
 import me.makeachoice.movies.controller.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
@@ -82,7 +82,7 @@ public class Boss extends Application implements PosterValet.Bridge{
     private RefreshStaff mRefreshStaff;
 
     //mMovieButler - butler in charge of making API calls to get movie list data
-    private PosterButler mMovieButler;
+    private MovieButler mMovieButler;
     //mDetailButler - butler in charge of making API calls to get movie detail data
     private DetailButler mDetailButler;
 
@@ -151,7 +151,7 @@ public class Boss extends Application implements PosterValet.Bridge{
  */
     private void initButlers(){
         //initialize MovieButler, makes API calls for a list of movies in a given category
-        mMovieButler = new PosterButler(this);
+        mMovieButler = new MovieButler(this);
 
         //initialize DetailButler, makes API calls to get more detailed info about a given movie
         mDetailButler = new DetailButler(this);
@@ -364,7 +364,7 @@ public class Boss extends Application implements PosterValet.Bridge{
  * @return - movie item data of the selected movie
  */
     public MovieItem getMovie(int movieType, int position){
-        //get the movie model from the PosterButler
+        //get the movie model from the MovieButler
         MovieModel model = mMovieStaff.getModel(movieType, position);
 
         //get the movie item data from DetailButler, if incomplete will start an AsyncTask

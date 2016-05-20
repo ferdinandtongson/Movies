@@ -333,19 +333,19 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         //identify menu selection
         /*if (id == MainHelper.MENU_ITEM01) {
             //requested most popular movies
-            //movieRequest = PosterButler.MOVIE_REQUEST_MOST_POPULAR;
+            //movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
         else if (id == MainHelper.MENU_ITEM02) {
             //requested most popular movies
-            //movieRequest = PosterButler.MOVIE_REQUEST_MOST_POPULAR;
+            //movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
         }
         else if (id == MainHelper.MENU_ITEM03) {
             //requested now playing movies
-            //movieRequest = PosterButler.MOVIE_REQUEST_NOW_PLAYING;
+            //movieRequest = MovieButler.MOVIE_REQUEST_NOW_PLAYING;
         }
         else{
             //requested upcoming movies
-            movieRequest = PosterButler.MOVIE_REQUEST_UPCOMING;
+            movieRequest = MovieButler.MOVIE_REQUEST_UPCOMING;
         }*/
 
     }
