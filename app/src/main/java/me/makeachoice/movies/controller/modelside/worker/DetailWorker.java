@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import me.makeachoice.movies.controller.modelside.MyButler;
+import me.makeachoice.movies.controller.modelside.butler.MyButler;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**************************************************************************************************/

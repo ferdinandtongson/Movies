@@ -11,7 +11,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
-import me.makeachoice.movies.controller.modelside.MovieButler;
+import me.makeachoice.movies.controller.modelside.butler.MovieButler;
 import me.makeachoice.movies.controller.modelside.staff.HouseKeeperStaff;
 import me.makeachoice.movies.controller.modelside.staff.MaidStaff;
 import me.makeachoice.movies.controller.modelside.staff.MovieStaff;
@@ -22,7 +22,7 @@ import me.makeachoice.movies.controller.modelside.staff.PosterStaff;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.db.MovieDB;
 import me.makeachoice.movies.model.item.PosterItem;
-import me.makeachoice.movies.controller.modelside.DetailButler;
+import me.makeachoice.movies.controller.modelside.butler.DetailButler;
 import me.makeachoice.movies.controller.viewside.housekeeper.DetailKeeper;
 import me.makeachoice.movies.controller.viewside.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.viewside.housekeeper.SwipeKeeper;

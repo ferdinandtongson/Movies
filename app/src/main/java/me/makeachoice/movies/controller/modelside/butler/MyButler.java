@@ -1,4 +1,4 @@
-package me.makeachoice.movies.controller.modelside;
+package me.makeachoice.movies.controller.modelside.butler;
 
 import android.content.Context;
 

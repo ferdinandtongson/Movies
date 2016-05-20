@@ -17,7 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import me.makeachoice.movies.controller.modelside.MyButler;
+import me.makeachoice.movies.controller.modelside.butler.MyButler;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
 import me.makeachoice.movies.model.response.tmdb.MoviesResponse;
 
