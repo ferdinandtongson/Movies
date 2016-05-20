@@ -9,12 +9,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
 import java.util.concurrent.Executor;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
 import me.makeachoice.movies.controller.butler.staff.HouseKeeperStaff;
+import me.makeachoice.movies.controller.butler.staff.MaidStaff;
 import me.makeachoice.movies.controller.butler.staff.MovieStaff;
 import me.makeachoice.movies.controller.butler.staff.RefreshStaff;
 import me.makeachoice.movies.controller.butler.valet.PosterValet;
@@ -30,7 +29,6 @@ import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
-import me.makeachoice.movies.model.item.RefreshItem;
 import me.makeachoice.movies.util.DateManager;
 import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
@@ -84,8 +82,10 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
     private PosterStaff mPosterStaff;
     //mRefreshStaff - staff in charge of maintaining the poster refresh buffers
     private RefreshStaff mRefreshStaff;
-    //HouseKeeperStaff mKeeperStaff - staff in charge of maintain the MyHouseKeeper buffer
+    //HouseKeeperStaff mKeeperStaff - staff in charge of maintaining the MyHouseKeeper buffer
     private HouseKeeperStaff mKeeperStaff;
+    //MaidStaff mMaidStaff - staff in charge of maintaining the MyMaid buffer
+    private MaidStaff mMaidStaff;
 
     //mMovieButler - butler in charge of making API calls to get movie list data
     private MovieButler mMovieButler;
@@ -152,6 +152,9 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
 
         //wake house keeper staff, maintains HashMap MyHouseKeeper buffer
         mKeeperStaff = new HouseKeeperStaff(this);
+
+        //wake maid staff, maintains HashMap MyMaid buffer
+        mMaidStaff = new MaidStaff(this);
     }
 
 /**
@@ -193,17 +196,12 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
         mPosterStaff.onFinish();
         mRefreshStaff.onFinish();
         mKeeperStaff.onFinish();
+        mMaidStaff.onFinish();
 
         mDB.close();
     }
 
 
-
-    //private WaitDialog mWaitDialog;
-
-
-    //mMaidRegistry - HashMap of instantiated Maid classes being used by HouseKeepers
-    private HashMap<Integer, MyMaid> mMaidRegistry = new HashMap<>();
 
     //mOrientation - current orientation of phone
     private int mOrientation;
@@ -235,6 +233,10 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
 
     public SQLiteDatabase getDatabase(){
         return mDB;
+    }
+
+    public Executor getExecutor(){
+        return AsyncTask.THREAD_POOL_EXECUTOR;
     }
 
 /**
@@ -386,7 +388,7 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
 
 
 
-    /**
+/**
  * MovieItem getMovie(int, int) - get movie item data. If the movie item data is incomplete, will
  * start an AsyncTask to get the missing data.
  * @param movieType - type of movies the movie is selected from
@@ -401,15 +403,6 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
         return mDetailButler.getMovie(model);
     }
 
-/**
- * MyMaid getMaid(String) - request a reference to a Maid
- * @param key - Maid name
- * @return - sends Maid reference
- */
-    public MyMaid getMaid(Integer key){
-        //send Maid
-        return mMaidRegistry.get(key);
-    }
 
 /**************************************************************************************************/
 
@@ -450,16 +443,6 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
  */
 /**************************************************************************************************/
 /**
- * void registerMaid(String, MyMaid) - registers Maids being used by HouseKeepers
- * @param key - Maid name
- * @param maid - Maid class (in charge of maintaining fragments)
- */
-    public void registerMaid(Integer key, MyMaid maid){
-        //register Maid
-        mMaidRegistry.put(key, maid);
-    }
-
-/**
  * void activityCreated(Context) - called when the onCreate() of an Activity is called, stores the
  * Activity Context and makes sure the Butler for activity is awake.
  * @param ctx - Activity context
@@ -483,23 +466,12 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
 /**************************************************************************************************/
 /**
  * HouseKeeper Methods:
- *      MyHouseKeeper getHouseKeeper(int) - get HouseKeeper object
- *      MyHouseKeeper hireHouseKeeper(int) - start HouseKeeper object, requested by Activity
+ *      MyHouseKeeper hireHouseKeeper(int) - get requested HouseKeeper, called by Activity
  *      void registerHouseKeeper(MyHouseKeeper,int) - register HouseKeeper
  */
 /**************************************************************************************************/
 /**
- * MyHouseKeeper getHouseKeeper(int) - get HouseKeeper object
- * @param id - id number of HouseKeeper
- * @return - HouseKeeper object
- */
-    private MyHouseKeeper getHouseKeeper(int id){
-        //return houseKeeper
-        return mKeeperStaff.getHouseKeeper(id);
-    }
-
-/**
- * MyHouseKeeper hireHouseKeeper(int) - start HouseKeeper object, requested by Activity
+ * MyHouseKeeper hireHouseKeeper(int) - get requested HouseKeeper, called by Activity
  * @param id - id number of HouseKeeper
  * @return - HouseKeeper object
  */
@@ -517,13 +489,35 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
         mKeeperStaff.setHouseKeeper(keeper, id);
     }
 
-
-
 /**************************************************************************************************/
 
-
-    public Executor getExecutor(){
-        return AsyncTask.THREAD_POOL_EXECUTOR;
+/**************************************************************************************************/
+/**
+ * Maid Methods:
+ *      MyMaid hireMaid(int) - get requested Maid, called by HouseKeeper
+ *      void registerMaid(MyMaid,int) - register maid
+ */
+/**************************************************************************************************/
+/**
+ * MyMaid hireMaid(int) - get requested Maid, called by HouseKeeper
+ * @param id - id number of maid
+ * @return - sends Maid reference
+ */
+    public MyMaid getMaid(Integer id){
+        //return requested Maid
+        return mMaidStaff.getMaid(id);
     }
+
+/**
+ * void registerMaid(String, MyMaid) - registers Maids being used by HouseKeepers
+ * @param key - Maid name
+ * @param maid - Maid class (in charge of maintaining fragments)
+ */
+    public void registerMaid(Integer key, MyMaid maid){
+        //register Maid
+        mMaidStaff.setMaid(maid, key);
+    }
+
+/**************************************************************************************************/
 
 }

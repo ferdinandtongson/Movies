@@ -1,7 +1,5 @@
 package me.makeachoice.movies.controller.butler.staff;
 
-import android.util.Log;
-
 import java.util.HashMap;
 
 import me.makeachoice.movies.controller.Boss;
@@ -71,10 +69,11 @@ public class HouseKeeperStaff {
     public MyHouseKeeper getHouseKeeper(int id){
         //check if houseKeeper with id number is in buffer
         if(mRegistry.containsKey(id)){
-
+            //return requested houseKeeper
             return mRegistry.get(id);
         }
 
+        //wake houseKeeper requested
         return startHouseKeeper(id);
     }
 
