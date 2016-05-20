@@ -2,11 +2,22 @@ package me.makeachoice.movies.controller;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Executor;
 
+import me.makeachoice.movies.controller.butler.staff.MovieStaff;
+import me.makeachoice.movies.controller.butler.staff.RefreshStaff;
+import me.makeachoice.movies.controller.butler.valet.PosterValet;
+import me.makeachoice.movies.controller.butler.valet.RefreshValet;
+import me.makeachoice.movies.controller.butler.staff.PosterStaff;
+import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
+import me.makeachoice.movies.model.db.MovieDB;
 import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.butler.DetailButler;
 import me.makeachoice.movies.controller.butler.PosterButler;
@@ -16,9 +27,11 @@ import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
-import me.makeachoice.movies.controller.butler.valet.NetworkValet;
+import me.makeachoice.movies.util.DateManager;
 import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
+import me.makeachoice.movies.view.dialog.WaitDialog;
+
 
 /**
  * Boss is the "boss", main controller of the app and interfaces with the View and Model. Boss
@@ -26,30 +39,156 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
  * prevented; in MVC (Model-View-Controller) model, the Model and View can communicate
  */
 
-public class Boss extends Application{
+public class Boss extends Application implements PosterValet.Bridge{
 
 /**************************************************************************************************/
 /**
  * Class Variables:
  *      Context mActivityContext - current Activity Context on display
- *      PosterButler mButler - Butler class taking care of Poster data
- *      NetworkValet mNetworkValet - in charge of checking for network connectivity
- *      HashMap<Integer,MyHouseKeeper> mHouseKeeperRegistry - registered HouseKeepers
+ *      MovieDB mMovieDB - in charge of maintaining the Movie app database
+ *      SQLiteDatabase mDB - SQLiteDatabase object
+ *
+ *      MovieStaff mMovieStaff - staff in charge of maintaining the Movie buffers
+ *      PosterStaff mPosterStaff - staff in charge of maintaining the Poster buffers
+ *      RefreshStaff mRefreshStaff - staff in charge of maintaining the poster refresh buffers
+ *
+ *      MovieButler mMovieButler - butler in charge of making API calls to get movie list data
+ *      DetailButler mDetailButler - butler in charge of making API calls to get movie detail data
+ *
+ *      PosterValet mPosterValet - valet in charge of getting poster database data
+ *      RefreshValet mRefreshValet - valet in charge of getting poster refresh database data
+ *
+ *      NetworkManager mNetworkValet - in charge of checking for network connectivity
+ *      HashMap<Integer,MyHouseKepeper> mHouseKeeperRegistry - registered HouseKeepers
  *      HashMap<Integer,MyMaid> mMaidRegistry - registered Maids
  *
  *      boolean mOrientationChange - status flag on whether the phone orientation has changed
  */
 /**************************************************************************************************/
 
-    //mActivityContext is the current UI Activity (In this case we are only using one Activity)
+    //mActivityContext - current Activity Context on display
     private Context mActivityContext;
+    //mMovieDB - in charge of maintaining the Movie app database
+    private MovieDB mMovieDB;
+    //mDB - SQLiteDatabase object
+    private SQLiteDatabase mDB;
 
-    //mButler will take care of preparing Movie data for consumption
-    private PosterButler mPosterButler;
+
+    //mMovieStaff - staff in charge of maintaining the Movie buffers
+    private MovieStaff mMovieStaff;
+    //mPosterStaff - staff in charge of maintaining the Poster buffers
+    private PosterStaff mPosterStaff;
+    //mRefreshStaff - staf in charge of maintaining the poster refresh buffers
+    private RefreshStaff mRefreshStaff;
+
+    //mMovieButler - butler in charge of making API calls to get movie list data
+    private PosterButler mMovieButler;
+    //mDetailButler - butler in charge of making API calls to get movie detail data
     private DetailButler mDetailButler;
 
-    //mNetworkValet is in charge of checking for network connectivity
-    private NetworkValet mNetworkValet;
+    //mPosterValet - valet in charge of getting poster database data
+    private PosterValet mPosterValet;
+    //mRefreshValet - valet in charge of getting poster refresh database data
+    private RefreshValet mRefreshValet;
+
+    //mPosterRetrieval - status flag on whether a poster db retrieval has been requested
+    private boolean mPosterRetrieval;
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Start Up Methods:
+ *      void onCreate() - called when application is first created
+ *      void initStaff() - initialize Staff classes, maintains ArrayList and HashMap buffers
+ *      void initButlers() - initialize Butler classes, handles calls to APIs
+ *      void initValets() - initialize Valet classes, handles request to DB
+ *      void startUpApp() - creates/check database for any saved data to put into local buffers
+ */
+/**************************************************************************************************/
+/**
+ * void onCreate() - called when application is first created. Initializes the Staff and Butler
+ * classes. Checks the database if there is any saved data to put into local buffers; creates
+ * the database if it does not exist
+ */
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        //initialize Staff classes
+        initStaff();
+
+        //initialize Butler classes
+        initButlers();
+
+        //initialize Valet classes
+        initValets();
+
+        //initialize database manager
+        mMovieDB = new MovieDB(this);
+
+        //will create database if necessary
+        mDB = mMovieDB.getWritableDatabase();
+
+        mWaitDialog = new WaitDialog();
+    }
+
+/**
+ * void initStaff() - initializes Staff classes; they maintain ArrayList and HashMap buffers
+ */
+    private void initStaff(){
+        //wake movie staff, maintains ArrayList MovieModel and MovieItem buffers
+        mMovieStaff = new MovieStaff(this);
+
+        //wake poster staff, maintains ArrayList PosterItem buffers
+        mPosterStaff = new PosterStaff(this);
+
+        //wake refresh staff, maintains HashMap RefreshItem buffers
+        mRefreshStaff = new RefreshStaff(this);
+    }
+
+/**
+ * void initButlers() - initializes Butler classes; they handle making and processing API calls
+ */
+    private void initButlers(){
+        //initialize MovieButler, makes API calls for a list of movies in a given category
+        mMovieButler = new PosterButler(this);
+
+        //initialize DetailButler, makes API calls to get more detailed info about a given movie
+        mDetailButler = new DetailButler(this);
+
+    }
+
+/**
+ * void initValets() - initialize Valet classes; they handle database requests
+ */
+    private void initValets(){
+        mRefreshValet = new RefreshValet(this);
+        mPosterValet = new PosterValet(this);
+    }
+
+/**************************************************************************************************/
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+        Log.d("Movies", "Boss.onConfigurationChanged: ");
+    }
+
+    public void onFinish(){
+
+        //savePosters();
+
+        mMovieStaff.onFinish();
+        mPosterStaff.onFinish();
+        mRefreshStaff.onFinish();
+
+        mDB.close();
+    }
+
+
+
+    private WaitDialog mWaitDialog;
 
     //mHouseKeeperRegistry - HashMap of instantiated HouseKeeper classes being used by the Boss
     private HashMap<Integer, MyHouseKeeper> mHouseKeeperRegistry = new HashMap<>();
@@ -62,7 +201,6 @@ public class Boss extends Application{
 
     //mOrientationChange - status flag on whether the phone orientation has changed
     private boolean mOrientationChange;
-
 
 /**************************************************************************************************/
 
@@ -83,8 +221,12 @@ public class Boss extends Application{
  * @return - context of current activity
  */
     public Context getActivityContext(){
-    return mActivityContext;
-}
+        return mActivityContext;
+    }
+
+    public SQLiteDatabase getDatabase(){
+        return mDB;
+    }
 
 /**
  * int getOrientation() - get current orientation of phone
@@ -100,19 +242,121 @@ public class Boss extends Application{
         return mOrientationChange;
     }
 
-    /**
+/**
  * ArrayList<PosterItem> getModel(int) - get list of poster item data. If null or is a new request,
  * Butler will start an AsyncTask to get new movie data.
- * @param request - type of movie data requested
+ * @param movieType - type of movie data requested
  * @return - an array list of poster item data
  */
-    public ArrayList<PosterItem> getPosters(int request){
+    public ArrayList<PosterItem> getPosters(int movieType){
+        Log.d("Boss", "Boss.getPosters: " + getString(movieType));
+        mPosterRetrieval = false;
+
+        Log.d("Boss", "     checkBuffer:");
+        ArrayList<PosterItem> posters = new ArrayList<>();
+        if(mRefreshStaff.needToRefreshList(movieType)){
+            //refresh posters, access internet data
+            mMovieButler.requestMovies(movieType);
+            mWaitDialog.showStartDialog(mActivityContext);
+        }
+        else{
+            posters = mPosterStaff.getPosters(movieType);
+            Log.d("Boss", "     list: " + posters.size());
+
+            if (posters.size() == 0) {
+                Log.d("Boss", "          retrieve posters from DB");
+                //retrieve posters from database
+                mPosterValet.requestPosters(movieType);
+                mWaitDialog.showStartDialog(mActivityContext);
+            }
+        }
 
         //return poster items
-        return mPosterButler.getPosters(request);
+        return posters;
     }
 
+    public void refreshPosters(int movieType){
+        //refresh posters, access internet data
+        mMovieButler.requestMovies(movieType);
+    }
+
+    //public void dbRequestComplete
+
 /**
+ * void movieRequestComplete() - communication channel used by Butlers to let the Boss
+ * know when an AsyncTask thread has completed (in this case for MovieData)
+ */
+    public void movieRequestComplete(ArrayList<MovieModel> models, int movieType){
+        mWaitDialog.closeStartDialog();
+        Log.d("Boss", "Boss.movieRequestComplete: " + getString(movieType));
+        //convert MovieModels to PosterItems
+        ArrayList<PosterItem> posters = mPosterStaff.preparePosters(models);
+
+        Log.d("Boss", "     showPosters");
+        //show list of poster items
+        showPosters(posters, movieType);
+
+        Log.d("Boss", "     processMovieData");
+        processMovieData(models, posters, movieType);
+   }
+
+    public void posterRetrievalComplete(ArrayList<PosterItem> posters, int movieType){
+        Log.d("Boss", ".");
+        Log.d("Boss", ".");
+        Log.d("Boss", "Here!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Log.d("Boss", ".");
+        Log.d("Boss", ".");
+        if(posters.size() >= 20){
+            mWaitDialog.closeStartDialog();
+            mPosterStaff.setPosters(posters, movieType);
+
+            showPosters(posters, movieType);
+        }
+        else{
+            if(movieType != PosterHelper.NAME_ID_FAVORITE){
+                mMovieButler.requestMovies(movieType);
+            }
+        }
+    }
+
+    public void showPosters(ArrayList<PosterItem> posters, int request){
+        //instantiate HouseKeeper that will maintain the Main Activity
+        SwipeKeeper keeper = (SwipeKeeper)mHouseKeeperRegistry.get(SwipeHelper.NAME_ID);
+        //tells the HouseKeeper to prepare the fragments the Activity will use
+        keeper.updatePosters(posters, request);
+    }
+
+    private void processMovieData(ArrayList<MovieModel> models,
+                                  ArrayList<PosterItem> posters, int movieType) {
+        Log.d("Boss", "          save movie models to buffer");
+        //save movie models to buffer
+        mMovieStaff.setMovieModels(models, movieType);
+
+        Log.d("Boss", "          save poster items to buffer");
+        //update refresh data
+        updateRefreshData(movieType);
+
+        //save poster data to database
+        mPosterValet.savePosters(posters, movieType);
+
+        //save poster items to buffer
+        mPosterStaff.setPosters(posters, movieType);
+    }
+
+    private void updateRefreshData(int movieType){
+        String strType = getString(movieType);
+        Long dateRefresh = DateManager.addDaysToDate(1).getTime();
+
+
+        mRefreshValet.setRefresh(movieType, dateRefresh);
+
+
+        mRefreshStaff.setRefreshDate(movieType, dateRefresh);
+    }
+
+
+
+    /**
  * MovieItem getMovie(int, int) - get movie item data. If the movie item data is incomplete, will
  * start an AsyncTask to get the missing data.
  * @param movieType - type of movies the movie is selected from
@@ -121,7 +365,7 @@ public class Boss extends Application{
  */
     public MovieItem getMovie(int movieType, int position){
         //get the movie model from the PosterButler
-        MovieModel model = mPosterButler.getMovie(movieType, position);
+        MovieModel model = mMovieStaff.getModel(movieType, position);
 
         //get the movie item data from DetailButler, if incomplete will start an AsyncTask
         return mDetailButler.getMovie(model);
@@ -222,45 +466,11 @@ public class Boss extends Application{
  * @param ctx - Activity context
  */
     public void activityCreated(Context ctx){
+        Log.d("Movies", "Boss.activityCreated");
         //set Activity context - in this case there is only MainActivity
         mActivityContext = ctx;
-
-        //check if Butler is awake
-        if(mPosterButler == null){
-            //initialize PosterButler
-            mPosterButler = new PosterButler(this);
-            mDetailButler = new DetailButler(this);
-        }
     }
 
-/**
- * boolean hasNetworkConnection() - checks if the phone has network connection
- * @return - true or false, will create alert dialog if false
- */
-    public boolean hasNetworkConnection(){
-
-        //check if network valet is awake
-        if(mNetworkValet == null){
-            //start networkValet
-            mNetworkValet = new NetworkValet(this);
-        }
-
-        //return network connection status
-        return mNetworkValet.hasConnection();
-    }
-
-
-/**
- * void downloadMovieDataComplete() - communication channel used by Butlers to let the Boss
- * know when an AsyncTask thread has completed (in this case for MovieData)
- */
-    public void updateSwipeActivity(ArrayList<PosterItem> posters, int request){
-        //TODO - very rigid, need to massage
-        //instantiate HouseKeeper that will maintain the Main Activity
-        SwipeKeeper keeper = (SwipeKeeper)mHouseKeeperRegistry.get(SwipeHelper.NAME_ID);
-        //tells the HouseKeeper to prepare the fragments the Activity will use
-        keeper.updatePosters(posters, request);
-    }
 
     public void updateDetailActivity(MovieItem movie){
         DetailKeeper keeper = (DetailKeeper)mHouseKeeperRegistry.get(DetailHelper.NAME_ID);
@@ -306,5 +516,9 @@ public class Boss extends Application{
 
 /**************************************************************************************************/
 
+
+    public Executor getExecutor(){
+        return AsyncTask.THREAD_POOL_EXECUTOR;
+    }
 
 }
