@@ -103,7 +103,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         mBoss = boss;
 
         //register HouseKeeper to Boss
-        mBoss.registerHouseKeeper(DetailHelper.NAME_ID, this);
+        //mBoss.registerHouseKeeper(this, DetailHelper.NAME_ID);
 
         //initialize fragment registry
         mFragmentRegistry = new HashMap<>();

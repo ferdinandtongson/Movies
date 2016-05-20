@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.concurrent.Executor;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
+import me.makeachoice.movies.controller.butler.staff.HouseKeeperStaff;
 import me.makeachoice.movies.controller.butler.staff.MovieStaff;
 import me.makeachoice.movies.controller.butler.staff.RefreshStaff;
 import me.makeachoice.movies.controller.butler.valet.PosterValet;
@@ -51,6 +52,7 @@ public class Boss extends Application implements PosterValet.Bridge{
  *      MovieStaff mMovieStaff - staff in charge of maintaining the Movie buffers
  *      PosterStaff mPosterStaff - staff in charge of maintaining the Poster buffers
  *      RefreshStaff mRefreshStaff - staff in charge of maintaining the poster refresh buffers
+ *      HouseKeeperStaff mKeeperStaff - staff in charge of maintain the MyHouseKeeper buffer
  *
  *      MovieButler mMovieButler - butler in charge of making API calls to get movie list data
  *      DetailButler mDetailButler - butler in charge of making API calls to get movie detail data
@@ -78,8 +80,10 @@ public class Boss extends Application implements PosterValet.Bridge{
     private MovieStaff mMovieStaff;
     //mPosterStaff - staff in charge of maintaining the Poster buffers
     private PosterStaff mPosterStaff;
-    //mRefreshStaff - staf in charge of maintaining the poster refresh buffers
+    //mRefreshStaff - staff in charge of maintaining the poster refresh buffers
     private RefreshStaff mRefreshStaff;
+    //HouseKeeperStaff mKeeperStaff - staff in charge of maintain the MyHouseKeeper buffer
+    private HouseKeeperStaff mKeeperStaff;
 
     //mMovieButler - butler in charge of making API calls to get movie list data
     private MovieButler mMovieButler;
@@ -144,6 +148,9 @@ public class Boss extends Application implements PosterValet.Bridge{
 
         //wake refresh staff, maintains HashMap RefreshItem buffers
         mRefreshStaff = new RefreshStaff(this);
+
+        //wake house keeper staff, maintains HashMap MyHouseKeeper buffer
+        mKeeperStaff = new HouseKeeperStaff(this);
     }
 
 /**
@@ -182,6 +189,7 @@ public class Boss extends Application implements PosterValet.Bridge{
         mMovieStaff.onFinish();
         mPosterStaff.onFinish();
         mRefreshStaff.onFinish();
+        mKeeperStaff.onFinish();
 
         mDB.close();
     }
@@ -190,8 +198,6 @@ public class Boss extends Application implements PosterValet.Bridge{
 
     private WaitDialog mWaitDialog;
 
-    //mHouseKeeperRegistry - HashMap of instantiated HouseKeeper classes being used by the Boss
-    private HashMap<Integer, MyHouseKeeper> mHouseKeeperRegistry = new HashMap<>();
 
     //mMaidRegistry - HashMap of instantiated Maid classes being used by HouseKeepers
     private HashMap<Integer, MyMaid> mMaidRegistry = new HashMap<>();
@@ -321,7 +327,7 @@ public class Boss extends Application implements PosterValet.Bridge{
 
     public void showPosters(ArrayList<PosterItem> posters, int request){
         //instantiate HouseKeeper that will maintain the Main Activity
-        SwipeKeeper keeper = (SwipeKeeper)mHouseKeeperRegistry.get(SwipeHelper.NAME_ID);
+        SwipeKeeper keeper = (SwipeKeeper)mKeeperStaff.getHouseKeeper(SwipeHelper.NAME_ID);
         //tells the HouseKeeper to prepare the fragments the Activity will use
         keeper.updatePosters(posters, request);
     }
@@ -344,6 +350,7 @@ public class Boss extends Application implements PosterValet.Bridge{
     }
 
     private void updateRefreshData(int movieType){
+        Log.d("Boss", "Boss.updateRefreshData: " + getString(movieType));
         String strType = getString(movieType);
         Long dateRefresh = DateManager.addDaysToDate(1).getTime();
 
@@ -369,26 +376,6 @@ public class Boss extends Application implements PosterValet.Bridge{
 
         //get the movie item data from DetailButler, if incomplete will start an AsyncTask
         return mDetailButler.getMovie(model);
-    }
-
-/**
- * MyHouseKeeper getHouseKeeper(String) - request a reference to a HouseKeeper
- * @param key - HouseKeeper Name
- * @return - sends HouseKeeper reference
- */
-    public MyHouseKeeper getHouseKeeper(Integer key){
-
-        //request houseKeeper from registry
-        MyHouseKeeper houseKeeper = mHouseKeeperRegistry.get(key);
-
-        //check if houseKeeper is available
-        if(houseKeeper == null){
-            //if not available, wake houseKeeper
-            houseKeeper = startHouseKeeper(key);
-        }
-
-        //return houseKeeper
-        return houseKeeper;
     }
 
 /**
@@ -433,23 +420,12 @@ public class Boss extends Application implements PosterValet.Bridge{
 /**************************************************************************************************/
 /**
  * Public Methods:
- *      void registerHouseKeeper(int,MyHouseKeeper) - adds HouseKeeper to registry
  *      void registerMaid(int,MyMaid) - adds Maid to registry
  *      void activityCreated(Context) - notifies Boss that onCreate() has been called in Activity
  *      boolean checkNetwork() - checks network connection of phone
  *      void updateMainActivity() - called by Butler when network download has completed
  */
 /**************************************************************************************************/
-/**
- * void registerHouseKeeper(String, MyHouseKeeper) - registers HouseKeepers used by the Boss
- * @param key - HouseKeeper name
- * @param keeper - HouseKeeper class (in charge of Activity objects)
- */
-    public void registerHouseKeeper(int key, MyHouseKeeper keeper){
-        //register HouseKeeper
-        mHouseKeeperRegistry.put(key, keeper);
-    }
-
 /**
  * void registerMaid(String, MyMaid) - registers Maids being used by HouseKeepers
  * @param key - Maid name
@@ -473,7 +449,7 @@ public class Boss extends Application implements PosterValet.Bridge{
 
 
     public void updateDetailActivity(MovieItem movie){
-        DetailKeeper keeper = (DetailKeeper)mHouseKeeperRegistry.get(DetailHelper.NAME_ID);
+        DetailKeeper keeper = (DetailKeeper)mKeeperStaff.getHouseKeeper(DetailHelper.NAME_ID);
         keeper.updateDetails(movie);
     }
 
@@ -483,36 +459,42 @@ public class Boss extends Application implements PosterValet.Bridge{
 
 /**************************************************************************************************/
 /**
- * Private Methods:
- *      MyHouseKeeper startHouseKeeper(Integer) - starts requested HouseKeeper
+ * HouseKeeper Methods:
+ *      MyHouseKeeper getHouseKeeper(int) - get HouseKeeper object
+ *      MyHouseKeeper hireHouseKeeper(int) - start HouseKeeper object, requested by Activity
+ *      void registerHouseKeeper(MyHouseKeeper,int) - register HouseKeeper
  */
-
 /**************************************************************************************************/
 /**
- * MyHouseKeeper startHouseKeeper(Integer) - starts requested HouseKeeper and add to registry
- * @param key - id number of HouseKeeper
- * @return - requested HouseKeeper or null
+ * MyHouseKeeper getHouseKeeper(int) - get HouseKeeper object
+ * @param id - id number of HouseKeeper
+ * @return - HouseKeeper object
  */
-    private MyHouseKeeper startHouseKeeper(Integer key){
-
-        MyHouseKeeper keeper = mHouseKeeperRegistry.get(key);
-
-        if(keeper == null){
-            if(key == SwipeHelper.NAME_ID){
-                Log.d("Movies", "Boss.startHouseKeeper: Swipe");
-                SwipeKeeper swipeKeeper = new SwipeKeeper(this);
-
-                keeper = swipeKeeper;
-            }
-            else if(key == DetailHelper.NAME_ID){
-                DetailKeeper detailKeeper = new DetailKeeper(this);
-
-                keeper = detailKeeper;
-            }
-        }
-
-        return keeper;
+    private MyHouseKeeper getHouseKeeper(int id){
+        //return houseKeeper
+        return mKeeperStaff.getHouseKeeper(id);
     }
+
+/**
+ * MyHouseKeeper hireHouseKeeper(int) - start HouseKeeper object, requested by Activity
+ * @param id - id number of HouseKeeper
+ * @return - HouseKeeper object
+ */
+    public MyHouseKeeper hireHouseKeeper(int id){
+        return mKeeperStaff.startHouseKeeper(id);
+    }
+
+/**
+ * void registerHouseKeeper(MyHouseKeeper,int) - register HouseKeeper
+ * @param keeper - HouseKeeper class (in charge of Activity objects)
+ * @param id - id number of HouseKeeper
+ */
+    public void registerHouseKeeper(MyHouseKeeper keeper, int id){
+        //register HouseKeeper
+        mKeeperStaff.setHouseKeeper(keeper, id);
+    }
+
+
 
 /**************************************************************************************************/
 

@@ -116,7 +116,7 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         mBoss = boss;
 
         //register HouseKeeper to Boss
-        mBoss.registerHouseKeeper(SwipeHelper.NAME_ID, this);
+        //mBoss.registerHouseKeeper(this, SwipeHelper.NAME_ID);
 
         //initialize fragment registry
         mFragmentRegistry = new HashMap<>();

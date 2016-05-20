@@ -74,8 +74,8 @@ public class SwipeActivity extends MyActivity {
         boss.activityCreated(this);
 
         try {
-            //check if HouseKeeper is implementing interface
-            mBridge = (Bridge) boss.getHouseKeeper(SwipeHelper.NAME_ID);
+            //hire HouseKeeper to maintain Activity
+            mBridge = (Bridge)boss.hireHouseKeeper(SwipeHelper.NAME_ID);
         } catch (ClassCastException e) {
             throw new ClassCastException(boss.toString() +
                     " must implement Bridge interface");
