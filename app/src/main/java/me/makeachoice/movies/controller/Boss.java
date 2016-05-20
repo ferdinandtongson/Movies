@@ -42,7 +42,7 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
  * prevented; in MVC (Model-View-Controller) model, the Model and View can communicate
  */
 
-public class Boss extends Application implements PosterValet.Bridge{
+public class Boss extends Application implements PosterValet.Bridge, RefreshValet.Bridge{
 
 /**************************************************************************************************/
 /**
