@@ -10,10 +10,17 @@ import me.makeachoice.movies.controller.butler.worker.MovieWorker;
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.housekeeper.helper.PosterHelper;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
+import me.makeachoice.movies.util.NetworkManager;
 
 /**
- * PosterButler handles the creation of a list of PosterItems to be consumed by the View. It takes
- * data from API calls or from the database and processes the data.
+ * MovieButler handles API calls to TheMovieDB to get movie list data.
+ *
+ * It uses other classes to assist in making retrieving poster data from the net:
+ *      Boss - Boss application
+ *      TMDBUri - uri builder that builds TheMovieDB api uri string
+ *      MovieWorker - AsyncTask class that makes API calls to get Movie details
+ *      NetworkManager - check for network status
+ *      PosterHelper - holds all static resources (layout id, view ids, etc)
  *
  * Variables from MyButler:
  *      Boss mBoss
@@ -33,9 +40,6 @@ public class PosterButler extends MyButler{
  *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
  *      MovieWorker mMovieWorker - AsyncTask class that makes API calls to get Movie details
  *      int mMovieRequest - current list of Movies being requested
- *
- *      int EMPTY_POSTERS_COUNT - number of "empty" poster items to create
- *      int EMPTY_ID - id number of "empty" poster item
  */
 /**************************************************************************************************/
 
@@ -56,7 +60,7 @@ public class PosterButler extends MyButler{
 /**************************************************************************************************/
 /**
  * PosterButler - constructor, registers to Boss, initialize URI builder, get API key and initialize
- * data buffers.
+ * request buffer.
  * @param boss - Boss class
  */
     public PosterButler(Boss boss){
@@ -97,41 +101,47 @@ public class PosterButler extends MyButler{
 
 /**************************************************************************************************/
 
+/**************************************************************************************************/
+/**
+ * Public methods
+ *      void makeRequest(int) - make a request to get movie data
+ */
+/**************************************************************************************************/
+/**
+ * void requestMovies(int) - make a request to get movie data. If MovieWorker is already
+ * working, the request will be saved into a buffer.
+ * @param movieType - poster buffer request
+ */
+    public void requestMovies(int movieType){
+        if(NetworkManager.hasConnection(mBoss)) {
+            //check if MovieWorker is already working on another request
+            if (mWorking) {
+                //save request to buffer
+                mRequestBuffer.add(movieType);
+            } else {
+                //save type of movies being requested
+                mMovieRequest = movieType;
+
+                //start working on the movie request
+                startMovieRequest(movieType);
+            }
+        }
+    }
 
 /**************************************************************************************************/
 /**
  * Class methods
- *      void makePosterRequest(int) - start or buffer movie request task
  *      void startMovieRequest(int) - start AsyncTask worker to get movie data requested
  *      void workComplete(boolean) - called when AsyncTask has completed
  *      void checkRequestBuffer() - check if there are any pending movie data requests
  */
 /**************************************************************************************************/
-/**
- * void makePosterRequest(int) - make a request to get poster data. If MovieWork is already
- * working, the request will be saved into a buffer.
- * @param request - poster buffer request
- */
-    public void makePosterRequest(int request){
-        //check if MovieWorker is already working on another request
-        if(mWorking){
-            //save request to buffer
-            mRequestBuffer.add(request);
-        }
-        else{
-            //save type of movies being requested
-            mMovieRequest = request;
-
-            //start working on the movie request
-            startMovieRequest(request);
-        }
-    }
 
 /**
  * void startMovieRequest(int) - start AsyncTask worker to get movie data requested.
- * @param request - movie data requested
+ * @param movieType - movie data requested
  */
-    private void startMovieRequest(int request){
+    private void startMovieRequest(int movieType){
         //initializes the AsyncTask worker
         mMovieWorker = new MovieWorker(this);
 
@@ -139,25 +149,33 @@ public class PosterButler extends MyButler{
         mWorking = true;
 
         //check type of movie request
-        switch(request) {
+        switch(movieType) {
             case PosterHelper.NAME_ID_MOST_POPULAR:
                 //start AsyncTask, get Popular movies from TheMovieDB api
-                mMovieWorker.execute(mTMDBUri.getMovieList(TMDBUri.PATH_POPULAR, mTMDBKey));
+                mMovieWorker.executeOnExecutor(mBoss.getExecutor(),
+                        mTMDBUri.getMovieList(TMDBUri.PATH_POPULAR, mTMDBKey));
                 break;
             case PosterHelper.NAME_ID_TOP_RATED:
                 //start AsyncTask, get Top Rated movies from TheMovieDB api
-                mMovieWorker.execute(mTMDBUri.getMovieList(TMDBUri.PATH_TOP_RATED, mTMDBKey));
+                mMovieWorker.executeOnExecutor(mBoss.getExecutor(),
+                        mTMDBUri.getMovieList(TMDBUri.PATH_TOP_RATED, mTMDBKey));
                 break;
             case PosterHelper.NAME_ID_NOW_PLAYING:
                 //start AsyncTask, get Now Playing movies from TheMovieDB api
-                mMovieWorker.execute(mTMDBUri.getMovieList(TMDBUri.PATH_NOW_PLAYING, mTMDBKey));
+                mMovieWorker.executeOnExecutor(mBoss.getExecutor(),
+                        mTMDBUri.getMovieList(TMDBUri.PATH_NOW_PLAYING, mTMDBKey));
                 break;
             case PosterHelper.NAME_ID_UPCOMING:
                 //start AsyncTask, get Upcoming movies from TheMovieDB api
-                mMovieWorker.execute(mTMDBUri.getMovieList(TMDBUri.PATH_UPCOMING, mTMDBKey));
+                mMovieWorker.executeOnExecutor(mBoss.getExecutor(),
+                        mTMDBUri.getMovieList(TMDBUri.PATH_UPCOMING, mTMDBKey));
                 break;
             default:
+                //invalid request, change working status to false
                 mWorking = false;
+
+                //check if there are any other pending movie requests
+                checkRequestBuffer();
         }
     }
 
@@ -187,10 +205,8 @@ public class PosterButler extends MyButler{
 
     }
 
-
-
 /**
- * void checkRequestBuffer() - checks the request buffer if there are any pending movie requests
+ * void checkRequestBuffer() - checks the request buffer if there are any pending movie requests.
  */
     private void checkRequestBuffer(){
         //check request buffer
@@ -202,7 +218,7 @@ public class PosterButler extends MyButler{
             mRequestBuffer.remove(0);
 
             //make a poster request
-            makePosterRequest(request);
+            requestMovies(request);
         }
     }
 
