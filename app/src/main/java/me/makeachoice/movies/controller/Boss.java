@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,6 @@ import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
 import me.makeachoice.movies.util.DateManager;
 import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
-import me.makeachoice.movies.view.dialog.WaitDialog;
 
 
 /**
@@ -133,7 +133,7 @@ public class Boss extends Application implements PosterValet.Bridge{
         //will create database if necessary
         mDB = mMovieDB.getWritableDatabase();
 
-        mWaitDialog = new WaitDialog();
+        //mWaitDialog = new WaitDialog();
     }
 
 /**
@@ -196,7 +196,7 @@ public class Boss extends Application implements PosterValet.Bridge{
 
 
 
-    private WaitDialog mWaitDialog;
+    //private WaitDialog mWaitDialog;
 
 
     //mMaidRegistry - HashMap of instantiated Maid classes being used by HouseKeepers
@@ -263,7 +263,7 @@ public class Boss extends Application implements PosterValet.Bridge{
         if(mRefreshStaff.needToRefreshList(movieType)){
             //refresh posters, access internet data
             mMovieButler.requestMovies(movieType);
-            mWaitDialog.showStartDialog(mActivityContext);
+            Toast.makeText(mActivityContext,"API call to TheMovieDB", Toast.LENGTH_SHORT).show();
         }
         else{
             posters = mPosterStaff.getPosters(movieType);
@@ -273,7 +273,7 @@ public class Boss extends Application implements PosterValet.Bridge{
                 Log.d("Boss", "          retrieve posters from DB");
                 //retrieve posters from database
                 mPosterValet.requestPosters(movieType);
-                mWaitDialog.showStartDialog(mActivityContext);
+                Toast.makeText(mActivityContext,"Retrieving posters from DB", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -293,7 +293,7 @@ public class Boss extends Application implements PosterValet.Bridge{
  * know when an AsyncTask thread has completed (in this case for MovieData)
  */
     public void movieRequestComplete(ArrayList<MovieModel> models, int movieType){
-        mWaitDialog.closeStartDialog();
+        //mWaitDialog.closeStartDialog(movieType);
         Log.d("Boss", "Boss.movieRequestComplete: " + getString(movieType));
         //convert MovieModels to PosterItems
         ArrayList<PosterItem> posters = mPosterStaff.preparePosters(models);
@@ -313,7 +313,7 @@ public class Boss extends Application implements PosterValet.Bridge{
         Log.d("Boss", ".");
         Log.d("Boss", ".");
         if(posters.size() >= 20){
-            mWaitDialog.closeStartDialog();
+            //mWaitDialog.closeStartDialog(movieType);
             mPosterStaff.setPosters(posters, movieType);
 
             showPosters(posters, movieType);
