@@ -1,15 +1,19 @@
 package me.makeachoice.movies.controller.butler.valet;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.HashMap;
 
-import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.model.db.contract.RefreshContract;
 import me.makeachoice.movies.model.item.RefreshItem;
 
 /**
  * RefreshValet takes care of all the database request to the movie refresh table.
+ *
+ * It uses other classes to assist in maintaining poster data in the database:
+ *      Bridge mBridge - Bridge communication interface
+ *      RefreshContract - database contract class for refresh table
  *
  */
 public class RefreshValet{
@@ -17,31 +21,37 @@ public class RefreshValet{
 /**************************************************************************************************/
 /**
  * Class Variables:
- *      Boss mBoss - Boss class
+ *      Bridge mBridge - Bridge communication interface
  *      RefreshContract mContract - contract class for the movie refresh table
  */
 /**************************************************************************************************/
 
-    //mBoss - Boss class
-    Boss mBoss;
+    //mBridge - Bridge communication interface
+    Bridge mBridge;
 
     //mContract - contract class for the movie refresh table
     private RefreshContract mContract;
 
+    //Implemented communication line to a Valet class
+    public interface Bridge{
+        //get Database from Bridge
+        SQLiteDatabase getDatabase();
+    }
 
 /**************************************************************************************************/
 
 
 /**************************************************************************************************/
 /**
- * RefreshVale - constructor
- * @param boss - Boss class
+ * RefreshValet - constructor, save bridge communication and create contract class.
+ * @param bridge - class implementing Bridge interface
  */
-    public RefreshValet(Boss boss){
-        mBoss = boss;
+    public RefreshValet(Bridge bridge){
+        //Class implementing Bridge interface
+        mBridge = bridge;
 
+        //refresh contract class for refresh tables in database
         mContract = new RefreshContract();
-
     }
 
 /**************************************************************************************************/
@@ -57,13 +67,14 @@ public class RefreshValet{
 /**************************************************************************************************/
 /**
  * HashMap<String, RefreshItem> getRefreshMap() - get refreshMap from database
+ * @return - refreshMap of RefreshItems
  */
     public HashMap<Integer, RefreshItem> getRefreshMap(){
         //get Select All query for the movie refresh table
         String query = RefreshContract.RefreshEntry.SELECT_ALL;
 
         //run query, get cursor
-        Cursor cursor = mBoss.getDatabase().rawQuery(query, null);
+        Cursor cursor = mBridge.getDatabase().rawQuery(query, null);
 
         //check if cursor is null or cursor count is zero
         if(cursor != null && cursor.getCount() != 0){
@@ -76,18 +87,19 @@ public class RefreshValet{
     }
 
 /**
- * void setRefresh(RefreshItem) - save refresh item into database
+ * void setRefresh(int,Long) - save refresh data into database
  * @param movieType - movie type being refreshed
+ * @param refreshDate - date when list needs to be refreshed
  */
     public void setRefresh(int movieType, Long refreshDate){
-        String whereClause = RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_TYPE + " = " +
-                movieType;
+        //create whereClause
+        String whereClause = RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_TYPE +
+                " = " + movieType;
 
-        mBoss.getDatabase().update(RefreshContract.RefreshEntry.TABLE_NAME,
+        //update refresh table with new refresh date
+        mBridge.getDatabase().update(RefreshContract.RefreshEntry.TABLE_NAME,
                 mContract.getContentValues(movieType, refreshDate), whereClause, null);
     }
-
-
 
 /**************************************************************************************************/
 
@@ -136,9 +148,6 @@ public class RefreshValet{
         //return hashMap
         return refreshMap;
     }
-
-
-
 
 /**************************************************************************************************/
 

@@ -43,12 +43,27 @@ public class RefreshStaff {
 /**************************************************************************************************/
 /**
  * Getters:
- *      - None -
- *
- * Setters:
- *      void setRefreshItem(String,RefreshItem) - save refreshItem to buffer
+ *      int getMapSize() - size of refresh HashMap
  */
 /**************************************************************************************************/
+/**
+ * int getMapSize() - size of refresh HashMap
+ * @return - size of HashMap
+ */
+    public int getMapSize(){
+        return mRefreshMap.size();
+    }
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Setters:
+ *      void setRefreshItem(String,RefreshItem) - set refreshItem into buffer
+ *      void setRefreshMap(HashMap<Integer,RefreshItem> - set buffer HashMap
+ */
+/**************************************************************************************************/
+
 /**
  * void setRefreshItem(RefreshItem) - save refreshItem to buffer
  * @param movieType - movie type
@@ -62,43 +77,55 @@ public class RefreshStaff {
         mRefreshMap.put(movieType, item);
     }
 
+/**
+ * void setRefreshMap(HashMap<Integer,RefreshItem>) - set buffer HashMap
+ * @param refresh - HashMap
+ */
+    public void setRefreshMap(HashMap<Integer,RefreshItem> refresh){
+        mRefreshMap = new HashMap<>(refresh);
+    }
+
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
  * Class methods
  *      boolean needToRefreshList(int) - returns true if the list needs to be refreshed
+ *      boolean checkDates(RefreshItem) - compares dates and determines if refresh date is passed
  *      void onFinish() - nulls all of the data in the arrayList buffers
  */
 /**************************************************************************************************/
 /**
- * boolean needToRefreshList(int) - returns true if the list needs to be refreshed. Takes the
- * current date and compares it with the refresh date. If the current date is pass the refresh date,
- * the list needs to be updated with current data
+ * boolean needToRefreshList(int) - gets RefreshItem from buffer. If in buffer, check refresh date.
  * @param movieType - movie type
  * @return - returns true if list needs to be refreshed, false if not
  */
-    public boolean needToRefreshList(int movieType){
-        //get current date
-        Date currentDate = DateManager.currentDate();
-
+    public boolean needToRefresh(int movieType){
         //get refresh item movie list
         RefreshItem item = mRefreshMap.get(movieType);
 
-        //check if item is not null
         if(item != null){
-            //valid item, get refresh date
-            Date refreshDate = new Date(item.dateRefresh);
-
-            //compare current date with refresh date
-            if(currentDate.after(refreshDate)){
-                //refresh date has already passed, need to refresh
-                return true;
-            }
+            return checkDates(item);
         }
 
-        //refresh date is still in the future, NO need to refresh
-        return false;
+        //not in buffer, refresh
+        return true;
+    }
+
+/**
+ * boolean checkDates(RefreshItem) - compares dates and determines if refresh date is passed
+ * @param item - refresh item
+ * @return - boolean value, true = need to refresh
+ */
+    private boolean checkDates(RefreshItem item){
+        //valid item, get refresh date
+        Date refreshDate = new Date(item.dateRefresh);
+
+        //get current date
+        Date currentDate = DateManager.currentDate();
+
+        //compare current date with refresh date, return true if need to refresh
+        return currentDate.after(refreshDate);
     }
 
 /**

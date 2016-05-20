@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 import me.makeachoice.movies.controller.butler.MovieButler;
@@ -29,6 +30,7 @@ import me.makeachoice.movies.controller.housekeeper.SwipeKeeper;
 import me.makeachoice.movies.controller.housekeeper.helper.DetailHelper;
 import me.makeachoice.movies.controller.housekeeper.helper.SwipeHelper;
 import me.makeachoice.movies.controller.housekeeper.maid.MyMaid;
+import me.makeachoice.movies.model.item.RefreshItem;
 import me.makeachoice.movies.util.DateManager;
 import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
@@ -118,22 +120,21 @@ public class Boss extends Application implements PosterValet.Bridge{
     @Override
     public void onCreate(){
         super.onCreate();
-        //initialize Staff classes
-        initStaff();
-
-        //initialize Butler classes
-        initButlers();
-
-        //initialize Valet classes
-        initValets();
-
         //initialize database manager
         mMovieDB = new MovieDB(this);
 
         //will create database if necessary
         mDB = mMovieDB.getWritableDatabase();
 
-        //mWaitDialog = new WaitDialog();
+        //initialize Valet classes
+        initValets();
+
+        //initialize Staff classes
+        initStaff();
+
+        //initialize Butler classes
+        initButlers();
+
     }
 
 /**
@@ -170,6 +171,8 @@ public class Boss extends Application implements PosterValet.Bridge{
  */
     private void initValets(){
         mRefreshValet = new RefreshValet(this);
+
+
         mPosterValet = new PosterValet(this);
     }
 
@@ -256,11 +259,32 @@ public class Boss extends Application implements PosterValet.Bridge{
  */
     public ArrayList<PosterItem> getPosters(int movieType){
         Log.d("Boss", "Boss.getPosters: " + getString(movieType));
+        if(movieType == PosterHelper.NAME_ID_FAVORITE){
+            return getFavoritePosters();
+        }
+        else{
+            return getRequestedPosters(movieType);
+        }
+    }
+
+
+    private ArrayList<PosterItem> getFavoritePosters(){
+        Log.d("Boss", "     get Favorite posters");
+        return new ArrayList<>();
+    }
+
+    private ArrayList<PosterItem> getRequestedPosters(int movieType){
+        Log.d("Boss", "     get" + getString(movieType));
         mPosterRetrieval = false;
+
+        if(mRefreshStaff.getMapSize() == 0){
+            Log.d("Boss", "          retrieve refreshMap from db");
+            mRefreshStaff.setRefreshMap(mRefreshValet.getRefreshMap());
+        }
 
         Log.d("Boss", "     checkBuffer:");
         ArrayList<PosterItem> posters = new ArrayList<>();
-        if(mRefreshStaff.needToRefreshList(movieType)){
+        if(mRefreshStaff.needToRefresh(movieType)){
             //refresh posters, access internet data
             mMovieButler.requestMovies(movieType);
             Toast.makeText(mActivityContext,"API call to TheMovieDB", Toast.LENGTH_SHORT).show();
@@ -279,6 +303,7 @@ public class Boss extends Application implements PosterValet.Bridge{
 
         //return poster items
         return posters;
+
     }
 
     public void refreshPosters(int movieType){
@@ -293,7 +318,6 @@ public class Boss extends Application implements PosterValet.Bridge{
  * know when an AsyncTask thread has completed (in this case for MovieData)
  */
     public void movieRequestComplete(ArrayList<MovieModel> models, int movieType){
-        //mWaitDialog.closeStartDialog(movieType);
         Log.d("Boss", "Boss.movieRequestComplete: " + getString(movieType));
         //convert MovieModels to PosterItems
         ArrayList<PosterItem> posters = mPosterStaff.preparePosters(models);
@@ -313,7 +337,6 @@ public class Boss extends Application implements PosterValet.Bridge{
         Log.d("Boss", ".");
         Log.d("Boss", ".");
         if(posters.size() >= 20){
-            //mWaitDialog.closeStartDialog(movieType);
             mPosterStaff.setPosters(posters, movieType);
 
             showPosters(posters, movieType);
