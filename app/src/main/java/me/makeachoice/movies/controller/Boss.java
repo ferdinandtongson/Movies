@@ -11,7 +11,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
-import me.makeachoice.movies.controller.modelside.butler.MovieButler;
+import me.makeachoice.movies.controller.modelside.butler.TMDBMoviesButler;
 import me.makeachoice.movies.controller.modelside.staff.HouseKeeperStaff;
 import me.makeachoice.movies.controller.modelside.staff.MaidStaff;
 import me.makeachoice.movies.controller.modelside.staff.MovieStaff;
@@ -54,8 +54,8 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
  *      RefreshStaff mRefreshStaff - staff in charge of maintaining the poster refresh buffers
  *      HouseKeeperStaff mKeeperStaff - staff in charge of maintain the MyHouseKeeper buffer
  *
- *      MovieButler mMovieButler - butler in charge of making API calls to get movie list data
- *      DetailButler mDetailButler - butler in charge of making API calls to get movie detail data
+ *      TMDBMovieButler mMoviesButler - butler in charge of making API calls to get movie list data
+ *      TMDBInfoButler mInfoButler - butler in charge of making API calls to get movie detail data
  *
  *      PosterValet mPosterValet - valet in charge of getting poster database data
  *      RefreshValet mRefreshValet - valet in charge of getting poster refresh database data
@@ -82,15 +82,15 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
     private PosterStaff mPosterStaff;
     //mRefreshStaff - staff in charge of maintaining the poster refresh buffers
     private RefreshStaff mRefreshStaff;
-    //HouseKeeperStaff mKeeperStaff - staff in charge of maintaining the MyHouseKeeper buffer
+    //mKeeperStaff - staff in charge of maintaining the MyHouseKeeper buffer
     private HouseKeeperStaff mKeeperStaff;
-    //MaidStaff mMaidStaff - staff in charge of maintaining the MyMaid buffer
+    //mMaidStaff - staff in charge of maintaining the MyMaid buffer
     private MaidStaff mMaidStaff;
 
-    //mMovieButler - butler in charge of making API calls to get movie list data
-    private MovieButler mMovieButler;
-    //mDetailButler - butler in charge of making API calls to get movie detail data
-    private DetailButler mDetailButler;
+    //mMoviesButler - butler in charge of making API calls to get movie list data
+    private TMDBMoviesButler mMoviesButler;
+    //mInfoButler - butler in charge of making API calls to get movie detail data
+    private DetailButler mInfoButler;
 
     //mPosterValet - valet in charge of getting poster database data
     private PosterValet mPosterValet;
@@ -161,11 +161,11 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
  * void initButlers() - initializes Butler classes; they handle making and processing API calls
  */
     private void initButlers(){
-        //initialize MovieButler, makes API calls for a list of movies in a given category
-        mMovieButler = new MovieButler(this);
+        //initialize TMDBMoviesButler, makes API calls for a list of movies in a given category
+        mMoviesButler = new TMDBMoviesButler(this);
 
-        //initialize DetailButler, makes API calls to get more detailed info about a given movie
-        mDetailButler = new DetailButler(this);
+        //initialize TMDBInfoButler, makes API calls to get more detailed info about a given movie
+        mInfoButler = new DetailButler(this);
 
     }
 
@@ -288,7 +288,7 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
         ArrayList<PosterItem> posters = new ArrayList<>();
         if(mRefreshStaff.needToRefresh(movieType)){
             //refresh posters, access internet data
-            mMovieButler.requestMovies(movieType);
+            mMoviesButler.requestMovies(movieType);
             Toast.makeText(mActivityContext,"API call to TheMovieDB", Toast.LENGTH_SHORT).show();
         }
         else{
@@ -310,7 +310,7 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
 
     public void refreshPosters(int movieType){
         //refresh posters, access internet data
-        mMovieButler.requestMovies(movieType);
+        mMoviesButler.requestMovies(movieType);
     }
 
     //public void dbRequestComplete
@@ -345,7 +345,7 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
         }
         else{
             if(movieType != PosterHelper.NAME_ID_FAVORITE){
-                mMovieButler.requestMovies(movieType);
+                mMoviesButler.requestMovies(movieType);
             }
         }
     }
@@ -400,7 +400,7 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
         MovieModel model = mMovieStaff.getModel(movieType, position);
 
         //get the movie item data from DetailButler, if incomplete will start an AsyncTask
-        return mDetailButler.getMovie(model);
+        return mInfoButler.getMovie(model);
     }
 
 

@@ -31,7 +31,7 @@ import me.makeachoice.movies.util.NetworkManager;
  *      abstract public Context getActivityContext()
  *      abstract public void workComplete(Boolean)
  */
-public class MovieButler extends MyButler{
+public class TMDBMoviesButler extends MyButler{
 
 /**************************************************************************************************/
 /**
@@ -63,7 +63,7 @@ public class MovieButler extends MyButler{
  * request buffer.
  * @param boss - Boss class
  */
-    public MovieButler(Boss boss){
+    public TMDBMoviesButler(Boss boss){
         //Application context
         mBoss = boss;
 
