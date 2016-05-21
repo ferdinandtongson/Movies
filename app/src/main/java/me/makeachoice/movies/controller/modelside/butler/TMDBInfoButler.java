@@ -120,13 +120,13 @@ public class TMDBInfoButler extends MyButler{
     }
 
 /**
- * MovieItem getMovie(MovieModel) - get the MovieItem of the request movie
- * @param model - movie model being requested
+ * MovieItem getMovie(MovieItem) - get the MovieItem of the request movie
+ * @param item - movie model being requested
  * @return - movie item processed for consumption by View
  */
-    public MovieItem getMovie(MovieModel model){
+    public MovieItem getMovie(MovieItem item){
         //check if movie is in buffer
-        return checkMovieBuffer(model);
+        return checkMovieBuffer(item);
     }
 
 /**************************************************************************************************/
@@ -149,12 +149,12 @@ public class TMDBInfoButler extends MyButler{
 /**
  * MovieItem checkMovieBuffer(MovieModel) - check if movie is in buffer. If not, a request is made
  * to get the movie data.
- * @param model - movie being requested
+ * @param item - movie being requested
  * @return - movie item ready for View consumption
  */
-    private MovieItem checkMovieBuffer(MovieModel model){
+    private MovieItem checkMovieBuffer(MovieItem item){
         //get movie id
-        int id = model.getId();
+        int id = item.getId();
 
         //check if movie item is in buffer
         if(mMovieMap.containsKey(id)){
@@ -166,7 +166,7 @@ public class TMDBInfoButler extends MyButler{
             makeDetailRequest(id);
 
             //prepare movie data we already have for View consumption
-            return prepareMovieItem(model);
+            return prepareMovieItem(item);
         }
     }
 
@@ -225,38 +225,19 @@ public class TMDBInfoButler extends MyButler{
 
 /**
  * MovieItem prepareMovieItem(MovieModel) - convert MovieModel to MovieItem
- * @param model - MovieModel data
+ * @param item - MovieModel data
  * @return - MovieItem
  */
-    private MovieItem prepareMovieItem(MovieModel model){
+    private MovieItem prepareMovieItem(MovieItem item){
 
         //create an empty MovieItem object
         MovieItem movieItem = new MovieItem();
 
         //populate MovieItem with MovieModel data
-        movieItem.setId(model.getId());
-        movieItem.setTitle(model.getTitle());
-        movieItem.setOverview(model.getOverview());
-        movieItem.setReleaseDate(model.getReleaseDate());
-
-        movieItem.setOriginalTitle(model.getOriginalTitle());
-        movieItem.setOriginalLanguage(model.getOriginalLanguage());
-
-        movieItem.setPopularity(model.getPopularity());
-        movieItem.setVoteCount(model.getVoteCount());
-        movieItem.setVoteAverage(model.getVoteAverage());
-
-        movieItem.setPosterPath(processImagePath(model.getPosterPath()));
-        movieItem.setBackdropPath(processImagePath(model.getBackdropPath()));
-        movieItem.setVideo(model.getVideo());
-
-        movieItem.setAdult(model.getAdult());
-        movieItem.setGenreIds(model.getGenreIds());
-
         prepareEmptyDetails(movieItem);
 
         //save movie item to buffer
-        mMovieMap.put(model.getId(), movieItem);
+        mMovieMap.put(item.getId(), movieItem);
 
         //return movie item
         return movieItem;

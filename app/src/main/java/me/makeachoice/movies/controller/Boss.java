@@ -360,8 +360,8 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
     private void processMovieData(ArrayList<MovieModel> models,
                                   ArrayList<PosterItem> posters, int movieType) {
         Log.d("Boss", "          save movie models to buffer");
-        //save movie models to buffer
-        mMovieStaff.setMovieModels(models, movieType);
+        //convert movie models to movie items then save to buffer
+        mMovieStaff.setMovies(mMovieStaff.prepareMovies(models), movieType);
 
         Log.d("Boss", "          save poster items to buffer");
         //update refresh data
@@ -376,7 +376,6 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
 
     private void updateRefreshData(int movieType){
         Log.d("Boss", "Boss.updateRefreshData: " + getString(movieType));
-        String strType = getString(movieType);
         Long dateRefresh = DateManager.addDaysToDate(1).getTime();
 
 
@@ -396,11 +395,11 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
  * @return - movie item data of the selected movie
  */
     public MovieItem getMovie(int movieType, int position){
-        //get the movie model from the MovieButler
-        MovieModel model = mMovieStaff.getModel(movieType, position);
+        //get the movie item from the MovieStaff
+        MovieItem item = mMovieStaff.getMovie(movieType, position);
 
         //get the movie item data from DetailButler, if incomplete will start an AsyncTask
-        return mInfoButler.getMovie(model);
+        return mInfoButler.getMovie(item);
     }
 
 
