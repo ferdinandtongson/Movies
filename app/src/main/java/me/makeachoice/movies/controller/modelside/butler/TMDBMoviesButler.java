@@ -13,7 +13,7 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
 import me.makeachoice.movies.util.NetworkManager;
 
 /**
- * MovieButler handles API calls to TheMovieDB to get movie list data.
+ * TMDBMoviesButler handles API calls to TheMovieDB to get movie list data.
  *
  * It uses other classes to assist in making retrieving poster data from the net:
  *      Boss - Boss application
@@ -59,8 +59,8 @@ public class TMDBMoviesButler extends MyButler{
 
 /**************************************************************************************************/
 /**
- * MovieButler - constructor, registers to Boss, initialize URI builder, get API key and initialize
- * request buffer.
+ * TMDBMoviesButler - constructor, registers to Boss, initialize URI builder, get API key and
+ * initialize request buffer.
  * @param boss - Boss class
  */
     public TMDBMoviesButler(Boss boss){

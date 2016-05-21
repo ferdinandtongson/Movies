@@ -21,7 +21,7 @@ import me.makeachoice.movies.model.response.tmdb.ReviewModel;
 import me.makeachoice.movies.model.response.tmdb.VideoModel;
 
 /**
- * DetailButler handles API calls to TheMovieDB to get movie info data.
+ * TMDBInfoButler handles API calls to TheMovieDB to get movie info data.
  *
  * It uses other classes to assist in making retrieving poster data from the net:
  *      Boss - Boss application
@@ -38,7 +38,7 @@ import me.makeachoice.movies.model.response.tmdb.VideoModel;
  *      abstract public Context getActivityContext()
  *      abstract public void workComplete(Boolean)
  */
-public class DetailButler extends MyButler{
+public class TMDBInfoButler extends MyButler{
 
 /**************************************************************************************************/
 /**
@@ -67,11 +67,11 @@ public class DetailButler extends MyButler{
 
 /**************************************************************************************************/
 /**
- * MovieButler - constructor, registers to Boss, initialize URI builder, get API key and initialize
- * data buffers.
+ * TMDBInfoButler - constructor, registers to Boss, initialize URI builder, get API key and
+ * initialize data buffers.
  * @param boss - Boss class
  */
-    public DetailButler(Boss boss){
+    public TMDBInfoButler(Boss boss){
         //Application context
         mBoss = boss;
 

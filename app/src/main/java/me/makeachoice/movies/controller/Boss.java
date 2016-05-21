@@ -22,7 +22,7 @@ import me.makeachoice.movies.controller.modelside.staff.PosterStaff;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.db.MovieDB;
 import me.makeachoice.movies.model.item.PosterItem;
-import me.makeachoice.movies.controller.modelside.butler.DetailButler;
+import me.makeachoice.movies.controller.modelside.butler.TMDBInfoButler;
 import me.makeachoice.movies.controller.viewside.housekeeper.DetailKeeper;
 import me.makeachoice.movies.controller.viewside.housekeeper.MyHouseKeeper;
 import me.makeachoice.movies.controller.viewside.housekeeper.SwipeKeeper;
@@ -90,7 +90,7 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
     //mMoviesButler - butler in charge of making API calls to get movie list data
     private TMDBMoviesButler mMoviesButler;
     //mInfoButler - butler in charge of making API calls to get movie detail data
-    private DetailButler mInfoButler;
+    private TMDBInfoButler mInfoButler;
 
     //mPosterValet - valet in charge of getting poster database data
     private PosterValet mPosterValet;
@@ -165,7 +165,7 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
         mMoviesButler = new TMDBMoviesButler(this);
 
         //initialize TMDBInfoButler, makes API calls to get more detailed info about a given movie
-        mInfoButler = new DetailButler(this);
+        mInfoButler = new TMDBInfoButler(this);
 
     }
 
