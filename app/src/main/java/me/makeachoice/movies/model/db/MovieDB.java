@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
+import me.makeachoice.movies.model.db.contract.MovieContract;
 import me.makeachoice.movies.model.db.contract.PosterContract;
 import me.makeachoice.movies.model.db.contract.RefreshContract;
 import me.makeachoice.movies.model.db.contract.TMDBContract;
@@ -38,6 +39,12 @@ public class MovieDB extends SQLiteOpenHelper{
         db.execSQL(PosterContract.NowPlayingEntry.CREATE_TABLE);
         db.execSQL(PosterContract.UpcomingEntry.CREATE_TABLE);
         db.execSQL(PosterContract.FavoriteEntry.CREATE_TABLE);
+
+        db.execSQL(MovieContract.MostPopularEntry.CREATE_TABLE);
+        db.execSQL(MovieContract.TopRatedEntry.CREATE_TABLE);
+        db.execSQL(MovieContract.NowPlayingEntry.CREATE_TABLE);
+        db.execSQL(MovieContract.UpcomingEntry.CREATE_TABLE);
+        db.execSQL(MovieContract.FavoriteEntry.CREATE_TABLE);
 
         db.execSQL(TMDBContract.MovieEntry.CREATE_TABLE);
         db.execSQL(TMDBContract.CastEntry.CREATE_TABLE);
