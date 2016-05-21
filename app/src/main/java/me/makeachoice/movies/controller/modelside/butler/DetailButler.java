@@ -8,7 +8,7 @@ import java.util.HashMap;
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.modelside.uri.TMDBUri;
-import me.makeachoice.movies.controller.modelside.worker.DetailWorker;
+import me.makeachoice.movies.controller.modelside.worker.TMDBInfoWorker;
 import me.makeachoice.movies.model.item.CastItem;
 import me.makeachoice.movies.model.item.GenreItem;
 import me.makeachoice.movies.model.item.MovieItem;
@@ -21,9 +21,13 @@ import me.makeachoice.movies.model.response.tmdb.ReviewModel;
 import me.makeachoice.movies.model.response.tmdb.VideoModel;
 
 /**
- * DetailButler handles the creation of a MovieItems to be consumed by the View. It takes data from
- * API calls or from the database and processes the data. It also buffers the data so it
- * does not need to make repeated calls to the API or database.
+ * DetailButler handles API calls to TheMovieDB to get movie info data.
+ *
+ * It uses other classes to assist in making retrieving poster data from the net:
+ *      Boss - Boss application
+ *      TMDBUri - uri builder that builds TheMovieDB api uri string
+ *      TMDBInfoWorker - AsyncTask class that makes API calls to get Movie details
+ *      NetworkManager - check for network status
  *
  * Variables from MyButler:
  *      Boss mBoss
@@ -41,7 +45,7 @@ public class DetailButler extends MyButler{
  * Class Variables:
  *      String mTMDBKey - the key used to access TheMovieDB api
  *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
- *      DetailWorker mDetailWorker - AsyncTask class that makes API calls to get Movie details
+ *      TMDBInfoWorker mInfoWorker - AsyncTask class that makes API calls to get Movie details
  *
  *      HashMap<Integer, MovieItem> mMovieMap - movie buffer holding movie items
  */
@@ -53,8 +57,8 @@ public class DetailButler extends MyButler{
     //mUri - class that builds TheMovieDB api uri strings
     private TMDBUri mTMDBUri;
 
-    //mMovieWorker - AsyncTask class that makes API calls to get Movie details
-    private DetailWorker mDetailWorker;
+    //mInfoWorker - AsyncTask class that makes API calls to get Movie details
+    private TMDBInfoWorker mInfoWorker;
 
     //mMovieMap - movie buffer holding movie items
     private HashMap<Integer, MovieItem> mMovieMap;
@@ -189,12 +193,13 @@ public class DetailButler extends MyButler{
  */
     private void startDetailRequest(int id){
         //initializes the AsyncTask worker
-        mDetailWorker = new DetailWorker(this);
+        mInfoWorker = new TMDBInfoWorker(this);
 
         //set working flag, AsyncTask is working in the background
         mWorking = true;
 
-        mDetailWorker.execute(mTMDBUri.getMovieDetailAll(String.valueOf(id), mTMDBKey));
+        mInfoWorker.executeOnExecutor(mBoss.getExecutor(),
+                mTMDBUri.getMovieDetailAll(String.valueOf(id), mTMDBKey));
     }
 
 /**
@@ -208,7 +213,7 @@ public class DetailButler extends MyButler{
 
         //check if results were successful
         if(result){
-            mBoss.updateDetailActivity(prepareMovieDetails(mDetailWorker.getMovie()));
+            mBoss.updateDetailActivity(prepareMovieDetails(mInfoWorker.getMovie()));
         }
         else{
             //TODO - need to handle event of a download failure
