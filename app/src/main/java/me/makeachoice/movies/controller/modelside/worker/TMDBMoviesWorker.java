@@ -39,7 +39,7 @@ import me.makeachoice.movies.model.response.tmdb.MoviesResponse;
  *      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
  *      <uses-permission android:name="android.permission.INTERNET" />
  */
-public class MovieWorker extends MyWorker{
+public class TMDBMoviesWorker extends MyWorker{
 
 /**************************************************************************************************/
 /**
@@ -58,7 +58,7 @@ public class MovieWorker extends MyWorker{
  * MovieWorker - constructor
  * @param butler - butler class making the API request
  */
-    public MovieWorker(MyButler butler){
+    public TMDBMoviesWorker(MyButler butler){
         //Butler making the API request
         mButler = butler;
     }

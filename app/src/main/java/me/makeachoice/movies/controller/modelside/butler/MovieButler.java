@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.modelside.uri.TMDBUri;
-import me.makeachoice.movies.controller.modelside.worker.MovieWorker;
+import me.makeachoice.movies.controller.modelside.worker.TMDBMoviesWorker;
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
@@ -18,7 +18,7 @@ import me.makeachoice.movies.util.NetworkManager;
  * It uses other classes to assist in making retrieving poster data from the net:
  *      Boss - Boss application
  *      TMDBUri - uri builder that builds TheMovieDB api uri string
- *      MovieWorker - AsyncTask class that makes API calls to get Movie details
+ *      TMDBMovieWorker - AsyncTask class that makes API calls to get Movie details
  *      NetworkManager - check for network status
  *      PosterHelper - holds all static resources (layout id, view ids, etc)
  *
@@ -38,7 +38,7 @@ public class MovieButler extends MyButler{
  * Class Variables:
  *      String mTMDBKey - the key used to access TheMovieDB api
  *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
- *      MovieWorker mMovieWorker - AsyncTask class that makes API calls to get Movie details
+ *      TMDBMovieWorker mMovieWorker - AsyncTask class that makes API calls to get Movie details
  *      int mMovieRequest - current list of Movies being requested
  */
 /**************************************************************************************************/
@@ -50,7 +50,7 @@ public class MovieButler extends MyButler{
     private TMDBUri mTMDBUri;
 
     //mMovieWorker - AsyncTask class that makes API calls to get Movie details
-    private MovieWorker mMovieWorker;
+    private TMDBMoviesWorker mMovieWorker;
 
     //mMovieRequest - current list of Movies being requested
     private int mMovieRequest;
@@ -143,7 +143,7 @@ public class MovieButler extends MyButler{
  */
     private void startMovieRequest(int movieType){
         //initializes the AsyncTask worker
-        mMovieWorker = new MovieWorker(this);
+        mMovieWorker = new TMDBMoviesWorker(this);
 
         //set working flag, AsyncTask is working in the background
         mWorking = true;
