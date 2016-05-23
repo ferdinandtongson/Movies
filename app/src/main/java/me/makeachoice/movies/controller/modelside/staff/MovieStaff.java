@@ -210,6 +210,7 @@ public class MovieStaff {
             item.setTMDBId(mod.getId());
             item.setTitle(mod.getTitle());
             item.setOverview(mod.getOverview());
+            item.setReleaseDate(mod.getReleaseDate());
             item.setIMDBId(mod.getIMDBId());
 
             item.setOriginalTitle(mod.getOriginalTitle());
