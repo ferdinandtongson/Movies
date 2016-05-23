@@ -1,6 +1,9 @@
 package me.makeachoice.movies.model.db.contract;
 
+import android.content.ContentValues;
 import android.provider.BaseColumns;
+
+import me.makeachoice.movies.model.item.MovieItem;
 
 /**
  * Created by Usuario on 5/7/2016.
@@ -23,7 +26,7 @@ public final class MovieContract extends MyContract{
     public static final int INDEX_VOTE_AVERAGE = 12;
 
     public static final int INDEX_POSTER_PATH = 13;
-    public static final int INDEX_BITMAP = 14;
+    public static final int INDEX_POSTER = 14;
 
     public static final String COLUMN_NAME_ORDER = "movieOrder";
     public static final String COLUMN_NAME_MOVIE_ID = "movieId";
@@ -41,12 +44,11 @@ public final class MovieContract extends MyContract{
     public static final String COLUMN_NAME_VOTE_AVERAGE = "voteAverage";
 
     public static final String COLUMN_NAME_POSTER_PATH = "posterPath";
-    public static final String COLUMN_NAME_BITMAP = "posterBitmap";
+    public static final String COLUMN_NAME_POSTER = "poster";
 
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
     public MovieContract() {}
-
 
 
 /**************************************************************************************************/
@@ -75,7 +77,7 @@ public final class MovieContract extends MyContract{
                 COLUMN_NAME_VOTE_COUNT + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_VOTE_AVERAGE + MyContract.REAL_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_POSTER_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
-                COLUMN_NAME_BITMAP + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
+                COLUMN_NAME_POSTER + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
 
         public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
 
@@ -109,7 +111,7 @@ public final class MovieContract extends MyContract{
                 COLUMN_NAME_VOTE_COUNT + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_VOTE_AVERAGE + MyContract.REAL_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_POSTER_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
-                COLUMN_NAME_BITMAP + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
+                COLUMN_NAME_POSTER + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
 
         public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
 
@@ -142,7 +144,7 @@ public final class MovieContract extends MyContract{
                 COLUMN_NAME_VOTE_COUNT + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_VOTE_AVERAGE + MyContract.REAL_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_POSTER_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
-                COLUMN_NAME_BITMAP + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
+                COLUMN_NAME_POSTER + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
 
         public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
 
@@ -175,7 +177,7 @@ public final class MovieContract extends MyContract{
                 COLUMN_NAME_VOTE_COUNT + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_VOTE_AVERAGE + MyContract.REAL_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_POSTER_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
-                COLUMN_NAME_BITMAP + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
+                COLUMN_NAME_POSTER + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
 
         public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
 
@@ -208,7 +210,7 @@ public final class MovieContract extends MyContract{
                 COLUMN_NAME_VOTE_COUNT + MyContract.INTEGER_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_VOTE_AVERAGE + MyContract.REAL_TYPE + MyContract.COMMA_SEP +
                 COLUMN_NAME_POSTER_PATH + MyContract.TEXT_TYPE + MyContract.COMMA_SEP +
-                COLUMN_NAME_BITMAP + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
+                COLUMN_NAME_POSTER + MyContract.BLOB_TYPE + MyContract.PAREN_CLOSE;
 
         public static final String DROP_TABLE = MyContract.DROP_TABLE + TABLE_NAME;
 
