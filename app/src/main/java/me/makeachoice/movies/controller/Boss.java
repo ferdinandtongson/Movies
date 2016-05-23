@@ -16,6 +16,7 @@ import me.makeachoice.movies.controller.modelside.staff.HouseKeeperStaff;
 import me.makeachoice.movies.controller.modelside.staff.MaidStaff;
 import me.makeachoice.movies.controller.modelside.staff.MovieStaff;
 import me.makeachoice.movies.controller.modelside.staff.RefreshStaff;
+import me.makeachoice.movies.controller.modelside.valet.MovieValet;
 import me.makeachoice.movies.controller.modelside.valet.PosterValet;
 import me.makeachoice.movies.controller.modelside.valet.RefreshValet;
 import me.makeachoice.movies.controller.modelside.staff.PosterStaff;
@@ -40,7 +41,8 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
  * prevented; in MVC (Model-View-Controller) model, the Model and View can communicate
  */
 
-public class Boss extends Application implements PosterValet.Bridge, RefreshValet.Bridge{
+public class Boss extends Application implements MovieValet.Bridge, PosterValet.Bridge,
+        RefreshValet.Bridge{
 
 /**************************************************************************************************/
 /**
@@ -92,6 +94,8 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
     //mInfoButler - butler in charge of making API calls to get movie detail data
     private TMDBInfoButler mInfoButler;
 
+    //mMovieValet - valet in charge of getting movie database data
+    private MovieValet mMovieValet;
     //mPosterValet - valet in charge of getting poster database data
     private PosterValet mPosterValet;
     //mRefreshValet - valet in charge of getting poster refresh database data
@@ -173,10 +177,14 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
  * void initValets() - initialize Valet classes; they handle database requests
  */
     private void initValets(){
-        mRefreshValet = new RefreshValet(this);
+        //valet in charge of getting movie database data
+        mMovieValet = new MovieValet(this);
 
-
+        //valet in charge of getting poster database data
         mPosterValet = new PosterValet(this);
+
+        //valet in charge of getting poster refresh database data
+        mRefreshValet = new RefreshValet(this);
     }
 
 /**************************************************************************************************/
@@ -299,6 +307,7 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
                 Log.d("Boss", "          retrieve posters from DB");
                 //retrieve posters from database
                 mPosterValet.requestPosters(movieType);
+                mMovieValet.requestMovies(movieType);
                 Toast.makeText(mActivityContext,"Retrieving posters from DB", Toast.LENGTH_SHORT).show();
             }
         }
@@ -333,11 +342,6 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
    }
 
     public void posterRetrievalComplete(ArrayList<PosterItem> posters, int movieType){
-        Log.d("Boss", ".");
-        Log.d("Boss", ".");
-        Log.d("Boss", "Here!!!!!!!!!!!!!!!!!!!!!!!!!");
-        Log.d("Boss", ".");
-        Log.d("Boss", ".");
         if(posters.size() >= 20){
             mPosterStaff.setPosters(posters, movieType);
 
@@ -348,6 +352,19 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
                 mMoviesButler.requestMovies(movieType);
             }
         }
+    }
+
+    public void movieRetrievalComplete(ArrayList<MovieItem> movies, int movieType){
+        Log.d("Boss", ".");
+        Log.d("Boss", ".");
+        Log.d("Boss", "Here!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Log.d("Boss", ".");
+        Log.d("Boss", ".");
+
+        if(movies.size() >= 20){
+            mMovieStaff.setMovies(movies, movieType);
+        }
+
     }
 
     public void showPosters(ArrayList<PosterItem> posters, int request){
@@ -366,6 +383,8 @@ public class Boss extends Application implements PosterValet.Bridge, RefreshVale
         Log.d("Boss", "          save poster items to buffer");
         //update refresh data
         updateRefreshData(movieType);
+
+        mMovieValet.saveMovies(mMovieStaff.getMovies(movieType), movieType);
 
         //save poster data to database
         mPosterValet.savePosters(posters, movieType);
