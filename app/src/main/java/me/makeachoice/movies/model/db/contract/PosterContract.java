@@ -34,7 +34,7 @@ public final class PosterContract extends MyContract{
 /**************************************************************************************************/
 
     public static abstract class MostPopularEntry implements BaseColumns {
-        public static final String TABLE_NAME = "tblMostPopular";
+        public static final String TABLE_NAME = "tblPosterMostPopular";
 
         public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
                 MyContract.PAREN_OPEN + MostPopularEntry._ID + MyContract.PRIMARY_KEY +
@@ -58,7 +58,7 @@ public final class PosterContract extends MyContract{
 /**************************************************************************************************/
 
     public static abstract class TopRatedEntry implements BaseColumns {
-        public static final String TABLE_NAME = "tblTopRated";
+        public static final String TABLE_NAME = "tblPosterTopRated";
 
         public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
                 MyContract.PAREN_OPEN + TopRatedEntry._ID + MyContract.PRIMARY_KEY +
@@ -82,7 +82,7 @@ public final class PosterContract extends MyContract{
 /**************************************************************************************************/
 
     public static abstract class NowPlayingEntry implements BaseColumns {
-        public static final String TABLE_NAME = "tblNowPlaying";
+        public static final String TABLE_NAME = "tblPosterNowPlaying";
 
         public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
                 MyContract.PAREN_OPEN + NowPlayingEntry._ID + MyContract.PRIMARY_KEY +
@@ -106,7 +106,7 @@ public final class PosterContract extends MyContract{
 /**************************************************************************************************/
 
     public static abstract class UpcomingEntry implements BaseColumns {
-        public static final String TABLE_NAME = "tblUpcoming";
+        public static final String TABLE_NAME = "tblPosterUpcoming";
 
         public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
                 MyContract.PAREN_OPEN + UpcomingEntry._ID + MyContract.PRIMARY_KEY +
@@ -130,7 +130,7 @@ public final class PosterContract extends MyContract{
 /**************************************************************************************************/
 
     public static abstract class FavoriteEntry implements BaseColumns {
-        public static final String TABLE_NAME = "tblFavorite";
+        public static final String TABLE_NAME = "tblPosterFavorite";
 
         public static final String CREATE_TABLE = MyContract.CREATE_TABLE + TABLE_NAME +
                 MyContract.PAREN_OPEN + FavoriteEntry._ID + MyContract.PRIMARY_KEY +
