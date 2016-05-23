@@ -83,7 +83,7 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 /**
  * Class Variables:
  *      SwipeHelper.ViewHolder mViewHolder - holds all the child view of the Activity
- *      int mMovieIndex - index of current movie list being shown
+ *      int mPageIndex - page index of current movie list being shown
  *      View.OnClickListener mFabListener - onClick listener for FloatingActionButton
  */
 /**************************************************************************************************/
@@ -91,8 +91,8 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
     //mViewHolder - holds all the child views of the fragment
     private SwipeHelper.ViewHolder mViewHolder;
 
-    //mMovieIndex - index of current movie list being shown
-    private int mMovieIndex;
+    //mPageIndex - page index of current movie list being shown
+    private int mPageIndex;
 
     //mFabListener - onClick listener for FloatingActionButton
     private View.OnClickListener mFabListener = new View.OnClickListener() {
@@ -129,9 +129,6 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 
         //initialize all Maids used by the SwipeKeeper
         mMaidAssistant.hireSwipeMaids(mBoss, this);
-
-        //initialize movie index
-        mMovieIndex = 0;
     }
 
 /**************************************************************************************************/
@@ -174,12 +171,12 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
     public void create(MyActivity activity, Bundle savedInstanceState){
         if(savedInstanceState != null){
             //get movieIndex of last shown movieList
-            mMovieIndex = savedInstanceState.getInt(
+            mPageIndex = savedInstanceState.getInt(
                     mBoss.getString(SwipeHelper.KEY_MOVIE_INDEX));
         }
         else{
             //default movie index = 0
-            mMovieIndex = 0;
+            mPageIndex = 0;
         }
 
         //set activity layout
@@ -188,11 +185,11 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         //fragmentManager is context sensitive, need to recreate every time onCreate() is called
         mFragmentManager = activity.getSupportFragmentManager();
 
-        //Fab is context sensitive, need to recreate everytime onCreate() is called
+        //Fab is context sensitive, need to recreate every time onCreate() is called
         mFab = getFloatButton(activity, SwipeHelper.SWIPE_FAB_ID, mFabListener);
 
         //create ViewPager and SwipeAdapter
-        createViewPager(activity, mMovieIndex);
+        createViewPager(activity, mPageIndex);
     }
 
 /**
@@ -245,7 +242,7 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  */
     public void saveInstanceState(Bundle inState){
         //save current movieIndex
-        inState.putInt(mBoss.getString(SwipeHelper.KEY_MOVIE_INDEX), mMovieIndex);
+        inState.putInt(mBoss.getString(SwipeHelper.KEY_MOVIE_INDEX), mPageIndex);
     }
 
 /**
@@ -326,44 +323,38 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  * void onPageSelected(int) - update fragment being viewed by ViewPager adapter. Checks with Boss
  * if poster data is in local buffer, if not will start an AsyncTask to get it from the database or
  * make an API call. After AsyncTask is complete, will call updatePosters() method
- * @param position - index of fragment being viewed by user
+ * @param index - index of fragment being viewed by user
  */
-    public void onPageSelected(int position){
+    public void onPageSelected(int index){
+        //save swipe page index
+        mPageIndex = index;
+
         //initialize arrayList to hold poster items
         ArrayList<PosterItem> posters;
 
-        //get type of posters being displayed
-        int posterType;
-
         //get poster list from Boss, if empty will start AsyncTask to get poster data, calls
         //updatePosters() after AsyncTask completes
-        switch (position) {
+        switch (index){
             //get Most Popular posters
             case 0: posters = mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
-                posterType = PosterHelper.NAME_ID_MOST_POPULAR;
                 break;
             //get Top Rated posters
             case 1: posters = mBoss.getPosters(PosterHelper.NAME_ID_TOP_RATED);
-                posterType = PosterHelper.NAME_ID_TOP_RATED;
                 break;
             //get Now Playing posters
             case 2: posters = mBoss.getPosters(PosterHelper.NAME_ID_NOW_PLAYING);
-                posterType = PosterHelper.NAME_ID_NOW_PLAYING;
                 break;
             //get Upcoming posters
             case 3: posters = mBoss.getPosters(PosterHelper.NAME_ID_UPCOMING);
-                posterType = PosterHelper.NAME_ID_UPCOMING;
                 break;
             //default request Favorite
             default: posters = mBoss.getPosters(PosterHelper.NAME_ID_FAVORITE);
-                posterType = PosterHelper.NAME_ID_FAVORITE;
-                break;
         }
 
         //check poster list size
         if(posters.size() > 0){
             //have poster in local buffer, update Poster fragment
-            updatePosters(posters, posterType);
+            updatePosters(posters, convertIndexToMovieType(index));
         }
     }
 
@@ -392,6 +383,7 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  * Class Methods:
  *      void updatePoster(ArrayList<PosterItem>,int) - update poster fragment with poster item data
  *      void onFABClick - floatingActionButton is clicked, refresh poster item data
+ *      int convertIndexToMovieType - converts to current swipe page index into a movie type
  */
 /**************************************************************************************************/
 /**
@@ -416,9 +408,35 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  */
     public void onFABClick(){
         //make API call to get fresh poster item data for current poster fragment
-        mBoss.refreshPosters(mMovieIndex);
+        mBoss.refreshPosters(convertIndexToMovieType(mPageIndex));
+    }
+
+/**
+ * int convertIndexToMovieType(int) - converts the current swipe page index into the current
+ * movie type being displayed.
+ * @param index - current swipe page index
+ * @return - movie type being displayed
+ */
+    private int convertIndexToMovieType(int index){
+        //get movie type from index
+        switch (index) {
+            //get Most Popular posters
+            case 0: return PosterHelper.NAME_ID_MOST_POPULAR;
+            //get Top Rated posters
+            case 1: return PosterHelper.NAME_ID_TOP_RATED;
+            //get Now Playing posters
+            case 2: return PosterHelper.NAME_ID_NOW_PLAYING;
+            //get Upcoming posters
+            case 3: return PosterHelper.NAME_ID_UPCOMING;
+            //default request Favorite
+            case 4: return PosterHelper.NAME_ID_FAVORITE;
+        }
+
+        //invalid page index
+        return 0;
     }
 
 /**************************************************************************************************/
+
 
 }
