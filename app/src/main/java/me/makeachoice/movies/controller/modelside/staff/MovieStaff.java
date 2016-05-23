@@ -207,10 +207,10 @@ public class MovieStaff {
 
             //create movie item from movie model
             MovieItem item = new MovieItem();
-            item.setId(mod.getId());
+            item.setTMDBId(mod.getId());
             item.setTitle(mod.getTitle());
             item.setOverview(mod.getOverview());
-            item.setImbdId(mod.getIMBDId());
+            item.setIMDBId(mod.getIMDBId());
 
             item.setOriginalTitle(mod.getOriginalTitle());
             item.setOriginalLanguage(mod.getOriginalLanguage());

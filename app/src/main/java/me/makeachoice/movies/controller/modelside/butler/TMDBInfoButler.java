@@ -154,7 +154,7 @@ public class TMDBInfoButler extends MyButler{
  */
     private MovieItem checkMovieBuffer(MovieItem item){
         //get movie id
-        int id = item.getId();
+        int id = item.getTMDBId();
 
         //check if movie item is in buffer
         if(mMovieMap.containsKey(id)){
@@ -237,7 +237,7 @@ public class TMDBInfoButler extends MyButler{
         prepareEmptyDetails(movieItem);
 
         //save movie item to buffer
-        mMovieMap.put(item.getId(), movieItem);
+        mMovieMap.put(item.getTMDBId(), movieItem);
 
         //return movie item
         return movieItem;
@@ -291,7 +291,7 @@ public class TMDBInfoButler extends MyButler{
     private MovieItem prepareMovieDetails(MovieModel model){
         MovieItem movieItem = mMovieMap.get(model.getId());
 
-        movieItem.setImbdId(model.getIMBDId());
+        movieItem.setIMDBId(model.getIMDBId());
         movieItem.setHomepage(model.getHomepage());
         movieItem.setGenres(prepareGenreItems(model.getGenres()));
         movieItem.setCast(prepareCastItems(model.getCast()));

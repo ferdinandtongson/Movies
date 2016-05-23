@@ -15,7 +15,7 @@ public class MovieModel {
     @SerializedName("release_date")
     private String releaseDate;
     @SerializedName("imbd_id")
-    private String imbdId;
+    private String imdbId;
     private  String homepage;                     //called during a request for a specific movie
 
 
@@ -70,7 +70,7 @@ public class MovieModel {
         return releaseDate;
     }
 
-    public String getIMBDId(){ return imbdId; }
+    public String getIMDBId(){ return imdbId; }
 
     public String getHomepage(){ return homepage; }
 
