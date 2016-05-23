@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 
 import me.makeachoice.movies.model.db.contract.MovieContract;
-import me.makeachoice.movies.model.db.contract.PosterContract;
 import me.makeachoice.movies.model.item.MovieItem;
 
 /**
@@ -181,7 +180,7 @@ public class MovieGetWorker extends AsyncTask<String, Void, ArrayList<MovieItem>
             item.setTitle(cursor.getString(MovieContract.INDEX_TITLE));
             item.setOverview(cursor.getString(MovieContract.INDEX_OVERVIEW));
             item.setReleaseDate(cursor.getString(MovieContract.INDEX_RELEASE_DATE));
-            item.setIMBDId(cursor.getString(MovieContract.INDEX_IMDB_ID));
+            item.setIMDBId(cursor.getString(MovieContract.INDEX_IMDB_ID));
             item.setHomepage(cursor.getString(MovieContract.INDEX_HOME_PAGE));
 
             item.setOriginalTitle(cursor.getString(MovieContract.INDEX_ORIGINAL_TITLE));

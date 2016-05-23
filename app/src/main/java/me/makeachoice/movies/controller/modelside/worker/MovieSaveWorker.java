@@ -223,7 +223,7 @@ public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
         values.put(MovieContract.COLUMN_NAME_TITLE, item.getTitle());
         values.put(MovieContract.COLUMN_NAME_OVERVIEW, item.getOverview());
         values.put(MovieContract.COLUMN_NAME_RELEASE_DATE, item.getReleaseDate());
-        values.put(MovieContract.COLUMN_NAME_IMBD_ID, item.getIMBDId());
+        values.put(MovieContract.COLUMN_NAME_IMBD_ID, item.getIMDBId());
         values.put(MovieContract.COLUMN_NAME_HOME_PAGE, item.getHomepage());
 
         values.put(MovieContract.COLUMN_NAME_ORIGINAL_TITLE, item.getOriginalTitle());
