@@ -3,6 +3,7 @@ package me.makeachoice.movies.controller.viewside.maid;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -269,7 +270,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge, NameAdapter
             mCastAdapter.setNames(prepareNames(item.getCast()));
         }
 
-        //set onItemClick listener for listview
+        //set onItemClick listener for listView
         listView.setOnItemClickListener(this);
 
         // Assign adapter to ListView
@@ -296,12 +297,22 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge, NameAdapter
             imgPoster = (ImageView)mViewHolder.getView(layout, InfoHelper.INFO_IMG_POSTER_LAND_ID);
         }
 
-        //add poster image, placeholder image and error image
-        Picasso.with(mBridge.getActivityContext())
-                .load(item.getPosterPath())
-                .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
-                .error(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
-                .into(imgPoster);
+        //get poster bitmap image from posterItem
+        Bitmap bitmap = item.getPoster();
+
+        //check if bitmap exists
+        if(bitmap != null){
+            //bitmap exist, set imageView with bitmap
+            imgPoster.setImageBitmap(bitmap);
+        }
+        else{
+            //bitmap does NOT exist, use picasso to get poster image from internet
+            Picasso.with(mBridge.getActivityContext())
+                    .load(item.getPosterPath())
+                    .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
+                    .error(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
+                    .into(imgPoster);
+        }
     }
 
 /**************************************************************************************************/
@@ -325,7 +336,7 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge, NameAdapter
 
         //check if cast member data is available
         if(item.getCast() != null){
-            //has cast membr data, get names of cast members and update cast adapter
+            //has cast member data, get names of cast members and update cast adapter
             mCastAdapter.setNames(prepareNames(item.getCast()));
         }
         else{
