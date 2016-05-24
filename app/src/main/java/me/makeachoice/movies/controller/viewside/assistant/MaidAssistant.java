@@ -2,7 +2,7 @@ package me.makeachoice.movies.controller.viewside.assistant;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.model.item.PosterItem;
+import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.viewside.housekeeper.DetailKeeper;
 import me.makeachoice.movies.controller.viewside.housekeeper.SwipeKeeper;
@@ -41,14 +41,14 @@ public class MaidAssistant{
         PosterMaid upcomingMaid = new PosterMaid(keeper, PosterHelper.NAME_ID_UPCOMING);
         PosterMaid favoriteMaid = new PosterMaid(keeper, PosterHelper.NAME_ID_FAVORITE);
 
-        ArrayList<PosterItem> posters = new ArrayList<>();
+        ArrayList<MovieItem> movies = new ArrayList<>();
 
         //update posters
-        popularMaid.updatePosters(posters);
-        topRatedMaid.updatePosters(posters);
-        nowPlayingMaid.updatePosters(posters);
-        upcomingMaid.updatePosters(posters);
-        favoriteMaid.updatePosters(posters);
+        popularMaid.updateMovies(movies);
+        topRatedMaid.updateMovies(movies);
+        nowPlayingMaid.updateMovies(movies);
+        upcomingMaid.updateMovies(movies);
+        favoriteMaid.updateMovies(movies);
 
 
         boss.registerMaid(PosterHelper.NAME_ID_MOST_POPULAR, popularMaid);
