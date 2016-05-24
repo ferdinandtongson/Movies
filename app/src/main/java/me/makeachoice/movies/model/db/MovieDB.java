@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.db.contract.MovieContract;
-import me.makeachoice.movies.model.db.contract.PosterContract;
 import me.makeachoice.movies.model.db.contract.RefreshContract;
 import me.makeachoice.movies.model.db.contract.TMDBContract;
 import me.makeachoice.movies.model.item.RefreshItem;
@@ -33,12 +32,6 @@ public class MovieDB extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         Log.d("Movies", "MovieDB.onCreate - create tables!!!!!!!!!!!!!!!!");
         db.execSQL(RefreshContract.RefreshEntry.CREATE_TABLE);
-
-        db.execSQL(PosterContract.MostPopularEntry.CREATE_TABLE);
-        db.execSQL(PosterContract.TopRatedEntry.CREATE_TABLE);
-        db.execSQL(PosterContract.NowPlayingEntry.CREATE_TABLE);
-        db.execSQL(PosterContract.UpcomingEntry.CREATE_TABLE);
-        db.execSQL(PosterContract.FavoriteEntry.CREATE_TABLE);
 
         db.execSQL(MovieContract.MostPopularEntry.CREATE_TABLE);
         db.execSQL(MovieContract.TopRatedEntry.CREATE_TABLE);
