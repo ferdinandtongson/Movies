@@ -190,8 +190,8 @@ public class MovieGetWorker extends AsyncTask<String, Void, ArrayList<MovieItem>
             item.setVoteCount(cursor.getInt(MovieContract.INDEX_VOTE_COUNT));
             item.setVoteAverage(cursor.getFloat(MovieContract.INDEX_VOTE_AVERAGE));
 
-            item.setHomepage(cursor.getString(MovieContract.INDEX_POSTER_PATH));
-            item.setHomepage(cursor.getString(MovieContract.INDEX_POSTER));
+            item.setPosterPath(cursor.getString(MovieContract.INDEX_POSTER_PATH));
+            item.setPosterBytes(cursor.getBlob(MovieContract.INDEX_POSTER_BYTES));
 
             //add movieItem to arrayList
             movies.add(item);
