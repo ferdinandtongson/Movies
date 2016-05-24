@@ -1,6 +1,5 @@
 package me.makeachoice.movies.controller.modelside.worker;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -12,6 +11,9 @@ import me.makeachoice.movies.model.item.MovieItem;
 
 /**
  * MovieSaveWorker - gets movie item data from the database, extends AsyncTask<>
+ *
+ * It uses other classes to assist saving data to the database:
+ *      MovieContract - converts MovieItem to ContentValues
  *
  * Methods from AsyncTask
  *      Boolean doInBackground(String...)
@@ -26,15 +28,19 @@ public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
 /**
  * Class Variables:
  *      ArrayList<MovieItem> - list of poster item data
+ *      MovieContract mContract - contract class for movies
  *      Bridge mBridge - bridge communication interface
  */
 /**************************************************************************************************/
 
-    //mBridge - bridge communication used by Butler class
-    Bridge mBridge;
-
     //mMovies - list of movie item data to be saved
     private ArrayList<MovieItem> mMovies;
+
+    //mContract - contract class for movies
+    private MovieContract mContract;
+
+    //mBridge - bridge communication used by Butler class
+    Bridge mBridge;
 
     //Implemented communication line to a Valet class
     public interface Bridge{
@@ -60,21 +66,10 @@ public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
 
         //movie item arrayList to be saved
         mMovies = movies;
+
+        //instantiate Contract class
+        mContract = new MovieContract();
     }
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * Getters:
- *      - None -
- *
- * Setters:
- *      - None -
- */
-/**************************************************************************************************/
-
-    //- None -
 
 /**************************************************************************************************/
 
@@ -144,7 +139,6 @@ public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
  *      void saveMoviesToDB(ArrayList<MovieItem>,String,String) - save movie data to database
  *      void updateMovies(ArrayList<MovieItem>,String) - update movie table with new data
  *      void insertMovies(ArrayList<MovieItem>,String) - insert new data into movie table
- *      ContentValues getContentValues(MovieItem,int) - convert MovieItem into ContentValues
  */
 /**************************************************************************************************/
 /**
@@ -193,7 +187,8 @@ public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
             whereClause = MovieContract.COLUMN_NAME_ORDER + " = " + i;
 
             //update movie table row
-            mBridge.getDatabase().update(tableName, getContentValues(item, i), whereClause, null);
+            mBridge.getDatabase().update(tableName, mContract.getContentValues(item, i),
+                    whereClause, null);
         }
     }
 
@@ -212,31 +207,9 @@ public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
             MovieItem item = movies.get(i);
 
             //insert new movie item data into poster table
-            mBridge.getDatabase().insert(tableName, null, getContentValues(item, i));
+            mBridge.getDatabase().insert(tableName, null, mContract.getContentValues(item, i));
         }
     }
-
-    public ContentValues getContentValues(MovieItem item, int index){
-        ContentValues values = new ContentValues();
-        values.put(MovieContract.COLUMN_NAME_MOVIE_ID, item.getTMDBId());
-        values.put(MovieContract.COLUMN_NAME_ORDER, index);
-        values.put(MovieContract.COLUMN_NAME_TITLE, item.getTitle());
-        values.put(MovieContract.COLUMN_NAME_OVERVIEW, item.getOverview());
-        values.put(MovieContract.COLUMN_NAME_RELEASE_DATE, item.getReleaseDate());
-        values.put(MovieContract.COLUMN_NAME_IMBD_ID, item.getIMDBId());
-        values.put(MovieContract.COLUMN_NAME_HOME_PAGE, item.getHomepage());
-
-        values.put(MovieContract.COLUMN_NAME_ORIGINAL_TITLE, item.getOriginalTitle());
-        values.put(MovieContract.COLUMN_NAME_ORIGINAL_LANGUAGE, item.getOriginalLanguage());
-
-        values.put(MovieContract.COLUMN_NAME_POPULARITY, item.getPopularity());
-        values.put(MovieContract.COLUMN_NAME_VOTE_COUNT, item.getVoteCount());
-        values.put(MovieContract.COLUMN_NAME_VOTE_AVERAGE, item.getVoteAverage());
-
-        values.put(MovieContract.COLUMN_NAME_POSTER_PATH, item.getPosterPath());
-        return values;
-    }
-
 
 /**************************************************************************************************/
 
