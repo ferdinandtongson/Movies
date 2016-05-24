@@ -101,9 +101,6 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
     //mRefreshValet - valet in charge of getting poster refresh database data
     private RefreshValet mRefreshValet;
 
-    //mPosterRetrieval - status flag on whether a poster db retrieval has been requested
-    private boolean mPosterRetrieval;
-
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -285,7 +282,6 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
 
     private ArrayList<PosterItem> getRequestedPosters(int movieType){
         Log.d("Boss", "     get" + getString(movieType));
-        mPosterRetrieval = false;
 
         if(mRefreshStaff.getMapSize() == 0){
             Log.d("Boss", "          retrieve refreshMap from db");
@@ -415,10 +411,20 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
  */
     public MovieItem getMovie(int movieType, int position){
         //get the movie item from the MovieStaff
-        MovieItem item = mMovieStaff.getMovie(movieType, position);
+        MovieItem movie = mMovieStaff.getMovie(movieType, position);
 
-        //get the movie item data from DetailButler, if incomplete will start an AsyncTask
-        return mInfoButler.getMovie(item);
+        PosterItem poster = mPosterStaff.getPoster(movieType, position);
+        movie.setPoster(poster.getPoster());
+
+
+        //check if movie item has complete data
+        if(movie.getCast() == null){
+            //data is incomplete, start AsyncTask to request movie data
+            mInfoButler.requestMovie(movie);
+        }
+
+        //return movie item data
+        return movie;
     }
 
 
@@ -485,7 +491,6 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
 /**
  * HouseKeeper Methods:
  *      MyHouseKeeper hireHouseKeeper(int) - get requested HouseKeeper, called by Activity
- *      void registerHouseKeeper(MyHouseKeeper,int) - register HouseKeeper
  */
 /**************************************************************************************************/
 /**
@@ -495,16 +500,6 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
  */
     public MyHouseKeeper hireHouseKeeper(int id){
         return mKeeperStaff.startHouseKeeper(id);
-    }
-
-/**
- * void registerHouseKeeper(MyHouseKeeper,int) - register HouseKeeper
- * @param keeper - HouseKeeper class (in charge of Activity objects)
- * @param id - id number of HouseKeeper
- */
-    public void registerHouseKeeper(MyHouseKeeper keeper, int id){
-        //register HouseKeeper
-        mKeeperStaff.setHouseKeeper(keeper, id);
     }
 
 /**************************************************************************************************/
@@ -521,7 +516,7 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
  * @param id - id number of maid
  * @return - sends Maid reference
  */
-    public MyMaid getMaid(Integer id){
+    public MyMaid hireMaid(Integer id){
         //return requested Maid
         return mMaidStaff.getMaid(id);
     }

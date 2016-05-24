@@ -81,7 +81,7 @@ public class InfoFragment extends MyFragment {
 
         try{
             //make sure Maid is implementing the Bridge interface
-            mBridge = (Bridge)boss.getMaid(mMaidId);
+            mBridge = (Bridge)boss.hireMaid(mMaidId);
         }catch(ClassCastException e){
             throw new ClassCastException(boss.toString() +
                     " must implement Bridge interface");

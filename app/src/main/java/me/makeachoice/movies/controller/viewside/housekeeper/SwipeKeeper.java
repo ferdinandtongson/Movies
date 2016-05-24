@@ -396,7 +396,7 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  */
     public void updatePosters(ArrayList<PosterItem> posters, int request){
         //get Maid responsible for displaying the type of movie posters requested
-        PosterMaid maid = ((PosterMaid)mBoss.getMaid(request));
+        PosterMaid maid = ((PosterMaid)mBoss.hireMaid(request));
 
         //update the Fragment being maintained by the Maid
         maid.updatePosters(posters);
