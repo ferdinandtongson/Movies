@@ -22,6 +22,7 @@ public class MovieStaff {
  *      ArrayList<MovieItem> mTopRatedMovies - Top Rated Movie item data from TMDB
  *      ArrayList<MovieItem> mNowPlayingMovies - Now Playing Movie item data from TMDB
  *      ArrayList<MovieItem> mUpcomingMovies - Upcoming Movie item data from TMDB
+ *      ArrayList<MovieItem> mFavoriteMovies - Favorite Movie item data selected by user
  */
 /**************************************************************************************************/
 
@@ -33,6 +34,8 @@ public class MovieStaff {
     private ArrayList<MovieItem> mNowPlayingMovies;
     //mUpcomingMovies - array list of movie item data of Upcoming Movies from TMDB
     private ArrayList<MovieItem> mUpcomingMovies;
+    //mFavoriteMovies - Favorite Movie item data selected by user
+    private ArrayList<MovieItem> mFavoriteMovies;
 
 /**************************************************************************************************/
 
@@ -66,6 +69,8 @@ public class MovieStaff {
         mNowPlayingMovies = new ArrayList<>();
         //buffer for Upcoming MovieItems
         mUpcomingMovies = new ArrayList<>();
+        //buffer for Favorite MovieItems
+        mFavoriteMovies = new ArrayList<>();
     }
 
 /**************************************************************************************************/
@@ -98,10 +103,12 @@ public class MovieStaff {
             case PosterHelper.NAME_ID_UPCOMING:
                 //get movie item from Upcoming buffer
                 return mUpcomingMovies.get(position);
-            default:
-                return null;
+            case PosterHelper.NAME_ID_FAVORITE:
+                //get movie item from Favorite buffer;
+                return mFavoriteMovies.get(position);
         }
-
+        //invalid request, return null
+        return null;
     }
 
 /**
@@ -124,10 +131,13 @@ public class MovieStaff {
             case PosterHelper.NAME_ID_UPCOMING:
                 //return Upcoming movie items
                 return mUpcomingMovies;
+            case PosterHelper.NAME_ID_FAVORITE:
+                //return Favorite movie items
+                return mFavoriteMovies;
         }
 
         //invalid request, return empty list
-        return new ArrayList<MovieItem>();
+        return new ArrayList<>();
     }
 
 /**************************************************************************************************/
@@ -162,23 +172,11 @@ public class MovieStaff {
                 //save movie items to Upcoming buffer
                 mUpcomingMovies = new ArrayList<>(movies);
                 break;
+            case PosterHelper.NAME_ID_FAVORITE:
+                //save movie items to Favorite buffer
+                mFavoriteMovies = new ArrayList<>(movies);
         }
     }
-
-/**
- * void setMovieModels(ArrayList<MovieModels>, int) - convert MovieModels to MovieItems; save to
- * buffer.
- * @param movieType - type of MovieItems to save
- * @param models - MovieModels to be converted and saved to buffer
- */
-    /*public void setMovieModels(ArrayList<MovieModel> models, int movieType){
-        //convert MovieModels to MovieItems
-        ArrayList<MovieItem> movies = prepareMovies(models);
-
-        //save MovieItems to buffer
-        setMovies(movies, movieType);
-
-    }*/
 
 /**************************************************************************************************/
 
@@ -250,6 +248,45 @@ public class MovieStaff {
         //clear and null Upcoming buffer
         mUpcomingMovies.clear();
         mUpcomingMovies = null;
+
+        //clear and null Favorite buffer
+        mFavoriteMovies.clear();
+        mFavoriteMovies = null;
+    }
+
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Favorites:
+ *      void addFavorite(MovieItem) - adds movie to Favorite Movie list
+ *      void removeFavorite(MovieItem) - removes movie from Favorite Movie list
+ *      boolean alreadyFavorite(MovieItem) - check if Movie is already in the Favorite Movie list
+ */
+/**************************************************************************************************/
+/**
+ * void addFavorite(MovieItem) - adds movie to Favorite Movie list
+ * @param movie - movie to be added to list
+ */
+    public void addFavorite(MovieItem movie){
+        mFavoriteMovies.add(movie);
+    }
+
+/**
+ * void removeFavorite(MovieItem) - removes movie from Favorite Movie list
+ * @param movie - movie to be removed from list
+ */
+    public void removeFavorite(MovieItem movie){
+        mFavoriteMovies.remove(movie);
+    }
+
+/**
+ * boolean alreadyFavorite(MovieItem) - check if Movie is already in the Favorite Movie list
+ * @param movie - check if movie is already in the list
+ * @return - true if already in list, false otherwise
+ */
+    public boolean alreadyFavorite(MovieItem movie){
+        return mFavoriteMovies.contains(movie);
     }
 
 /**************************************************************************************************/
