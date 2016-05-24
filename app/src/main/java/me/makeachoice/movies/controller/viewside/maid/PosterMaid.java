@@ -12,8 +12,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import me.makeachoice.movies.R;
+import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.util.NetworkManager;
-import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.viewside.adapter.RecyclerItemClickListener;
 import me.makeachoice.movies.util.GridAutofitLayoutManager;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
@@ -22,7 +22,7 @@ import me.makeachoice.movies.view.fragment.PosterFragment;
 
 /**
  * PosterMaid initializes and takes care of communicating with the Fragment that hold the
- * list of poster Movies the user can select from.
+ * list of Movies the user can select from.
  *
  * Its main purpose is to upkeep and handle events and request from the Fragment and if the Maid
  * cannot handle a request or an event, it will pass it onto the HouseKeeper.
@@ -83,8 +83,10 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
-        //notify HouseKeeper a poster has been selected
-        void onSelectedPoster(int id, int position);
+        //notify Bridge a poster has been clicked
+        void onPosterClicked(int id, int position);
+        //notify Bridge a poster has been long-clicked
+        void onPosterLongClicked(int id, int position);
     }
 
 /**************************************************************************************************/
@@ -229,7 +231,7 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
                             @Override
                             public void onItemClick(View view, int position) {
                                 //notify Bridge poster has been selected
-                                mBridge.onSelectedPoster(mMaidId, position);
+                                mBridge.onPosterClicked(mMaidId, position);
                             }
                         })
         );
@@ -252,26 +254,37 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
 /**************************************************************************************************/
 /**
  * Public Methods:
- *      void updatePosters(ArrayList<PosterItem>) - update recyclerView with new poster data
+ *      void updateMovies(ArrayList<MovieItem>) - update recyclerView with new movie item data
+ *      void onPosterLongClicked(int) - a poster long-click event occurred in PosterRecycler
  */
 /**************************************************************************************************/
 /**
- * void updatePosters(PosterItem) - called by HouseKeep to inform Maid that changes to the data
+ * void updateMovies(MovieItem) - called by HouseKeep to inform Maid that changes to the data
  * being displayed in the fragment has occurred.
- * @param posters - list of PosterItem data
+ * @param movies - list of MovieItem data
  */
-    public void updatePosters(ArrayList<PosterItem> posters){
+    public void updateMovies(ArrayList<MovieItem> movies){
         if(mLayout != null){
             //if layout not null, check if there is data to display
-            displayNoData(posters.size());
+            displayNoData(movies.size());
         }
 
-        //change movie posters being displayed
-        mRecycler.setPosters(posters);
+        //change movies being displayed
+        mRecycler.setMovies(movies);
 
         //notify adapter that data has changed
         mRecycler.notifyDataSetChanged();
     }
+
+/**
+ * void onPosterLongClicked(int) - a poster long-click event occurred in PosterRecycler
+ * @param position - position of poster
+ */
+    public void onPosterLongClicked(int position){
+        //notify Bridge that a poster long-click event occurred
+        mBridge.onPosterLongClicked(mMaidId, position);
+    }
+
 
 /**************************************************************************************************/
 
@@ -332,4 +345,5 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
     }
 
 /**************************************************************************************************/
+
 }

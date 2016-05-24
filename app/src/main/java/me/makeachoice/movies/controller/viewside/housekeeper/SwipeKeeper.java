@@ -10,6 +10,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.view.activity.DetailActivity;
 import me.makeachoice.movies.view.activity.MyActivity;
 import me.makeachoice.movies.view.activity.SwipeActivity;
@@ -69,7 +70,8 @@ import me.makeachoice.movies.controller.viewside.adapter.SwipeAdapter;
  * Implements PosterMaid.Bridge
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
- *      void onSelectedPoster(int, int) - movie poster selected [PosterMaid.Bridge]
+ *      void onPosterClicked(int, int) - movie poster selected
+ *      void onPosterLongClicked(int, int) - movie poster long-clicked
  *
  * Implements ViewPager.OnPageChangeListener
  *      void onPageScrollStateChanged(int)
@@ -282,8 +284,9 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 /**
  * PosterMaid.Bridge implementations:
  *      Context getActivityContext() - implemented by MyHouseKeeper
- *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
- *      void onSelectedPoster(int position) [PosterMaid] - onSelectPoster event
+ *      void registerFragment(Integer,Fragment) - implemented by MyHouseKeeper
+ *      void onPosterClicked(int, int) - onPosterClicked event, show detailed info of movie
+ *      void onPosterLongClicked(int,int) - onPosterLongClicked event
  */
 /**************************************************************************************************/
 /**
@@ -291,7 +294,7 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  * @param movieType - id number of the Maid used as movieType where the poster selection occurred
  * @param index - position of poster
  */
-    public void onSelectedPoster(int movieType, int index){
+    public void onPosterClicked(int movieType, int index){
         //get key for saving movie type to Extra
         String keyType = mBoss.getActivityContext().getString(DetailHelper.KEY_MOVIE_TYPE_ID);
         //get key for saving movie index to Extra
@@ -307,6 +310,27 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 
         //start DetailActivity
         mBoss.getActivityContext().startActivity(intent);
+    }
+
+    public void onPosterLongClicked(int movieType, int index){
+        //get movie type
+        switch (movieType) {
+            //save Most Popular poster
+            case PosterHelper.NAME_ID_MOST_POPULAR:
+            //get Top Rated posters
+            case PosterHelper.NAME_ID_TOP_RATED:
+            //get Now Playing posters
+            case PosterHelper.NAME_ID_NOW_PLAYING:
+            //get Upcoming posters
+            case PosterHelper.NAME_ID_UPCOMING:
+                mBoss.addToFavorite(movieType, index);
+                break;
+            //default request Favorite
+            case PosterHelper.NAME_ID_FAVORITE:
+                mBoss.removeFavorite(index);
+                break;
+        }
+
     }
 
 /**************************************************************************************************/
@@ -329,32 +353,32 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         //save swipe page index
         mPageIndex = index;
 
-        //initialize arrayList to hold poster items
-        ArrayList<PosterItem> posters;
+        //initialize arrayList to hold movie items
+        ArrayList<MovieItem> movies = new ArrayList<>();
 
         //get poster list from Boss, if empty will start AsyncTask to get poster data, calls
         //updatePosters() after AsyncTask completes
         switch (index){
             //get Most Popular posters
-            case 0: posters = mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
+            case 0: movies = mBoss.getMovies(PosterHelper.NAME_ID_MOST_POPULAR);
                 break;
             //get Top Rated posters
-            case 1: posters = mBoss.getPosters(PosterHelper.NAME_ID_TOP_RATED);
+            case 1: movies = mBoss.getMovies(PosterHelper.NAME_ID_TOP_RATED);
                 break;
             //get Now Playing posters
-            case 2: posters = mBoss.getPosters(PosterHelper.NAME_ID_NOW_PLAYING);
+            case 2: movies = mBoss.getMovies(PosterHelper.NAME_ID_NOW_PLAYING);
                 break;
             //get Upcoming posters
-            case 3: posters = mBoss.getPosters(PosterHelper.NAME_ID_UPCOMING);
+            case 3: movies = mBoss.getMovies(PosterHelper.NAME_ID_UPCOMING);
                 break;
-            //default request Favorite
-            default: posters = mBoss.getPosters(PosterHelper.NAME_ID_FAVORITE);
+            //get Favorite posters
+            case 4: movies = mBoss.getMovies(PosterHelper.NAME_ID_FAVORITE);
         }
 
         //check poster list size
-        if(posters.size() > 0){
+        if(movies.size() > 0){
             //have poster in local buffer, update Poster fragment
-            updatePosters(posters, convertIndexToMovieType(index));
+            updateMovies(movies, convertIndexToMovieType(index));
         }
     }
 
@@ -381,25 +405,22 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 /**************************************************************************************************/
 /**
  * Class Methods:
- *      void updatePoster(ArrayList<PosterItem>,int) - update poster fragment with poster item data
+ *      void updateMovies(ArrayList<MovieItem>,int) - update poster fragment with movie item data
  *      void onFABClick - floatingActionButton is clicked, refresh poster item data
  *      int convertIndexToMovieType - converts to current swipe page index into a movie type
  */
 /**************************************************************************************************/
 /**
- * void updatePoster(ArrayList<PosterItem>, int) - update poster fragment with poster item data. If
- * poster item data is buffered will be called onPageSelected(). If there is no poster item data
- * buffered, Boss will start an AsyncTask to get the data either from the database or through an
- * API call. Once that task is done, this method will be called.
- * @param posters - list of PosterItem data requested
+ * void updatePoster(ArrayList<PosterItem>, int) - update poster fragment with movie item data.
+ * @param movies - list of MovieItem data requested
  * @param request - type of movie posters requested
  */
-    public void updatePosters(ArrayList<PosterItem> posters, int request){
+    public void updateMovies(ArrayList<MovieItem> movies, int request){
         //get Maid responsible for displaying the type of movie posters requested
         PosterMaid maid = ((PosterMaid)mBoss.hireMaid(request));
 
         //update the Fragment being maintained by the Maid
-        maid.updatePosters(posters);
+        maid.updateMovies(movies);
     }
 
 /**

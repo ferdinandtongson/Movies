@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import me.makeachoice.movies.model.item.PosterItem;
+import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 
 /**
@@ -34,7 +34,8 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
 /**************************************************************************************************/
 /**
  * Class Variables
- *      ArrayList<PosterItem> mPosters - array list of poster data
+ *      int mPosition - use to return position of the movie long-clicked
+ *      ArrayList<MovieItem> mMovies - array list of movie data consumed by the adapter
  *      Bridge mBridge - class implementing Bridge interface, typically a Maid class
  *
  * Interface:
@@ -42,8 +43,11 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  */
 /**************************************************************************************************/
 
-    //mPosters - an array list of poster item data consumed by the adapter
-    private ArrayList<PosterItem> mPosters;
+    //mPosition - use to return position of the movie long-clicked
+    int mPosition;
+
+    //mMovies - array list of movie data consumed by the adapter
+    private ArrayList<MovieItem> mMovies;
 
     //mBridge - class implementing Bridge, typically a Maid class
     private Bridge mBridge;
@@ -52,6 +56,9 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
     public interface Bridge{
         //get Context of current Activity
         Context getActivityContext();
+        //add long click listener to item in recycler
+        void onPosterLongClicked(int position);
+
     }
 
 /**************************************************************************************************/
@@ -71,28 +78,28 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
 /**************************************************************************************************/
 /**
  * Getters:
- *      int getItemCount()
+ *      int getItemCount() - get number of movie items in adapter
  *
  * Setters:
- *      void setPosters(ArrayList<PosterItem>)
+ *      void setMovies(ArrayList<MovieItem>) - get data to be display by the RecyclerView
  */
 /**************************************************************************************************/
 /**
- * int getItemCount() - get number of poster items in adapter
- * @return int - number of poster items in adapter
+ * int getItemCount() - get number of movie items in adapter
+ * @return int - number of movie items in adapter
  */
     @Override
     public int getItemCount(){
-        //return number of poster items
-        return mPosters.size();
+        //return number of movie items
+        return mMovies.size();
     }
 
 /**
- * void setPosters(ArrayList<PosterItem>) - get data to be display by the RecyclerView
- * @param posters - list of poster data
+ * void setMovies(ArrayList<MovieItem>) - get data to be display by the RecyclerView
+ * @param movies - list of movie item data
  */
-    public void setPosters(ArrayList<PosterItem> posters){
-        mPosters = posters;
+    public void setMovies(ArrayList<MovieItem> movies){
+        mMovies = movies;
     }
 
 /**************************************************************************************************/
@@ -131,10 +138,22 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  * @param position - position of the itemView being bound
  */
     @Override
-    public void onBindViewHolder(PosterHolder holder, int position) {
+    public void onBindViewHolder(PosterHolder holder, int position){
+        //save position of poster
+        mPosition = position;
 
         //update poster title textView
-        holder.mTxtTitle.setText(mPosters.get(position).getTitle());
+        holder.mTxtTitle.setText(mMovies.get(position).getTitle());
+
+        //add a long-click listener to each poster item
+        holder.mCrdPoster.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mBridge.onPosterLongClicked(mPosition);
+                return true;
+            }
+        });
+
 
         //update poster image imageView
         updatePoster(holder, position);
@@ -149,7 +168,7 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
     private void updatePoster(PosterHolder holder, int position){
 
         //get poster bitmap image from posterItem
-        Bitmap bitmap = mPosters.get(position).getPoster();
+        Bitmap bitmap = mMovies.get(position).getPoster();
 
         //check if bitmap exists
         if(bitmap != null){
@@ -159,7 +178,7 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
         else{
             //bitmap does NOT exist, use picasso to get poster image from internet
             Picasso.with(mBridge.getActivityContext())
-                    .load(mPosters.get(position).getPosterPath())
+                    .load(mMovies.get(position).getPosterPath())
                     .placeholder(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
                     .error(PosterHelper.POSTER_PLACEHOLDER_IMG_ID)
                     .into(holder.mImgPoster);
