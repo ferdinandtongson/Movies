@@ -3,7 +3,6 @@ package me.makeachoice.movies.controller.modelside.butler;
 import android.content.Context;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.Boss;
@@ -60,9 +59,6 @@ public class TMDBInfoButler extends MyButler{
     //mInfoWorker - AsyncTask class that makes API calls to get Movie details
     private TMDBInfoWorker mInfoWorker;
 
-    //mMovieMap - movie buffer holding movie items
-    private HashMap<Integer, MovieItem> mMovieMap;
-
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -94,9 +90,6 @@ public class TMDBInfoButler extends MyButler{
     private void initBuffers(){
         //initialize buffer to hold pending movie requests
         mRequestBuffer = new ArrayList<>();
-
-        //initialize buffer to hold movie items that have been requested
-        mMovieMap = new HashMap<>();
     }
 
 /**************************************************************************************************/
@@ -120,14 +113,19 @@ public class TMDBInfoButler extends MyButler{
     }
 
 /**
- * MovieItem getMovie(MovieItem) - get the MovieItem of the request movie
+ * void requestMovie(MovieItem) - get the MovieItem of the requested movie
  * @param item - movie model being requested
  * @return - movie item processed for consumption by View
  */
-    public MovieItem getMovie(MovieItem item){
+    public void requestMovie(MovieItem item){
+        mItem = item;
         //check if movie is in buffer
-        return checkMovieBuffer(item);
+        //return checkMovieBuffer(item);
+        makeDetailRequest(item.getTMDBId());
     }
+
+    private MovieItem mItem;
+
 
 /**************************************************************************************************/
 
@@ -146,30 +144,6 @@ public class TMDBInfoButler extends MyButler{
  *      void checkRequestBuffer() - check if there are any pending movie data requests
  */
 /**************************************************************************************************/
-/**
- * MovieItem checkMovieBuffer(MovieModel) - check if movie is in buffer. If not, a request is made
- * to get the movie data.
- * @param item - movie being requested
- * @return - movie item ready for View consumption
- */
-    private MovieItem checkMovieBuffer(MovieItem item){
-        //get movie id
-        int id = item.getTMDBId();
-
-        //check if movie item is in buffer
-        if(mMovieMap.containsKey(id)){
-            //movie in buffer, return movie item
-            return mMovieMap.get(id);
-        }
-        else{
-            //requested to get missing movie data
-            makeDetailRequest(id);
-
-            //prepare movie data we already have for View consumption
-            return prepareMovieItem(item);
-        }
-    }
-
 /**
  * void makeMovieDetailRequest(int) - make a request to get details of a movie. If the MovieWorker
  * is working, save movie id into request buffer. If not working, start request
@@ -213,7 +187,8 @@ public class TMDBInfoButler extends MyButler{
 
         //check if results were successful
         if(result){
-            mBoss.updateDetailActivity(prepareMovieDetails(mInfoWorker.getMovie()));
+            mItem = prepareMovieDetails(mInfoWorker.getMovie(), mItem);
+            mBoss.updateDetailActivity(mItem);
         }
         else{
             //TODO - need to handle event of a download failure
@@ -223,82 +198,16 @@ public class TMDBInfoButler extends MyButler{
 
     }
 
-/**
- * MovieItem prepareMovieItem(MovieModel) - convert MovieModel to MovieItem
- * @param item - MovieModel data
- * @return - MovieItem
- */
-    private MovieItem prepareMovieItem(MovieItem item){
+    private MovieItem prepareMovieDetails(MovieModel model, MovieItem item){
 
-        //create an empty MovieItem object
-        MovieItem movieItem = new MovieItem();
+        item.setIMDBId(model.getIMDBId());
+        item.setHomepage(model.getHomepage());
+        item.setGenres(prepareGenreItems(model.getGenres()));
+        item.setCast(prepareCastItems(model.getCast()));
+        item.setReviews(prepareReviewItems(model.getReviews()));
+        item.setVideos(prepareVideoItems(model.getVideos()));
 
-        //populate MovieItem with MovieModel data
-        prepareEmptyDetails(movieItem);
-
-        //save movie item to buffer
-        mMovieMap.put(item.getTMDBId(), movieItem);
-
-        //return movie item
-        return movieItem;
-    }
-
-    private void prepareEmptyDetails(MovieItem movie){
-        String strEmpty = mBoss.getString(R.string.str_empty);
-
-
-        ArrayList<GenreItem> emptyGenre = new ArrayList<>();
-        GenreItem genreItem = new GenreItem();
-        genreItem.setTMDBId(-1);
-        genreItem.setName(strEmpty);
-
-        emptyGenre.add(genreItem);
-        movie.setGenres(emptyGenre);
-
-        ArrayList<CastItem> emptyCast = new ArrayList<>();
-
-        CastItem castItem = new CastItem();
-        castItem.character = strEmpty;
-        castItem.name = strEmpty;
-        castItem.profilePath = strEmpty;
-
-        emptyCast.add(castItem);
-        movie.setCast(emptyCast);
-
-        ArrayList<ReviewItem> emptyReview = new ArrayList<>();
-
-        ReviewItem reviewItem = new ReviewItem();
-        reviewItem.author = strEmpty;
-        reviewItem.review = strEmpty;
-        reviewItem.reviewPath = strEmpty;
-
-        emptyReview.add(reviewItem);
-        movie.setReviews(emptyReview);
-
-        ArrayList<VideoItem> emptyVideo = new ArrayList<>();
-
-        VideoItem videoItem = new VideoItem();
-        videoItem.key = strEmpty;
-        videoItem.name = strEmpty;
-        videoItem.site = strEmpty;
-        videoItem.size = -1;
-
-        emptyVideo.add(videoItem);
-        movie.setVideos(emptyVideo);
-
-    }
-
-    private MovieItem prepareMovieDetails(MovieModel model){
-        MovieItem movieItem = mMovieMap.get(model.getId());
-
-        movieItem.setIMDBId(model.getIMDBId());
-        movieItem.setHomepage(model.getHomepage());
-        movieItem.setGenres(prepareGenreItems(model.getGenres()));
-        movieItem.setCast(prepareCastItems(model.getCast()));
-        movieItem.setReviews(prepareReviewItems(model.getReviews()));
-        movieItem.setVideos(prepareVideoItems(model.getVideos()));
-
-        return movieItem;
+        return item;
     }
 
     private ArrayList<GenreItem> prepareGenreItems(ArrayList<GenreModel> models){
