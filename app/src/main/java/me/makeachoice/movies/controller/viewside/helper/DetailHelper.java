@@ -48,8 +48,8 @@ public class DetailHelper extends MyHelper{
     //XXX_TOOLBAR_ID is the toolbar used by Activity
     //public static final  int XXX_TOOLBAR_ID = R.id.toolbar;
 
-    //XXX_FAB_ID is the floating action button
-    //public static final  int XXX_FAB_ID = R.id.fab;
+    //DETAIL_FAB_ID is the floating action button
+    public static final  int DETAIL_FAB_ID = R.id.detail_fab;
 
 /**************************************************************************************************/
 

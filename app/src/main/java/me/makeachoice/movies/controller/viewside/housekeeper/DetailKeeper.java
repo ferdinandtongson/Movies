@@ -9,9 +9,15 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import me.makeachoice.movies.R;
+import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
+import me.makeachoice.movies.controller.viewside.helper._templateHelper;
+import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.util.NetworkManager;
 import me.makeachoice.movies.view.activity.DetailActivity;
 import me.makeachoice.movies.view.activity.MyActivity;
@@ -73,7 +79,8 @@ import me.makeachoice.movies.view.dialog.ReviewDialog;
  *
  */
 public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
-        DetailAdapter.Bridge, InfoMaid.Bridge, ReviewMaid.Bridge, VideoMaid.Bridge {
+        DetailAdapter.Bridge, InfoMaid.Bridge, ReviewMaid.Bridge, VideoMaid.Bridge,
+        ViewPager.OnPageChangeListener{
 
 /**************************************************************************************************/
 /**
@@ -88,6 +95,16 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
     //mMovie - movie item data to be displayed
     private MovieItem mMovie;
+
+    //mFabListener - onClick listener for FloatingActionButton
+    private View.OnClickListener mFabListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onFABClick();
+        }
+    };
+
+
 
 /**************************************************************************************************/
 
@@ -212,13 +229,13 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
         mMovie = mBoss.getMovie(movieType, index);
 
-        InfoMaid infoMaid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
+        InfoMaid infoMaid = (InfoMaid)mBoss.hireMaid(InfoHelper.NAME_ID);
         infoMaid.setMovie(mMovie);
 
-        ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
+        ReviewMaid reviewMaid = (ReviewMaid)mBoss.hireMaid(ReviewHelper.NAME_ID);
         reviewMaid.setReviews(mMovie.getReviews());
 
-        VideoMaid videoMaid = (VideoMaid)mBoss.getMaid(VideoHelper.NAME_ID);
+        VideoMaid videoMaid = (VideoMaid)mBoss.hireMaid(VideoHelper.NAME_ID);
         videoMaid.setVideos(mMovie.getVideos());
 
 
@@ -233,7 +250,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         //mToolbar = getToolbar(activity, _templateHelper.MAIN_TOOLBAR_ID);
 
         //TODO - set floatbar layout, create Helper
-        //mFab = getFloatButton(activity, _templateHelper.MAIN_FAB_ID), xxOnClickListener)
+        mFab = getFloatButton(activity, DetailHelper.DETAIL_FAB_ID, mFabListener);
 
         //check for connectivity
         if(!NetworkManager.hasConnection(mBoss.getActivityContext())){
@@ -245,6 +262,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
         //get viewPager
         ViewPager viewPager = (ViewPager)activity.findViewById(DetailHelper.DETAIL_PAGER_ID);
+        viewPager.addOnPageChangeListener(this);
 
         //set adapter in viewPager
         viewPager.setAdapter(adapter);
@@ -398,17 +416,95 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  */
     public void updateDetails(MovieItem item){
         //get Maid responsible for displaying the type of movies requested
-        InfoMaid infoMaid = (InfoMaid)mBoss.getMaid(InfoHelper.NAME_ID);
+        InfoMaid infoMaid = (InfoMaid)mBoss.hireMaid(InfoHelper.NAME_ID);
         infoMaid.updateViews(item);
 
-        ReviewMaid reviewMaid = (ReviewMaid)mBoss.getMaid(ReviewHelper.NAME_ID);
+        ReviewMaid reviewMaid = (ReviewMaid)mBoss.hireMaid(ReviewHelper.NAME_ID);
         reviewMaid.updateReviews(item.getReviews());
 
-        VideoMaid videoMaid = (VideoMaid)mBoss.getMaid(VideoHelper.NAME_ID);
+        VideoMaid videoMaid = (VideoMaid)mBoss.hireMaid(VideoHelper.NAME_ID);
         videoMaid.updateVideos(item.getVideos());
 
         //update posters being displayed by the Fragment being maintained by the Maid
         //maid.updatePosters(posters);
+    }
+
+/**************************************************************************************************/
+
+    /**
+     * void onFABClick() - the floatingActionButton has been clicked, user want to refresh poster
+     * item data.
+     */
+    public void onFABClick(){
+        Log.d("Boss", "DetailKeeper.onFABClick");
+        //make API call to get fresh poster item data for current poster fragment
+        //mBoss.refreshPosters(convertIndexToMovieType(mPageIndex));
+    }
+
+/**************************************************************************************************/
+/**
+ * ViewPager.OnPageChangeListener implementations:
+ *      void onPageSelected(int) - current fragment being viewed by ViewPager adapter
+ *      void onPageScrollStateChanged(int) - does nothing
+ *      void onPageScrolled(int,float,int) - does nothing
+ */
+/**************************************************************************************************/
+    /**
+     * void onPageSelected(int) - update fragment being viewed by ViewPager adapter. Checks with Boss
+     * if poster data is in local buffer, if not will start an AsyncTask to get it from the database or
+     * make an API call. After AsyncTask is complete, will call updatePosters() method
+     * @param index - index of fragment being viewed by user
+     */
+    public void onPageSelected(int index){
+        Log.d("Bos", "DetailKeeper.onPageSelected: " + index);
+        //save swipe page index
+        //mPageIndex = index;
+
+        //initialize arrayList to hold poster items
+        ArrayList<PosterItem> posters;
+
+        //get poster list from Boss, if empty will start AsyncTask to get poster data, calls
+        //updatePosters() after AsyncTask completes
+        switch (index){
+            //get Most Popular posters
+            case 0:
+                //mFab.setBackgroundResource(R.drawable.star_white);
+                mFab.setImageResource(R.drawable.star_white);
+                mFab.refreshDrawableState();
+                mFab.setVisibility(View.VISIBLE);
+                break;
+            //get Top Rated posters
+            case 1:
+                //mFab.setBackgroundResource(R.drawable.star_white);
+                mFab.setVisibility(View.INVISIBLE);
+                mFab.refreshDrawableState();
+                break;
+            //get Now Playing posters
+            case 2:
+                //mFab.setBackgroundResource(R.drawable.share_white);
+                mFab.setImageResource(R.drawable.share_white);
+                mFab.refreshDrawableState();
+                mFab.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    /**
+     * void onPageScrollStateChanged(int) - does nothing
+     * @param state - state of page scroll
+     */
+    public void onPageScrollStateChanged(int state){
+        //does nothing
+    }
+
+    /**
+     * void onPageScrolled(int,float,int) - does nothing
+     * @param position - initial position
+     * @param positionOffset - change of position
+     * @param positionOffsetPixels - change of pixel position
+     */
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
+        //does nothing
     }
 
 /**************************************************************************************************/
