@@ -2,7 +2,9 @@ package me.makeachoice.movies.controller.modelside.staff;
 
 import java.util.ArrayList;
 
+import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.Boss;
+import me.makeachoice.movies.controller.modelside.uri.TMDBUri;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.item.MovieItem;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
@@ -18,6 +20,9 @@ public class MovieStaff {
 /**************************************************************************************************/
 /**
  * Class Variables:
+ *      String mTMDBKey - the key used to access TheMovieDB api
+ *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
+ *
  *      ArrayList<MovieItem> mPopularMovies - Popular Movie item data from TMDB
  *      ArrayList<MovieItem> mTopRatedMovies - Top Rated Movie item data from TMDB
  *      ArrayList<MovieItem> mNowPlayingMovies - Now Playing Movie item data from TMDB
@@ -25,6 +30,11 @@ public class MovieStaff {
  *      ArrayList<MovieItem> mFavoriteMovies - Favorite Movie item data selected by user
  */
 /**************************************************************************************************/
+
+    //mTMDBKey - the key used to access TheMovieDB api
+    private String mTMDBKey;
+    //mUri - class that builds TheMovieDB api uri strings
+    private TMDBUri mTMDBUri;
 
     //mPopularMovies - array list of movie item data of Popular Movies from TMDB
     private ArrayList<MovieItem> mPopularMovies;
@@ -41,10 +51,17 @@ public class MovieStaff {
 
 /**************************************************************************************************/
 /**
- * MovieStaff - constructor, initialize movie item buffers
+ * MovieStaff - constructor, get TMDBUri builder and TMDBKey (TMDB = TheMovieDB) and initialize
+ * data buffers.
  * @param boss - Boss class
  */
     public MovieStaff(Boss boss){
+        //builds TheMovieDB api uri strings
+        mTMDBUri = new TMDBUri(boss);
+
+        //get TheMovieDB api key from resource file
+        mTMDBKey = boss.getString(R.string.api_key_tmdb);
+
         //initialize buffers
         initBuffers();
     }
@@ -218,8 +235,11 @@ public class MovieStaff {
             item.setVoteCount(mod.getVoteCount());
             item.setVoteAverage(mod.getVoteAverage());
 
-            item.setPosterPath(mod.getPosterPath());
-            item.setBackdropPath(mod.getBackdropPath());
+            //get uri poster path
+            String posterPath = mTMDBUri.getImagePath(mod.getPosterPath(), mTMDBKey);
+
+            item.setPosterPath(posterPath);
+            item.setPoster(null);
 
             //add item into array list
             itemList.add(item);
