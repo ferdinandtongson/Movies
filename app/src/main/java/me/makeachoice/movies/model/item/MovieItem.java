@@ -30,6 +30,7 @@ public class MovieItem {
  *
  *      String mPosterPath - the full API path to the poster image in TMDB
  *      Bitmap mPoster - bitmap of the movie poster
+ *      byte[] mPosterByte - holds the byte array for the poster image
  *
  *      String mBackdropPath - url path to the movie backdrop image
  *      boolean mVideo - if movie contains a video
@@ -73,6 +74,9 @@ public class MovieItem {
     private String mPosterPath;
     //mPoster - bitmap of the movie poster
     private Bitmap mPoster;
+    //mPosterByte - holds the byte array for the poster image
+    private byte[] mPosterByte;
+
 
     //mBackdropPath - url path to the movie backdrop image
     private String mBackdropPath;
@@ -144,6 +148,7 @@ public class MovieItem {
 
     public String getPosterPath(){ return mPosterPath; }
     public Bitmap getPoster(){ return mPoster; }
+    public byte[] getPosterBytes(){ return mPosterByte; }
 
     public String getBackdropPath(){ return mBackdropPath; }
     public Boolean getVideo(){ return mVideo; }
@@ -177,6 +182,7 @@ public class MovieItem {
  *
  *      void setPosterPath(String) - sets the full API path to the poster image in TMDB
  *      void setPoster(Bitmap) - sets the poster bitmap
+ *      void setPosterBytes(byte[]) - set the byte array value of the poster bitmap
  *
  *      void setBackdropPath(String) - sets url path to the movie backdrop image
  *      void setVideo(boolean) - sets status if movie contains a video
@@ -207,6 +213,7 @@ public class MovieItem {
 
     public void setPosterPath(String path){ mPosterPath = path; }
     public void setPoster(Bitmap poster){ mPoster = poster; }
+    public void setPosterBytes(byte[] bmpByte){ mPosterByte = bmpByte;}
 
     public void setBackdropPath(String path){ mBackdropPath = path; }
     public void setVideo(boolean hasVideo){mVideo = hasVideo; }
