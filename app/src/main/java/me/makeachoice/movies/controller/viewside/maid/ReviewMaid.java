@@ -12,9 +12,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.viewside.adapter.RecyclerItemClickListener;
 import me.makeachoice.movies.controller.viewside.adapter.ReviewRecycler;
 import me.makeachoice.movies.controller.viewside.helper.ReviewHelper;
+import me.makeachoice.movies.util.NetworkManager;
 import me.makeachoice.movies.view.fragment.ReviewFragment;
 import me.makeachoice.movies.model.item.ReviewItem;
 
@@ -278,8 +280,18 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
         mRecycler.notifyDataSetChanged();
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
 /**
- * void displayNoData(int) - displays "No Data" message to user if there are no reviews
+ * Class Methods:
+ *      void displayNoData(int) - displays "No Data" message to user if there are no reviews
+ *      String noDataMessage() - type of "No Data" message to display
+ */
+/**************************************************************************************************/
+/**
+ * void displayNoData(int) - displays "No Data" message to user if there are no reviews and hid
+ * "No Data" display if there are reviews to display
  * @param count - number of reviews to display
  */
     private void displayNoData(int count){
@@ -289,15 +301,37 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
 
         //check if there are any reviews
         if(count == 0){
-            //no reviews, display "No Data" text
+            //no posters, set message "No Data" message
+            txtNoData.setText(noDataMessage());
+            //display "No Data" text
             txtNoData.setVisibility(View.VISIBLE);
         }
         else{
-            //have reviews, hid "No Data" text
+            //have posters, hid "No Data" text
             txtNoData.setVisibility(View.INVISIBLE);
         }
 
     }
 
+/**
+ * String noDataMessage() - type of "no Data" message to display. If there is no network, will
+ *  display "No Network Connection" and if it is simple no data will display "No Data to Display"
+ * @return - type of string message to display
+ */
+    private String noDataMessage(){
+
+        //check if we have connection
+        if(NetworkManager.hasConnection(mBridge.getActivityContext())) {
+            //we have connection just no data
+            return mBridge.getActivityContext().getString(R.string.str_no_data);
+        }
+        else{
+            //we have no network connection
+            return mBridge.getActivityContext().getString(R.string.str_no_network);
+        }
+
+    }
+
 /**************************************************************************************************/
+
 }
