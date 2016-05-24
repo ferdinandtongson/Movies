@@ -198,7 +198,6 @@ public class PosterStaff{
                 mFavoritePosters = new ArrayList<>(posters);
                 break;
         }
-
     }
 
 /**************************************************************************************************/
@@ -267,5 +266,39 @@ public class PosterStaff{
 
 /**************************************************************************************************/
 
+/**************************************************************************************************/
+/**
+ * Favorites:
+ *      void addFavorite(PosterItem) - adds poster to Favorite Poster list
+ *      void removeFavorite(PosterItem) - removes poster from Favorite Poster list
+ *      boolean alreadyFavorite(PosterItem) - check if poster is already in the Favorite Poster list
+ */
+/**************************************************************************************************/
+/**
+ * void addFavorite(PosterItem) - adds poster to Favorite Poster list
+ * @param poster - poster to be added to list
+ */
+    public void addFavorite(PosterItem poster){
+        mFavoritePosters.add(poster);
+    }
+
+/**
+ * void removeFavorite(PosterItem) - removes poster from Favorite Poster list
+ * @param poster - poster to be removed from list
+ */
+    public void removeFavorite(PosterItem poster){
+        mFavoritePosters.remove(poster);
+    }
+
+/**
+ * boolean alreadyFavorite(PosterItem) - check if poster is already in the Favorite Poster list
+ * @param poster - check if poster is already in the list
+ * @return - true if already in list, false otherwise
+ */
+    public boolean alreadyFavorite(PosterItem poster){
+        return mFavoritePosters.contains(poster);
+    }
+
+/**************************************************************************************************/
 
 }
