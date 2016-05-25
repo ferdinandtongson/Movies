@@ -17,12 +17,9 @@ import me.makeachoice.movies.controller.modelside.staff.MaidStaff;
 import me.makeachoice.movies.controller.modelside.staff.MovieStaff;
 import me.makeachoice.movies.controller.modelside.staff.RefreshStaff;
 import me.makeachoice.movies.controller.modelside.valet.MovieValet;
-import me.makeachoice.movies.controller.modelside.valet.PosterValet;
 import me.makeachoice.movies.controller.modelside.valet.RefreshValet;
-import me.makeachoice.movies.controller.modelside.staff.PosterStaff;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
 import me.makeachoice.movies.model.db.MovieDB;
-import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.modelside.butler.TMDBInfoButler;
 import me.makeachoice.movies.controller.viewside.housekeeper.DetailKeeper;
 import me.makeachoice.movies.controller.viewside.housekeeper.MyHouseKeeper;
@@ -41,8 +38,7 @@ import me.makeachoice.movies.model.response.tmdb.MovieModel;
  * prevented; in MVC (Model-View-Controller) model, the Model and View can communicate
  */
 
-public class Boss extends Application implements MovieValet.Bridge, PosterValet.Bridge,
-        RefreshValet.Bridge{
+public class Boss extends Application implements MovieValet.Bridge, RefreshValet.Bridge{
 
 /**************************************************************************************************/
 /**
@@ -52,14 +48,13 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
  *      SQLiteDatabase mDB - SQLiteDatabase object
  *
  *      MovieStaff mMovieStaff - staff in charge of maintaining the Movie buffers
- *      PosterStaff mPosterStaff - staff in charge of maintaining the Poster buffers
  *      RefreshStaff mRefreshStaff - staff in charge of maintaining the poster refresh buffers
  *      HouseKeeperStaff mKeeperStaff - staff in charge of maintain the MyHouseKeeper buffer
  *
  *      TMDBMovieButler mMoviesButler - butler in charge of making API calls to get movie list data
  *      TMDBInfoButler mInfoButler - butler in charge of making API calls to get movie detail data
  *
- *      PosterValet mPosterValet - valet in charge of getting poster database data
+ *      MovieValet mMovieValet - valet in charge of getting movie database data
  *      RefreshValet mRefreshValet - valet in charge of getting poster refresh database data
  *
  *      NetworkManager mNetworkValet - in charge of checking for network connectivity
@@ -80,8 +75,6 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
 
     //mMovieStaff - staff in charge of maintaining the Movie buffers
     private MovieStaff mMovieStaff;
-    //mPosterStaff - staff in charge of maintaining the Poster buffers
-    private PosterStaff mPosterStaff;
     //mRefreshStaff - staff in charge of maintaining the poster refresh buffers
     private RefreshStaff mRefreshStaff;
     //mKeeperStaff - staff in charge of maintaining the MyHouseKeeper buffer
@@ -96,8 +89,6 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
 
     //mMovieValet - valet in charge of getting movie database data
     private MovieValet mMovieValet;
-    //mPosterValet - valet in charge of getting poster database data
-    private PosterValet mPosterValet;
     //mRefreshValet - valet in charge of getting poster refresh database data
     private RefreshValet mRefreshValet;
 
@@ -139,14 +130,23 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
     }
 
 /**
+ * void initValets() - initialize Valet classes; they handle database requests
+ */
+    private void initValets(){
+        //valet in charge of getting movie database data
+        mMovieValet = new MovieValet(this);
+        mMovieValet.requestMovies(PosterHelper.NAME_ID_FAVORITE);
+
+        //valet in charge of getting poster refresh database data
+        mRefreshValet = new RefreshValet(this);
+    }
+
+    /**
  * void initStaff() - initializes Staff classes; they maintain ArrayList and HashMap buffers
  */
     private void initStaff(){
         //wake movie staff, maintains ArrayList MovieModel and MovieItem buffers
         mMovieStaff = new MovieStaff(this);
-
-        //wake poster staff, maintains ArrayList PosterItem buffers
-        mPosterStaff = new PosterStaff(this);
 
         //wake refresh staff, maintains HashMap RefreshItem buffers
         mRefreshStaff = new RefreshStaff(this);
@@ -170,20 +170,6 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
 
     }
 
-/**
- * void initValets() - initialize Valet classes; they handle database requests
- */
-    private void initValets(){
-        //valet in charge of getting movie database data
-        mMovieValet = new MovieValet(this);
-
-        //valet in charge of getting poster database data
-        mPosterValet = new PosterValet(this);
-
-        //valet in charge of getting poster refresh database data
-        mRefreshValet = new RefreshValet(this);
-    }
-
 /**************************************************************************************************/
 
 
@@ -198,7 +184,6 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
         //savePosters();
 
         mMovieStaff.onFinish();
-        mPosterStaff.onFinish();
         mRefreshStaff.onFinish();
         mKeeperStaff.onFinish();
         mMaidStaff.onFinish();
@@ -259,57 +244,58 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
     }
 
 /**
- * ArrayList<PosterItem> getModel(int) - get list of poster item data. If null or is a new request,
+ * ArrayList<PosterItem> getPosters(int) - get list of poster item data. If null or is a new request,
  * Butler will start an AsyncTask to get new movie data.
  * @param movieType - type of movie data requested
  * @return - an array list of poster item data
  */
-    public ArrayList<PosterItem> getPosters(int movieType){
+    public ArrayList<MovieItem> getMovies(int movieType){
         Log.d("Boss", "Boss.getPosters: " + getString(movieType));
         if(movieType == PosterHelper.NAME_ID_FAVORITE){
-            return getFavoritePosters();
+            return getFavoriteMovies(movieType);
         }
         else{
-            return getRequestedPosters(movieType);
+            return getRequestedMovies(movieType);
         }
     }
 
 
-    private ArrayList<PosterItem> getFavoritePosters(){
-        Log.d("Boss", "     get Favorite posters");
-        return new ArrayList<>();
+    private ArrayList<MovieItem> getFavoriteMovies(int movieType){
+        Log.d("Boss", "     get Favorite");
+        Log.d("Boss", "          checkBuffer:");
+        ArrayList<MovieItem> movies = mMovieStaff.getMovies(movieType);
+
+        if(movies.size() == 0){
+            Log.d("Boss", "          check database");
+            mMovieValet.requestMovies(movieType);
+        }
+        return movies;
     }
 
-    private ArrayList<PosterItem> getRequestedPosters(int movieType){
-        Log.d("Boss", "     get" + getString(movieType));
+    private ArrayList<MovieItem> getRequestedMovies(int movieType){
 
         if(mRefreshStaff.getMapSize() == 0){
-            Log.d("Boss", "          retrieve refreshMap from db");
             mRefreshStaff.setRefreshMap(mRefreshValet.getRefreshMap());
         }
 
-        Log.d("Boss", "     checkBuffer:");
-        ArrayList<PosterItem> posters = new ArrayList<>();
+        ArrayList<MovieItem> movies = new ArrayList<>();
         if(mRefreshStaff.needToRefresh(movieType)){
-            //refresh posters, access internet data
+            //refresh movies, access internet data
             mMoviesButler.requestMovies(movieType);
             Toast.makeText(mActivityContext,"API call to TheMovieDB", Toast.LENGTH_SHORT).show();
         }
         else{
-            posters = mPosterStaff.getPosters(movieType);
-            Log.d("Boss", "     list: " + posters.size());
+            movies = mMovieStaff.getMovies(movieType);
 
-            if (posters.size() == 0) {
-                Log.d("Boss", "          retrieve posters from DB");
-                //retrieve posters from database
-                mPosterValet.requestPosters(movieType);
+            if (movies.size() == 0) {
+                //retrieve movies from database
                 mMovieValet.requestMovies(movieType);
                 Toast.makeText(mActivityContext,"Retrieving posters from DB", Toast.LENGTH_SHORT).show();
             }
         }
 
         //return poster items
-        return posters;
+        return movies;
 
     }
 
@@ -327,66 +313,62 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
     public void movieRequestComplete(ArrayList<MovieModel> models, int movieType){
         Log.d("Boss", "Boss.movieRequestComplete: " + getString(movieType));
         //convert MovieModels to PosterItems
-        ArrayList<PosterItem> posters = mPosterStaff.preparePosters(models);
+        ArrayList<MovieItem> movies = mMovieStaff.prepareMovies(models);
 
         Log.d("Boss", "     showPosters");
         //show list of poster items
-        showPosters(posters, movieType);
+        showMovies(movies, movieType);
 
         Log.d("Boss", "     processMovieData");
-        processMovieData(models, posters, movieType);
+        processMovieData(movies, movieType);
    }
 
-    public void posterRetrievalComplete(ArrayList<PosterItem> posters, int movieType){
-        if(posters.size() >= 20){
-            mPosterStaff.setPosters(posters, movieType);
-
-            showPosters(posters, movieType);
+    public void movieRetrievalComplete(ArrayList<MovieItem> movies, int movieType){
+        if(movieType == PosterHelper.NAME_ID_FAVORITE){
+            processRetrievalFavorite(movies);
         }
         else{
-            if(movieType != PosterHelper.NAME_ID_FAVORITE){
+            if(movies.size() > 0){
+                showMovies(movies, movieType);
+                mMovieStaff.setMovies(movies, movieType);
+            }
+            else{
                 mMoviesButler.requestMovies(movieType);
+            }
+        }
+
+    }
+
+    private void processRetrievalFavorite(ArrayList<MovieItem> movies){
+        int count = movies.size();
+
+        if(count > 0){
+            showMovies(movies, PosterHelper.NAME_ID_FAVORITE);
+            mMovieStaff.setMovies(movies, PosterHelper.NAME_ID_FAVORITE);
+
+            for(int i = 0; i < count; i++){
+                mMovieStaff.addFavoriteId(movies.get(i).getTMDBId());
             }
         }
     }
 
-    public void movieRetrievalComplete(ArrayList<MovieItem> movies, int movieType){
-        Log.d("Boss", ".");
-        Log.d("Boss", ".");
-        Log.d("Boss", "Here!!!!!!!!!!!!!!!!!!!!!!!!!");
-        Log.d("Boss", ".");
-        Log.d("Boss", ".");
-
-        if(movies.size() >= 20){
-            mMovieStaff.setMovies(movies, movieType);
-        }
-
-    }
-
-    public void showPosters(ArrayList<PosterItem> posters, int request){
+    public void showMovies(ArrayList<MovieItem> movies, int request){
         //instantiate HouseKeeper that will maintain the Main Activity
         SwipeKeeper keeper = (SwipeKeeper)mKeeperStaff.getHouseKeeper(SwipeHelper.NAME_ID);
         //tells the HouseKeeper to prepare the fragments the Activity will use
-        keeper.updatePosters(posters, request);
+        keeper.updateMovies(movies, request);
     }
 
-    private void processMovieData(ArrayList<MovieModel> models,
-                                  ArrayList<PosterItem> posters, int movieType) {
+    private void processMovieData(ArrayList<MovieItem> movies, int movieType) {
         Log.d("Boss", "          save movie models to buffer");
-        //convert movie models to movie items then save to buffer
-        mMovieStaff.setMovies(mMovieStaff.prepareMovies(models), movieType);
+        //
+        mMovieStaff.setMovies(movies, movieType);
 
-        Log.d("Boss", "          save poster items to buffer");
+        mMovieValet.saveMovies(movies, movieType);
+
         //update refresh data
         updateRefreshData(movieType);
 
-        mMovieValet.saveMovies(mMovieStaff.getMovies(movieType), movieType);
-
-        //save poster data to database
-        mPosterValet.savePosters(posters, movieType);
-
-        //save poster items to buffer
-        mPosterStaff.setPosters(posters, movieType);
     }
 
     private void updateRefreshData(int movieType){
@@ -410,23 +392,45 @@ public class Boss extends Application implements MovieValet.Bridge, PosterValet.
  * @return - movie item data of the selected movie
  */
     public MovieItem getMovie(int movieType, int position){
+        Log.d("Boss", "Boss.getMovie: " );
         //get the movie item from the MovieStaff
-        MovieItem movie = mMovieStaff.getMovie(movieType, position);
+        mMovie = mMovieStaff.getMovie(movieType, position);
+        Log.d("Boss", "     title: " + mMovie.getTitle());
 
-        PosterItem poster = mPosterStaff.getPoster(movieType, position);
-        movie.setPoster(poster.getPoster());
+        mMovie.setFavorite(mMovieStaff.alreadyFavorite(mMovie.getTMDBId()));
 
 
         //check if movie item has complete data
-        if(movie.getCast() == null){
+        if(mMovie.getCast() == null){
             //data is incomplete, start AsyncTask to request movie data
-            mInfoButler.requestMovie(movie);
+            mInfoButler.requestMovie(mMovie);
         }
 
         //return movie item data
-        return movie;
+        return mMovie;
     }
 
+    private MovieItem mMovie;
+
+    public void saveFavorite(){
+        ArrayList<MovieItem> movies = mMovieStaff.getMovies(PosterHelper.NAME_ID_FAVORITE);
+
+        if(!movies.contains(mMovie)){
+            mMovieValet.saveFavorite(mMovie);
+            mMovieStaff.addFavorite(mMovie);
+        }
+    }
+
+    public void addToFavorite(int movieType, int position){
+        mMovie = mMovieStaff.getMovie(movieType, position);
+
+        Toast.makeText(mActivityContext,"Saving to Favorites", Toast.LENGTH_SHORT).show();
+        saveFavorite();
+    }
+
+    public void removeFavorite(int position){
+        Log.d("Boss", "Boss.removeFavorite");
+    }
 
 /**************************************************************************************************/
 
