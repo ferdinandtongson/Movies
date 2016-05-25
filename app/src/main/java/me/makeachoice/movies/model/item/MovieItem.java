@@ -35,6 +35,7 @@ public class MovieItem {
  *      String mBackdropPath - url path to the movie backdrop image
  *      boolean mVideo - if movie contains a video
  *      boolean mAdult - if the movie is an X-rated movie
+ *      boolean mFavorite - if the movie is a user favorite
  *
  *      Integer[] mGenreIds - id number of genre types the movie is in
  *      ArrayList<GenreItem> mGenres - array of genre item data, genre types the movie is in
@@ -84,6 +85,8 @@ public class MovieItem {
     private Boolean mVideo;
     //mAdult - if the movie is an X-rated movie
     private Boolean mAdult;
+    //mFavorite - if the movie is a user favorite
+    private Boolean mFavorite;
 
     //mGenreIds - id number of genre types the movie is in
     private Integer[] mGenreIds;
@@ -121,6 +124,7 @@ public class MovieItem {
  *      String getBackdropPath() - get url path to the movie backdrop image
  *      boolean getVideo() - get status if movie contains a video
  *      boolean getAdult() - get status if the movie is an X-rated movie
+ *      boolean getFavorite() - get status if the movie is a user favorite
  *
  *      Integer[] getGenreIds() - get id number of genre types the movie is in
  *      ArrayList<GenreItem> getGenres() - get array of genre item data, genre types the movie is in
@@ -153,7 +157,7 @@ public class MovieItem {
     public String getBackdropPath(){ return mBackdropPath; }
     public Boolean getVideo(){ return mVideo; }
     public Boolean getAdult(){ return mAdult; }
-
+    public Boolean getFavorite(){ return mFavorite; }
 
     public Integer[] getGenreIds(){ return mGenreIds; }
     public ArrayList<GenreItem> getGenres(){ return mGenres; }
@@ -187,6 +191,7 @@ public class MovieItem {
  *      void setBackdropPath(String) - sets url path to the movie backdrop image
  *      void setVideo(boolean) - sets status if movie contains a video
  *      void setAdult(boolean) - sets status if the movie is an X-rated movie
+ *      void setFavorite(boolean) - set status if the movie is a user favorite
  *
  *      void setGenreIds(Integer[]) - sets id number of genre types the movie is in
  *      void setGenres(ArrayList<GenreItem>) - sets array of genre item data
@@ -218,6 +223,8 @@ public class MovieItem {
     public void setBackdropPath(String path){ mBackdropPath = path; }
     public void setVideo(boolean hasVideo){mVideo = hasVideo; }
     public void setAdult(boolean isAdult){mAdult = isAdult; }
+    public void setFavorite(boolean isFavorite){mFavorite = isFavorite;}
+
     public void setGenreIds(Integer[] ids){ mGenreIds = ids; }
     public void setGenres(ArrayList<GenreItem> genres){ mGenres = genres; }
     public void setCast(ArrayList<CastItem> cast){ mCast = cast; }
