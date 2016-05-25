@@ -165,7 +165,7 @@ public class MovieValet implements MovieSaveWorker.Bridge, MovieGetWorker.Bridge
 /**
  * MovieGetWorker.Bridge implementations:
  *      SQLiteDatabase getDatabase() - get database (see Getter section)
- *      void moviessRetrieved(ArrayList<MovieItem>) - movie item data has been retrieved
+ *      void moviesRetrieved(ArrayList<MovieItem>) - movie item data has been retrieved
  */
 /**************************************************************************************************/
 /**
@@ -192,6 +192,7 @@ public class MovieValet implements MovieSaveWorker.Bridge, MovieGetWorker.Bridge
  *      void requestMovies(int) - request movie data from database, if any
  *      void saveMovies(ArrayList<MovieItem>,int) - save movie data to database.
  *      void saveFavorite(MovieItem) - save movie into Favorite table
+ *      void deleteFavorite(MovieItem) - delete movie from Favorite table
  */
 /**************************************************************************************************/
 /**
@@ -245,6 +246,18 @@ public class MovieValet implements MovieSaveWorker.Bridge, MovieGetWorker.Bridge
         //insert new movie item data into poster table
         mBridge.getDatabase().insert(MovieContract.FavoriteEntry.TABLE_NAME, null,
                 mContract.getContentValues(item, 0));
+    }
+
+/**
+ * void deleteFavorite(MovieItem) - delete movie from Favorite table
+ * @param item - movie item to be deleted
+ */
+    public void deleteFavorite(MovieItem item){
+        //create where clause to remove movie item row
+        String whereClause = MovieContract.COLUMN_NAME_MOVIE_ID + " = " + item.getTMDBId();
+
+        //delete movie from database
+        mBridge.getDatabase().delete(MovieContract.FavoriteEntry.TABLE_NAME, whereClause, null);
     }
 
 /**************************************************************************************************/
