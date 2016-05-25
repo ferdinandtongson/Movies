@@ -1,14 +1,11 @@
 package me.makeachoice.movies.controller.modelside.butler;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.Boss;
 
 /**
- * MyButler abstract class - used to process internet and db data and prepare it for consumption
- * by View
+ * MyButler abstract class - used to process internet data model objects
  */
 public abstract class MyButler {
 
@@ -32,25 +29,5 @@ public abstract class MyButler {
 
 /**************************************************************************************************/
 
-/**************************************************************************************************/
-/**
- * Abstract Methods:
- *      Context getActivityContext()
- *      void workComplete(Boolean)
- */
-/**************************************************************************************************/
-/**
- * Context getActivityContext() - get current Activity Context
- * @return - activity context
- */
-    abstract public Context getActivityContext();
-
-/**
- * workComplete(Boolean) - called when an AsyncTask job has been completed
- * @param result - job completed or failed, true or false respectively
- */
-    abstract public void workComplete(Boolean result);
-
-/**************************************************************************************************/
 
 }

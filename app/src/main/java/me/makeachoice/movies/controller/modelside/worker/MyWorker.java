@@ -2,8 +2,6 @@ package me.makeachoice.movies.controller.modelside.worker;
 
 import android.os.AsyncTask;
 
-import me.makeachoice.movies.controller.modelside.butler.MyButler;
-
 /**
  * MyWorker abstract class - used to run threads, network calls or background work to process data
  * before passing it onto the Butler and then general consumption by the View
@@ -29,14 +27,8 @@ import me.makeachoice.movies.controller.modelside.butler.MyButler;
  */
 public abstract class MyWorker extends AsyncTask<String, Integer, Boolean> {
 
-    //mButler - MyWorker talks directly to the Butler
-    MyButler mButler;
-
-    //abstract method from AsyncTask, see notes above about AsyncTask<Params, Progress, Result>
     //doInBackground - runs in background thread; called after MyWorker.execute(...)
     protected abstract Boolean doInBackground(String... params);
-    //onProgressUpdate - runs in UI thread
-    protected abstract void onProgressUpdate(Integer... values);
     //onPostExecute - runs in UI thread
     protected abstract void onPostExecute(Boolean result);
 }
