@@ -11,13 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
-import me.makeachoice.movies.controller.viewside.helper._templateHelper;
-import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.util.NetworkManager;
 import me.makeachoice.movies.view.activity.DetailActivity;
 import me.makeachoice.movies.view.activity.MyActivity;
@@ -87,6 +83,8 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  * Class Variables:
  *      DetailHelper.ViewHolder mViewHolder - holds all the child view of the Activity
  *      MovieItem mMovie - movie item data to be displayed
+ *      int mStarStatus - used to determine if the movie is a user favorite
+ *      View.OnClickListener mFabListener - FloatingActionButton onClick listener
  */
 /**************************************************************************************************/
 
@@ -96,6 +94,9 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
     //mMovie - movie item data to be displayed
     private MovieItem mMovie;
 
+    //mStarStatus - used to determine if the movie is a user favorite
+    private int mStarStatus;
+
     //mFabListener - onClick listener for FloatingActionButton
     private View.OnClickListener mFabListener = new View.OnClickListener() {
         @Override
@@ -103,8 +104,6 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
             onFABClick();
         }
     };
-
-
 
 /**************************************************************************************************/
 
@@ -118,9 +117,6 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
         //set Boss
         mBoss = boss;
-
-        //register HouseKeeper to Boss
-        //mBoss.registerHouseKeeper(this, DetailHelper.NAME_ID);
 
         //initialize fragment registry
         mFragmentRegistry = new HashMap<>();
@@ -238,6 +234,13 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         VideoMaid videoMaid = (VideoMaid)mBoss.hireMaid(VideoHelper.NAME_ID);
         videoMaid.setVideos(mMovie.getVideos());
 
+        if(mMovie.getFavorite()){
+            mStarStatus = DetailHelper.DRW_STAR_WHITE_ID;
+        }
+        else{
+            mStarStatus = DetailHelper.DRW_STAR_BORDER_ID;
+        }
+
 
         //set activity layout
         activity.setContentView(DetailHelper.DETAIL_LAYOUT_ID);
@@ -266,6 +269,8 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
         //set adapter in viewPager
         viewPager.setAdapter(adapter);
+
+        onPageSelected(0);
     }
 
 /**
@@ -425,8 +430,6 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         VideoMaid videoMaid = (VideoMaid)mBoss.hireMaid(VideoHelper.NAME_ID);
         videoMaid.updateVideos(item.getVideos());
 
-        //update posters being displayed by the Fragment being maintained by the Maid
-        //maid.updatePosters(posters);
     }
 
 /**************************************************************************************************/
@@ -437,6 +440,17 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
      */
     public void onFABClick(){
         Log.d("Boss", "DetailKeeper.onFABClick");
+        if(mStarStatus == DetailHelper.DRW_STAR_WHITE_ID){
+            mStarStatus = DetailHelper.DRW_STAR_BORDER_ID;
+        }
+        else{
+            mStarStatus = DetailHelper.DRW_STAR_WHITE_ID;
+        }
+
+        mFab.setImageResource(mStarStatus);
+        mFab.refreshDrawableState();
+
+        mBoss.saveFavorite();
         //make API call to get fresh poster item data for current poster fragment
         //mBoss.refreshPosters(convertIndexToMovieType(mPageIndex));
     }
@@ -460,16 +474,13 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         //save swipe page index
         //mPageIndex = index;
 
-        //initialize arrayList to hold poster items
-        ArrayList<PosterItem> posters;
-
         //get poster list from Boss, if empty will start AsyncTask to get poster data, calls
         //updatePosters() after AsyncTask completes
         switch (index){
             //get Most Popular posters
             case 0:
                 //mFab.setBackgroundResource(R.drawable.star_white);
-                mFab.setImageResource(R.drawable.star_white);
+                mFab.setImageResource(mStarStatus);
                 mFab.refreshDrawableState();
                 mFab.setVisibility(View.VISIBLE);
                 break;
