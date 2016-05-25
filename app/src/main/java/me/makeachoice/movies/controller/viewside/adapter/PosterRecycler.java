@@ -34,7 +34,6 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
 /**************************************************************************************************/
 /**
  * Class Variables
- *      int mPosition - use to return position of the movie long-clicked
  *      ArrayList<MovieItem> mMovies - array list of movie data consumed by the adapter
  *      Bridge mBridge - class implementing Bridge interface, typically a Maid class
  *
@@ -42,9 +41,6 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  *      Bridge
  */
 /**************************************************************************************************/
-
-    //mPosition - use to return position of the movie long-clicked
-    int mPosition;
 
     //mMovies - array list of movie data consumed by the adapter
     private ArrayList<MovieItem> mMovies;
@@ -56,9 +52,6 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
     public interface Bridge{
         //get Context of current Activity
         Context getActivityContext();
-        //add long click listener to item in recycler
-        void onPosterLongClicked(int position);
-
     }
 
 /**************************************************************************************************/
@@ -139,21 +132,8 @@ public class PosterRecycler extends RecyclerView.Adapter<PosterRecycler.PosterHo
  */
     @Override
     public void onBindViewHolder(PosterHolder holder, int position){
-        //save position of poster
-        mPosition = position;
-
         //update poster title textView
         holder.mTxtTitle.setText(mMovies.get(position).getTitle());
-
-        //add a long-click listener to each poster item
-        holder.mCrdPoster.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mBridge.onPosterLongClicked(mPosition);
-                return true;
-            }
-        });
-
 
         //update poster image imageView
         updatePoster(holder, position);

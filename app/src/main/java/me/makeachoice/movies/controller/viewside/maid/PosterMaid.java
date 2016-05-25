@@ -85,8 +85,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
     public interface Bridge extends MyMaid.Bridge{
         //notify Bridge a poster has been clicked
         void onPosterClicked(int id, int position);
-        //notify Bridge a poster has been long-clicked
-        void onPosterLongClicked(int id, int position);
     }
 
 /**************************************************************************************************/
@@ -275,16 +273,6 @@ public class PosterMaid extends MyMaid implements PosterFragment.Bridge, PosterR
         //notify adapter that data has changed
         mRecycler.notifyDataSetChanged();
     }
-
-/**
- * void onPosterLongClicked(int) - a poster long-click event occurred in PosterRecycler
- * @param position - position of poster
- */
-    public void onPosterLongClicked(int position){
-        //notify Bridge that a poster long-click event occurred
-        mBridge.onPosterLongClicked(mMaidId, position);
-    }
-
 
 /**************************************************************************************************/
 
