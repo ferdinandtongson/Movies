@@ -28,6 +28,8 @@ public class MovieStaff {
  *      ArrayList<MovieItem> mNowPlayingMovies - Now Playing Movie item data from TMDB
  *      ArrayList<MovieItem> mUpcomingMovies - Upcoming Movie item data from TMDB
  *      ArrayList<MovieItem> mFavoriteMovies - Favorite Movie item data selected by user
+ *
+ *      ArrayList<Integer> mFavoriteIds - Favorite Movie id numbers
  */
 /**************************************************************************************************/
 
@@ -46,6 +48,9 @@ public class MovieStaff {
     private ArrayList<MovieItem> mUpcomingMovies;
     //mFavoriteMovies - Favorite Movie item data selected by user
     private ArrayList<MovieItem> mFavoriteMovies;
+
+    //mFavoriteIds - Favorite Movie id numbers
+    private ArrayList<Integer> mFavoriteIds;
 
 /**************************************************************************************************/
 
@@ -88,6 +93,8 @@ public class MovieStaff {
         mUpcomingMovies = new ArrayList<>();
         //buffer for Favorite MovieItems
         mFavoriteMovies = new ArrayList<>();
+        //buffer for Favorite Movie ids
+        mFavoriteIds = new ArrayList<>();
     }
 
 /**************************************************************************************************/
@@ -290,6 +297,13 @@ public class MovieStaff {
  */
     public void addFavorite(MovieItem movie){
         mFavoriteMovies.add(movie);
+        mFavoriteIds.add(movie.getTMDBId());
+    }
+
+    public void addFavoriteId(int id){
+        if(!mFavoriteIds.contains(id)){
+            mFavoriteIds.add(id);
+        }
     }
 
 /**
@@ -298,15 +312,16 @@ public class MovieStaff {
  */
     public void removeFavorite(MovieItem movie){
         mFavoriteMovies.remove(movie);
+        mFavoriteIds.remove(movie.getTMDBId());
     }
 
 /**
- * boolean alreadyFavorite(MovieItem) - check if Movie is already in the Favorite Movie list
- * @param movie - check if movie is already in the list
+ * boolean alreadyFavorite(int) - check if Movie id is already in the Favorite Movie list
+ * @param id - check if movie id is already in the list
  * @return - true if already in list, false otherwise
  */
-    public boolean alreadyFavorite(MovieItem movie){
-        return mFavoriteMovies.contains(movie);
+    public boolean alreadyFavorite(int id){
+        return mFavoriteIds.contains(id);
     }
 
 /**************************************************************************************************/

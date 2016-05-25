@@ -191,6 +191,7 @@ public class MovieValet implements MovieSaveWorker.Bridge, MovieGetWorker.Bridge
  * Public Methods:
  *      void requestMovies(int) - request movie data from database, if any
  *      void saveMovies(ArrayList<MovieItem>,int) - save movie data to database.
+ *      void saveFavorite(MovieItem) - save movie into Favorite table
  */
 /**************************************************************************************************/
 /**
@@ -231,6 +232,19 @@ public class MovieValet implements MovieSaveWorker.Bridge, MovieGetWorker.Bridge
             //save posters to database
             saveMoviesToDB(movies, movieType);
         }
+    }
+
+/**
+ * void saveFavorite(MovieItem) - save movie into Favorite table
+ * @param item - movie item to save
+ */
+    public void saveFavorite(MovieItem item){
+        //initializes the AsyncTask worker
+        mSaveWorker = new MovieSaveWorker(this, null);
+
+        //insert new movie item data into poster table
+        mBridge.getDatabase().insert(MovieContract.FavoriteEntry.TABLE_NAME, null,
+                mContract.getContentValues(item, 0));
     }
 
 /**************************************************************************************************/
