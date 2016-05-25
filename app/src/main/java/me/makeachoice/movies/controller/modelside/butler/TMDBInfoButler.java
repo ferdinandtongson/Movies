@@ -45,8 +45,6 @@ public class TMDBInfoButler extends MyButler{
  *      String mTMDBKey - the key used to access TheMovieDB api
  *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
  *      TMDBInfoWorker mInfoWorker - AsyncTask class that makes API calls to get Movie details
- *
- *      HashMap<Integer, MovieItem> mMovieMap - movie buffer holding movie items
  */
 /**************************************************************************************************/
 
@@ -58,6 +56,9 @@ public class TMDBInfoButler extends MyButler{
 
     //mInfoWorker - AsyncTask class that makes API calls to get Movie details
     private TMDBInfoWorker mInfoWorker;
+
+    //mMovie - movie item requesting further movie info about the movie
+    private MovieItem mMovie;
 
 /**************************************************************************************************/
 
@@ -80,14 +81,6 @@ public class TMDBInfoButler extends MyButler{
         //get TheMovieDB api key from resource file
         mTMDBKey = mBoss.getString(R.string.api_key_tmdb);
 
-        //initialize buffers
-        initBuffers();
-    }
-
-/**
- * void initBuffers() - initialize buffers to hold MovieItems that have been requested
- */
-    private void initBuffers(){
         //initialize buffer to hold pending movie requests
         mRequestBuffer = new ArrayList<>();
     }
@@ -98,7 +91,6 @@ public class TMDBInfoButler extends MyButler{
 /**
  * Getters:
  *      Context getActivityContext() - get current Activity context
- *      MovieItem getMovie(int, int) - get a movie model from the buffer
  *
  * Setters:
  *      - None -
@@ -112,74 +104,68 @@ public class TMDBInfoButler extends MyButler{
         return mBoss.getActivityContext();
     }
 
+/**************************************************************************************************/
+
+/**************************************************************************************************/
 /**
- * void requestMovie(MovieItem) - get the MovieItem of the requested movie
- * @param item - movie model being requested
- * @return - movie item processed for consumption by View
+ * Movie Request related methods
+ *      void requestMovieInfo(MovieItem) - get info on the requested movie
+ *      void makeInfoRequest(int) - make a request to get details of a movie
+ *      void startInfoRequest(int) - start AsyncTask worker to get info of movie being requested
+ *      void workComplete(boolean) - called when AsyncTask has completed
+ *      void checkRequestBuffer() - check if there are any pending requests
  */
-    public void requestMovie(MovieItem item){
-        mItem = item;
-        //check if movie is in buffer
-        //return checkMovieBuffer(item);
-        makeDetailRequest(item.getTMDBId());
+/**************************************************************************************************/
+
+/**
+ * void requestMovieInfo(MovieItem) - get info on the requested movie
+ * @param movie - movie item requesting more info
+ */
+    public void requestMovieInfo(MovieItem movie){
+        //save movie item to buffer
+        mMovie = movie;
+
+        //make request for info
+        makeInfoRequest(movie.getTMDBId());
     }
 
-    private MovieItem mItem;
-
-
-/**************************************************************************************************/
-
-
-/**************************************************************************************************/
-/**
- * Class methods
- *      MovieItem checkMovieBuffer(int) - check if movie is in buffer
- *      void makeDetailRequest(int) - start or buffer movie detail request task
- *      void startDetailRequest(int) - start AsyncTask worker to get movie data requested
- *      void workComplete(boolean) - called when AsyncTask has completed
- *      ArrayList<PosterItem> preparePosterItems(ArrayList<MovieModel>) - convert MovieModels to
- *          PosterItems used by View
- *      void saveMovieModels(int, ArrayList<MovieModel>) - save MovieModels to buffer
- *      void savePosterItems(int, ArrayList<PosterItem>) - save PosterItems to buffer
- *      void checkRequestBuffer() - check if there are any pending movie data requests
- */
-/**************************************************************************************************/
-/**
- * void makeMovieDetailRequest(int) - make a request to get details of a movie. If the MovieWorker
+ /**
+ * void makeInfoRequest(int) - make a request to get details of a movie. If the MovieWorker
  * is working, save movie id into request buffer. If not working, start request
  * @param id - id number of Movie from TheMovieDB
  */
-    private void makeDetailRequest(int id){
+    private void makeInfoRequest(int id){
         //check if MovieWorker is already working on another request
         if(mWorking){
             //save request to buffer
             mRequestBuffer.add(id);
         }
         else{
-            //start working on the movie detail request
-            startDetailRequest(id);
+            //start working on the movie info request
+            startInfoRequest(id);
         }
     }
 
 /**
- * void startMovieRequest(int) - start AsyncTask worker to get details of movie being requested.
+ * void startInfoRequest(int) - start AsyncTask worker to get info of movie being requested.
  * @param id - id number of movie from TheMovieDB
  */
-    private void startDetailRequest(int id){
+    private void startInfoRequest(int id){
         //initializes the AsyncTask worker
         mInfoWorker = new TMDBInfoWorker(this);
 
         //set working flag, AsyncTask is working in the background
         mWorking = true;
 
+        //start AsyncTask in background thread
         mInfoWorker.executeOnExecutor(mBoss.getExecutor(),
                 mTMDBUri.getMovieDetailAll(String.valueOf(id), mTMDBKey));
     }
 
 /**
- * void workComplete(Boolean) - called when MovieWorker completes its' work, updates buffers,
- * notifies Boss and, finally checks if there are more movie requests
- * @param result - returns boolean result of success of movie download
+ * void workComplete(Boolean) - called when AsyncTask has completed, prepares the data model to
+ * movie item for consumption by the View then notifies boss to update the Activity
+ * @param result - returns boolean result of success of movie info download
  */
     public void workComplete(Boolean result) {
         //work has finished
@@ -187,110 +173,17 @@ public class TMDBInfoButler extends MyButler{
 
         //check if results were successful
         if(result){
-            mItem = prepareMovieDetails(mInfoWorker.getMovie(), mItem);
-            mBoss.updateDetailActivity(mItem);
-        }
-        else{
-            //TODO - need to handle event of a download failure
+            //prepare Movie model data for consumption by the View, add to Movie item object
+            mMovie = prepareMovieItem(mInfoWorker.getMovie(), mMovie);
+            //notify Boss to update Activity
+            mBoss.updateDetailActivity(mMovie);
         }
 
+        //check Request buffer
         checkRequestBuffer();
-
     }
 
-    private MovieItem prepareMovieDetails(MovieModel model, MovieItem item){
-
-        item.setIMDBId(model.getIMDBId());
-        item.setHomepage(model.getHomepage());
-        item.setGenres(prepareGenreItems(model.getGenres()));
-        item.setCast(prepareCastItems(model.getCast()));
-        item.setReviews(prepareReviewItems(model.getReviews()));
-        item.setVideos(prepareVideoItems(model.getVideos()));
-
-        return item;
-    }
-
-    private ArrayList<GenreItem> prepareGenreItems(ArrayList<GenreModel> models){
-        ArrayList<GenreItem> genres = new ArrayList<>();
-
-        int count = models.size();
-        for(int i = 0; i < count; i++){
-            GenreModel mod = models.get(i);
-
-            GenreItem item = new GenreItem();
-            item.setTMDBId(mod.id);
-            item.setName(mod.name);
-
-            genres.add(item);
-        }
-
-        return genres;
-    }
-
-    private ArrayList<CastItem> prepareCastItems(ArrayList<CastModel> models){
-        ArrayList<CastItem> cast = new ArrayList<>();
-
-        int count = models.size();
-        for(int i = 0; i < count; i++){
-            CastModel mod = models.get(i);
-
-
-            CastItem item = new CastItem();
-            item.character = mod.character;
-            item.name = mod.name;
-            item.profilePath = processImagePath(mod.profilePath);
-
-            cast.add(item);
-        }
-
-        return cast;
-    }
-
-    private ArrayList<ReviewItem> prepareReviewItems(ArrayList<ReviewModel> models){
-        ArrayList<ReviewItem> reviews = new ArrayList<>();
-
-        int count = models.size();
-        for(int i = 0; i < count; i++){
-            ReviewModel mod = models.get(i);
-
-            ReviewItem item = new ReviewItem();
-            item.author = mod.author;
-            item.review = mod.content;
-            item.reviewPath = mod.url;
-
-            reviews.add(item);
-        }
-
-        return reviews;
-    }
-
-    private ArrayList<VideoItem> prepareVideoItems(ArrayList<VideoModel> models){
-        ArrayList<VideoItem> reviews = new ArrayList<>();
-
-        int count = models.size();
-        for(int i = 0; i < count; i++){
-            VideoModel mod = models.get(i);
-
-            VideoItem item = new VideoItem();
-            item.key = mod.key;
-            item.site = mod.site;
-            item.name = mod.name;
-            item.size = mod.size;
-
-            if(item.site.equalsIgnoreCase(mBoss.getString(R.string.tmdb_youtube))){
-
-                item.thumbnailPath = mTMDBUri.getYouTubeThumbnailPath(item.key);
-                item.videoPath = mTMDBUri.getYouTubeVideoPath(item.key);
-            }
-
-            reviews.add(item);
-        }
-
-        return reviews;
-    }
-
-
-    /**
+/**
  * void checkRequestBuffer() - checks the request buffer if there are any pending movie requests
  */
     private void checkRequestBuffer(){
@@ -303,14 +196,198 @@ public class TMDBInfoButler extends MyButler{
             mRequestBuffer.remove(0);
 
             //make a movie request
-            makeDetailRequest(request);
+            startInfoRequest(request);
         }
     }
 
-    private String processImagePath(String path){
 
-        //create valid poster path uri for TheMovieDB api
-        return mTMDBUri.getImagePath(path, mTMDBKey);
+/**************************************************************************************************/
+
+/**************************************************************************************************/
+/**
+ * Class methods
+ *      MovieItem prepareMovieItem(MovieModel,MovieItem) - convert MovieModels to MovieItem
+ *      ArrayList<GenreItem> prepareGenreItems(ArrayList<GenreModel>) - convert Genre Model to Genre
+ *          Item data
+ *      ArrayList<CastItem> prepareCastItems(ArrayList<CastModel>) - convert Cast Model to Cast Item
+ *          data
+ *      ArrayList<ReviewItem> prepareReviewItems(ArrayList<ReviewModel>) - convert Review Model to
+ *          Review Item data
+ *      ArrayList<VideoItem> prepareVideoItems(ArrayList<VideoModel>) - convert Video Model to Video
+ *          data
+ */
+/**************************************************************************************************/
+/**
+ * MovieItem prepareMovieInfo(MovieModel,MovieItem) - convert MovieModels to MovieItem
+ * @param model - movie model downloaded from TMDB API call
+ * @param item - movie item to be updated
+ * @return - movie item with updated movie info
+ */
+    private MovieItem prepareMovieItem(MovieModel model, MovieItem item){
+
+        //get InternetMovieDB id of movie
+        item.setIMDBId(model.getIMDBId());
+        //get homepage url of movie
+        item.setHomepage(model.getHomepage());
+
+        //get array list of genre data related to movie
+        item.setGenres(prepareGenreItems(model.getGenres()));
+        //get array list of cast member data
+        item.setCast(prepareCastItems(model.getCast()));
+        //get array list of movie review data
+        item.setReviews(prepareReviewItems(model.getReviews()));
+        //get array list of movie trailer video data
+        item.setVideos(prepareVideoItems(model.getVideos()));
+
+        return item;
+    }
+
+/**
+ * ArrayList<GenreItem> prepareGenreItems(ArrayList<GenreModel>) - convert Genre Model to Genre
+ * Item data
+ * @param models - list of genre model data
+ * @return - list of genre item data ready for View consumption
+ */
+    private ArrayList<GenreItem> prepareGenreItems(ArrayList<GenreModel> models){
+        //create array list buffer for genre items
+        ArrayList<GenreItem> genres = new ArrayList<>();
+
+        //get number of genre models to process
+        int count = models.size();
+
+        //loop through models
+        for(int i = 0; i < count; i++){
+            //get model from model list
+            GenreModel mod = models.get(i);
+
+            //create genre item object
+            GenreItem item = new GenreItem();
+            //set TMDB genre id number
+            item.setTMDBId(mod.id);
+            //set name of genre
+            item.setName(mod.name);
+
+            //add item to list
+            genres.add(item);
+        }
+
+        //return list of genre items
+        return genres;
+    }
+
+/**
+ * ArrayList<CastItem> prepareCastItems(ArrayList<CastModel>) - convert Cast Model to Cast Item
+ * data
+ * @param models - list of cast model data
+ * @return - list of cast item data ready for View consumption
+ */
+    private ArrayList<CastItem> prepareCastItems(ArrayList<CastModel> models){
+        //create array list buffer for cast item data
+        ArrayList<CastItem> cast = new ArrayList<>();
+
+        //get number of cast models to process
+        int count = models.size();
+
+        //loop through models
+        for(int i = 0; i < count; i++){
+            //get model from model list
+            CastModel mod = models.get(i);
+
+            //create cast item object
+            CastItem item = new CastItem();
+            //set name of character in the movie
+            item.character = mod.character;
+            //set name of actor who played the character in the movie
+            item.name = mod.name;
+            //set full portfolio picture uri path of the actor
+            item.profilePath = mTMDBUri.getImagePath(mod.profilePath, mTMDBKey);
+
+            //add cast item to list
+            cast.add(item);
+        }
+
+        //return list of cast item data
+        return cast;
+    }
+
+/**
+ * ArrayList<ReviewItem> prepareReviewItems(ArrayList<ReviewModel>) - convert Review Model to
+ * Review Item data
+ * @param models - list of review model data
+ * @return - list of review item data ready for View consumption
+ */
+    private ArrayList<ReviewItem> prepareReviewItems(ArrayList<ReviewModel> models){
+        //create array list buffer for review item data
+        ArrayList<ReviewItem> reviews = new ArrayList<>();
+
+        //get number of review models to process
+        int count = models.size();
+
+        //loop through models
+        for(int i = 0; i < count; i++){
+            //get model from model list
+            ReviewModel mod = models.get(i);
+
+            //create review item object
+            ReviewItem item = new ReviewItem();
+            //set name of author who created the movie review
+            item.author = mod.author;
+            //set review of the movie
+            item.review = mod.content;
+            //set the url path to the original review
+            item.reviewPath = mod.url;
+
+            //add review item to list
+            reviews.add(item);
+        }
+
+        //return list of review item data
+        return reviews;
+    }
+
+/**
+ * ArrayList<VideoItem> prepareVideoItems(ArrayList<VideoModel>) - convert Video Model to Video
+ * data
+ * @param models - list of video model data
+ * @return - list of video item data ready for View consumption
+ */
+    private ArrayList<VideoItem> prepareVideoItems(ArrayList<VideoModel> models){
+        //create array list buffer for video item data
+        ArrayList<VideoItem> videos = new ArrayList<>();
+
+        //get number of video models to process
+        int count = models.size();
+
+        //loop through models
+        for(int i = 0; i < count; i++){
+            //get model from model list
+            VideoModel mod = models.get(i);
+
+            //create video item object
+            VideoItem item = new VideoItem();
+            //set video key to access video
+            item.key = mod.key;
+            //set website where the video is located; normally YouTube
+            item.site = mod.site;
+            //set name of video trailer
+            item.name = mod.name;
+            //set size of video trailer
+            item.size = mod.size;
+
+            //check if YouTube is website source
+            if(item.site.equalsIgnoreCase(mBoss.getString(R.string.tmdb_youtube))){
+                //set video thumbnail image of trailer
+                item.thumbnailPath = mTMDBUri.getYouTubeThumbnailPath(item.key);
+                //set video url path of trailer
+                item.videoPath = mTMDBUri.getYouTubeVideoPath(item.key);
+            }
+
+            //add videos item to list
+            videos.add(item);
+        }
+
+        //return list video item data
+        return videos;
     }
 
 /**************************************************************************************************/
