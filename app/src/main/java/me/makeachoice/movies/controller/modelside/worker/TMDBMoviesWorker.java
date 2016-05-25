@@ -63,7 +63,7 @@ public class TMDBMoviesWorker extends MyWorker{
  * @param bridge - class implementing the Bridge interface
  */
     public TMDBMoviesWorker(Bridge bridge){
-        //Butler making the API request
+        //class implementing bridge interface
         mBridge = bridge;
 
         //initialize movie model list buffer

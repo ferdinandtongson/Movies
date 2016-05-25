@@ -1,6 +1,5 @@
 package me.makeachoice.movies.controller.modelside.butler;
 
-import android.content.Context;
 
 import java.util.ArrayList;
 
@@ -32,19 +31,14 @@ import me.makeachoice.movies.model.response.tmdb.VideoModel;
  *      Boss mBoss
  *      Boolean mWorking
  *      ArrayList<Integer> mRequestBuffer
- *
- * Abstract Methods from MyButler:
- *      abstract public Context getActivityContext()
- *      abstract public void workComplete(Boolean)
  */
-public class TMDBInfoButler extends MyButler{
+public class TMDBInfoButler extends MyButler implements TMDBInfoWorker.Bridge{
 
 /**************************************************************************************************/
 /**
  * Class Variables:
  *      String mTMDBKey - the key used to access TheMovieDB api
  *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
- *      TMDBInfoWorker mInfoWorker - AsyncTask class that makes API calls to get Movie details
  */
 /**************************************************************************************************/
 
@@ -53,9 +47,6 @@ public class TMDBInfoButler extends MyButler{
 
     //mUri - class that builds TheMovieDB api uri strings
     private TMDBUri mTMDBUri;
-
-    //mInfoWorker - AsyncTask class that makes API calls to get Movie details
-    private TMDBInfoWorker mInfoWorker;
 
     //mMovie - movie item requesting further movie info about the movie
     private MovieItem mMovie;
@@ -89,26 +80,7 @@ public class TMDBInfoButler extends MyButler{
 
 /**************************************************************************************************/
 /**
- * Getters:
- *      Context getActivityContext() - get current Activity context
- *
- * Setters:
- *      - None -
- */
-/**************************************************************************************************/
-/**
- * Context getActivityContext() - get current Activity context
- * @return - activity context
- */
-    public Context getActivityContext(){
-        return mBoss.getActivityContext();
-    }
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * Movie Request related methods
+ * Movie Request related methods:
  *      void requestMovieInfo(MovieItem) - get info on the requested movie
  *      void makeInfoRequest(int) - make a request to get details of a movie
  *      void startInfoRequest(int) - start AsyncTask worker to get info of movie being requested
@@ -152,32 +124,29 @@ public class TMDBInfoButler extends MyButler{
  */
     private void startInfoRequest(int id){
         //initializes the AsyncTask worker
-        mInfoWorker = new TMDBInfoWorker(this);
+        TMDBInfoWorker infoWorker = new TMDBInfoWorker(this);
 
         //set working flag, AsyncTask is working in the background
         mWorking = true;
 
         //start AsyncTask in background thread
-        mInfoWorker.executeOnExecutor(mBoss.getExecutor(),
+        infoWorker.executeOnExecutor(mBoss.getExecutor(),
                 mTMDBUri.getMovieDetailAll(String.valueOf(id), mTMDBKey));
     }
 
 /**
  * void workComplete(Boolean) - called when AsyncTask has completed, prepares the data model to
  * movie item for consumption by the View then notifies boss to update the Activity
- * @param result - returns boolean result of success of movie info download
+ * @param model - movie mode contain movie info data
  */
-    public void workComplete(Boolean result) {
+    public void movieInfoDownloaded(MovieModel model) {
         //work has finished
         mWorking = false;
 
-        //check if results were successful
-        if(result){
-            //prepare Movie model data for consumption by the View, add to Movie item object
-            mMovie = prepareMovieItem(mInfoWorker.getMovie(), mMovie);
-            //notify Boss to update Activity
-            mBoss.updateDetailActivity(mMovie);
-        }
+        //prepare Movie model data for consumption by the View, add to Movie item object
+        mMovie = prepareMovieItem(model, mMovie);
+        //notify Boss that the movie info request is complete
+        mBoss.infoRequestComplete(mMovie);
 
         //check Request buffer
         checkRequestBuffer();
@@ -205,7 +174,7 @@ public class TMDBInfoButler extends MyButler{
 
 /**************************************************************************************************/
 /**
- * Class methods
+ * Prepare Item methods
  *      MovieItem prepareMovieItem(MovieModel,MovieItem) - convert MovieModels to MovieItem
  *      ArrayList<GenreItem> prepareGenreItems(ArrayList<GenreModel>) - convert Genre Model to Genre
  *          Item data
