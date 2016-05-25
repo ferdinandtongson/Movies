@@ -1,8 +1,6 @@
 package me.makeachoice.movies.view.activity;
 
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.viewside.helper.SwipeHelper;
@@ -38,10 +36,8 @@ import me.makeachoice.movies.controller.viewside.helper.SwipeHelper;
  *
  * Bridge Interface from MyActivity:
  *      void create(Bundle savedInstanceState)
- *      void postResume()
+ *      void onSaveInstanceState(Bundle)
  *      void backPressed()
- *      void createOptionsMenu(Menu menu)
- *      void optionsItemSelected(MenuItem item)
  */
 
 public class SwipeActivity extends MyActivity {
@@ -50,11 +46,8 @@ public class SwipeActivity extends MyActivity {
 /**
  * Activity LifeCycle calls:
  *      void onCreate(Bundle) - start of Activity lifecycle
- *      boolean onCreateOptionsMenu(Menu) - create Option Menu toolbar, if any
- *      void onPostResume() - called after the activity and fragments have all resumed
  *      void onSaveInstanceState(Bundle) - save instance state to bundle, if any
  *      void onBackPressed() - called when the User press the "Back" button
- *      boolean onOptionItemSelected(MenuItem) - called when a menu item is clicked on by the user
  */
 /**************************************************************************************************/
 /**
@@ -90,33 +83,8 @@ public class SwipeActivity extends MyActivity {
         //set orientation flag in Boss class and mOrientation
         setOrientationChangeFlag(boss, orientation);
 
-        //use HouseKeeper class to create activity
+        //notify Bridge that onCreate event occurred
         mBridge.create(this, savedInstanceState);
-    }
-
-/**
- * boolean onCreateOptionsMenu(Menu) - create OptionMeun Toolbar, if any
- * @param menu - action bar menu object
- * @return boolean - by default returns true
- */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        //send to HouseKeeper to manage creation of toolbar
-        mBridge.createOptionsMenu(this, menu);
-        return true;
-    }
-
-    /**
- * void onPostResume() is called after the activity and fragments have all resumed. Fragments
- * are resumed with the activity's onResume() method but they are not guaranteed to have
- * been resumed. Another approach is to use onResumeFragment()
- */
-    @Override
-    public void onPostResume() {
-        super.onPostResume();
-        //signal to HouseKeeper that Activity and Fragments have resumed
-        mBridge.postResume();
     }
 
 /**
@@ -127,6 +95,7 @@ public class SwipeActivity extends MyActivity {
     @Override
     public void onSaveInstanceState(Bundle saveState){
         super.onSaveInstanceState(saveState);
+        //notify bridge of onSaveInstanceState event
         mBridge.saveInstanceState(saveState);
     }
 
@@ -136,26 +105,11 @@ public class SwipeActivity extends MyActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        //notify bridge of onBackPressed event
         mBridge.backPressed(this);
     }
 
-/**
- * boolean onOptionItemSelected(MenuItem) - called when a menu item is clicked on by the user
- * @param item - menu item clicked on
- * @return boolean - by default returns false
- */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        //send to HouseKeeper to manage event
-        mBridge.optionsItemSelected(this, item);
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
 /**************************************************************************************************/
-
 
 /**************************************************************************************************/
 /**

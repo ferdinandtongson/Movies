@@ -4,8 +4,7 @@ package me.makeachoice.movies.view.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+
 
 import me.makeachoice.movies.controller.Boss;
 
@@ -45,17 +44,8 @@ public abstract class MyActivity extends AppCompatActivity {
         //Bridge is called when onCreate(...) is called in the activity
         void create(MyActivity activity, Bundle savedInstanceState);
 
-        //Bridge is called when onPostResume() is called in the activity
-        void postResume();
-
         //Bridge is called when onBackPressed() is called in the activity
         void backPressed(MyActivity activity);
-
-        //Bridge is called when onCreateOptionsMenu(...) is called in the activity
-        void createOptionsMenu(MyActivity activity, Menu menu);
-
-        //Bridge is called when onOptionsItemSelected(...) is called in the activity
-        void optionsItemSelected(MyActivity activity, MenuItem item);
 
         //Bridge is called when onSaveInstanceState(...) is called in the activity
         void saveInstanceState(Bundle saveState);

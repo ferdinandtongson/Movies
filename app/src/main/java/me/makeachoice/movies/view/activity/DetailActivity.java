@@ -2,8 +2,6 @@ package me.makeachoice.movies.view.activity;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
@@ -38,15 +36,20 @@ import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
  *
  * Bridge Interface from MyActivity:
  *      void create(Bundle savedInstanceState)
- *      void postResume()
+ *      void onSaveInstanceState(Bundle)
  *      void backPressed()
- *      void createOptionsMenu(Menu menu)
- *      void optionsItemSelected(MenuItem item)
  *
  */
 
 public class DetailActivity extends MyActivity {
 
+/**************************************************************************************************/
+/**
+ * Activity LifeCycle calls:
+ *      void onCreate(Bundle) - start of Activity lifecycle
+ *      void onSaveInstanceState(Bundle) - save instance state to bundle, if any
+ *      void onBackPressed() - called when the User press the "Back" button
+ */
 /**************************************************************************************************/
 /**
  * void onCreate() is called when the Activity is first being created or during a configuration
@@ -58,7 +61,6 @@ public class DetailActivity extends MyActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("Movies", "DetailActivity.onCreate");
 
         //get Boss Application
         Boss boss = (Boss)getApplicationContext();
@@ -83,7 +85,7 @@ public class DetailActivity extends MyActivity {
         //set orientation flag in Boss class and mOrientation
         setOrientationChangeFlag(boss, orientation);
 
-        //use HouseKeeper class to create activity
+        //notify Bridge that onCreate event occurred
         mBridge.create(this, savedInstanceState);
     }
 
@@ -96,19 +98,8 @@ public class DetailActivity extends MyActivity {
     @Override
     public void onSaveInstanceState(Bundle saveState) {
         super.onSaveInstanceState(saveState);
+        //notify Bridge that onSaveInstanceState event occurred
         mBridge.saveInstanceState(saveState);
-    }
-
-/**
- * void onPostResume() is called after the activity and fragments have all resumed. Fragments
- * are resumed with the activity's onResume() method but they are not guaranteed to have
- * been resumed. Another approach is to use onResumeFragment()
- */
-    @Override
-    public void onPostResume(){
-        super.onPostResume();
-        //signal to HouseKeeper that Activity and Fragments have resumed
-        mBridge.postResume();
     }
 
 /**
@@ -117,43 +108,11 @@ public class DetailActivity extends MyActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        //notify Bridge that onBackPressed event occurred
         mBridge.backPressed(this);
     }
 
 /**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * boolean onCreateOptionsMenu(Menu) is called if an action bar is present
- *
- * @param menu - action bar menu object
- * @return boolean - by default returns true
- */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        //send to HouseKeeper to manage creation of toolbar
-        mBridge.createOptionsMenu(this, menu);
-        return true;
-    }
-
-/**
- * boolean onOptionItemSelected(MenuItem) is called when a menu item is clicked on by the user
- *
- * @param item - menu item clicked on
- * @return boolean - by default returns false
- */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        //send to HouseKeeper to manage event
-        mBridge.optionsItemSelected(this, item);
-
-        return super.onOptionsItemSelected(item);
-    }
-
-/**************************************************************************************************/
-
 
 /**************************************************************************************************/
 /**
@@ -166,7 +125,6 @@ public class DetailActivity extends MyActivity {
         //close activity
         this.finish();
     }
-
 
 /**************************************************************************************************/
 
