@@ -1,7 +1,5 @@
 package me.makeachoice.movies.controller.modelside.butler;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.Boss;
@@ -27,18 +25,14 @@ import me.makeachoice.movies.util.NetworkManager;
  *      Boolean mWorking
  *      ArrayList<Integer> mRequestBuffer
  *
- * Abstract Methods from MyButler:
- *      abstract public Context getActivityContext()
- *      abstract public void workComplete(Boolean)
  */
-public class TMDBMoviesButler extends MyButler{
+public class TMDBMoviesButler extends MyButler implements TMDBMoviesWorker.Bridge{
 
 /**************************************************************************************************/
 /**
  * Class Variables:
  *      String mTMDBKey - the key used to access TheMovieDB api
  *      TMDBUri mTMDBUri - uri builder that builds TheMovieDB api uri string
- *      TMDBMovieWorker mMovieWorker - AsyncTask class that makes API calls to get Movie details
  *      int mMovieRequest - current list of Movies being requested
  */
 /**************************************************************************************************/
@@ -48,9 +42,6 @@ public class TMDBMoviesButler extends MyButler{
 
     //mUri - class that builds TheMovieDB api uri strings
     private TMDBUri mTMDBUri;
-
-    //mMovieWorker - AsyncTask class that makes API calls to get Movie details
-    private TMDBMoviesWorker mMovieWorker;
 
     //mMovieRequest - current list of Movies being requested
     private int mMovieRequest;
@@ -84,27 +75,11 @@ public class TMDBMoviesButler extends MyButler{
 
 /**************************************************************************************************/
 /**
- * Getters:
- *      Context getActivityContext() - get current Activity context
- *
- * Setters:
- *      - None -
- */
-/**************************************************************************************************/
-/**
- * Context getActivityContext() - get current Activity context
- * @return - activity context
- */
-    public Context getActivityContext(){
-        return mBoss.getActivityContext();
-    }
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * Public methods
+ * Movie Request related methods:
  *      void makeRequest(int) - make a request to get movie data
+ *      void startMovieRequest(int) - start AsyncTask worker to get movie data requested
+ *      void workComplete(boolean) - called when AsyncTask has completed
+ *      void checkRequestBuffer() - check if there are any pending movie data requests
  */
 /**************************************************************************************************/
 /**
@@ -128,22 +103,13 @@ public class TMDBMoviesButler extends MyButler{
         }
     }
 
-/**************************************************************************************************/
-/**
- * Class methods
- *      void startMovieRequest(int) - start AsyncTask worker to get movie data requested
- *      void workComplete(boolean) - called when AsyncTask has completed
- *      void checkRequestBuffer() - check if there are any pending movie data requests
- */
-/**************************************************************************************************/
-
 /**
  * void startMovieRequest(int) - start AsyncTask worker to get movie data requested.
  * @param movieType - movie data requested
  */
     private void startMovieRequest(int movieType){
         //initializes the AsyncTask worker
-        mMovieWorker = new TMDBMoviesWorker(this);
+        TMDBMoviesWorker movieWorker = new TMDBMoviesWorker(this);
 
         //set working flag, AsyncTask is working in the background
         mWorking = true;
@@ -152,22 +118,22 @@ public class TMDBMoviesButler extends MyButler{
         switch(movieType) {
             case PosterHelper.NAME_ID_MOST_POPULAR:
                 //start AsyncTask, get Popular movies from TheMovieDB api
-                mMovieWorker.executeOnExecutor(mBoss.getExecutor(),
+                movieWorker.executeOnExecutor(mBoss.getExecutor(),
                         mTMDBUri.getMovieList(TMDBUri.PATH_POPULAR, mTMDBKey));
                 break;
             case PosterHelper.NAME_ID_TOP_RATED:
                 //start AsyncTask, get Top Rated movies from TheMovieDB api
-                mMovieWorker.executeOnExecutor(mBoss.getExecutor(),
+                movieWorker.executeOnExecutor(mBoss.getExecutor(),
                         mTMDBUri.getMovieList(TMDBUri.PATH_TOP_RATED, mTMDBKey));
                 break;
             case PosterHelper.NAME_ID_NOW_PLAYING:
                 //start AsyncTask, get Now Playing movies from TheMovieDB api
-                mMovieWorker.executeOnExecutor(mBoss.getExecutor(),
+                movieWorker.executeOnExecutor(mBoss.getExecutor(),
                         mTMDBUri.getMovieList(TMDBUri.PATH_NOW_PLAYING, mTMDBKey));
                 break;
             case PosterHelper.NAME_ID_UPCOMING:
                 //start AsyncTask, get Upcoming movies from TheMovieDB api
-                mMovieWorker.executeOnExecutor(mBoss.getExecutor(),
+                movieWorker.executeOnExecutor(mBoss.getExecutor(),
                         mTMDBUri.getMovieList(TMDBUri.PATH_UPCOMING, mTMDBKey));
                 break;
             default:
@@ -180,25 +146,16 @@ public class TMDBMoviesButler extends MyButler{
     }
 
 /**
- * void workComplete(Boolean) - called when MovieWorker completes its' work, updates buffers,
- * notifies Boss and, finally checks if there are more movie requests
- * @param result - returns boolean result of success of movie download
+ * void moviesDownloaded(ArrayList<MovieModel>) - called when MovieWorker completes its' work,
+ * updates buffers, notifies Boss and, finally checks if there are more movie requests
+ * @param models - returns boolean result of success of movie download
  */
-    public void workComplete(Boolean result) {
+    public void moviesDownloaded(ArrayList<MovieModel> models) {
         //work has finished
         mWorking = false;
 
-        //get movie data from MovieWorker
-        ArrayList<MovieModel> movieModel = mMovieWorker.getMovies();
-
-        //check if results were successful
-        if(result){
-            //message the Boss that the download of movie info is complete
-            mBoss.movieRequestComplete(movieModel, mMovieRequest);
-        }
-        else{
-            //TODO - need to handle event of a download failure
-        }
+        //message the Boss that movie request is complete
+        mBoss.movieRequestComplete(models, mMovieRequest);
 
         //check if there are any pending request
         checkRequestBuffer();
