@@ -14,9 +14,7 @@ import me.makeachoice.movies.model.item.MovieItem;
  *
  * Methods from AsyncTask
  *      Boolean doInBackground(String...)
- *      void onProgressUpdate(Void...)
  *      Boolean onPostExecute(ArrayList<PosterItem>)
- *      void onCancelled()
  *
  */
 public class MovieGetWorker extends AsyncTask<String, Void, ArrayList<MovieItem>> {
@@ -39,8 +37,6 @@ public class MovieGetWorker extends AsyncTask<String, Void, ArrayList<MovieItem>
         void moviesRetrieved(ArrayList<MovieItem> movies);
     }
 
-
-
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -58,39 +54,13 @@ public class MovieGetWorker extends AsyncTask<String, Void, ArrayList<MovieItem>
 
 /**************************************************************************************************/
 /**
- * Getters:
- *      - None -
- *
- * Setters:
- *      - None -
- */
-/**************************************************************************************************/
-
-    //- None -
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
  * Implemented AsyncTask methods
- *      void onPreExecute() - method inherited from AsyncTask; runs on UI Thread. Does nothing.
  *      Boolean doInBackground(String...) - method inherited from AsyncTask; runs on a background
  *          Thread. Access the database to get movie Item data
- *      void onProgressUpdate(Integer...) - method inherited from AsyncTask; runs on UI Thread.
- *          Does nothing.
  *      void onPostExecute(Boolean) - method inherited from AsyncTask; runs on UI Thread. Informs
  *          Bridge that the work has completed.
- *      void onCancelled() - method inherited from AsyncTask; runs on UI Thread. Does nothing.
  */
 /**************************************************************************************************/
-/**
- * void onPreExecute() - does nothing.
- */
-    @Override
-    protected void onPreExecute(){
-        //does nothing
-   }
-
 /**
  * ArrayList<MovieItem> doInBackground(String... params) - retrieves movie item data from the db.
  * @param param - dynamic array of Strings, param[0] = query string to retrieve movie data
@@ -102,27 +72,12 @@ public class MovieGetWorker extends AsyncTask<String, Void, ArrayList<MovieItem>
     }
 
 /**
- * void onProgressUpdate() - does nothing
- */
-    protected void onProgressUpdate(){
-        //does nothing
-    }
-
-/**
  * void onPostExecute(ArrayList<MovieItem>) - runs on UI thread, called when doInBackground is
  * completed. Lets Bridge know that the movie item data requested has been retrieved.
  */
     protected void onPostExecute(ArrayList<MovieItem> movies){
         //inform Bridge class that the database is ready
         mBridge.moviesRetrieved(movies);
-    }
-
-/**
- * void onCancelled() - called if the Task is canceled. Does nothing.
- */
-    @Override
-    protected void onCancelled(){
-        //does nothing
     }
 
 /**************************************************************************************************/
@@ -156,12 +111,12 @@ public class MovieGetWorker extends AsyncTask<String, Void, ArrayList<MovieItem>
         return new ArrayList<>();
     }
 
-    /**
-     * ArrayList<MovieItem> prepareMovieList(Cursor) - prepares movie data for View consumption.
-     * Takes cursor data and puts them in MovieItem objects.
-     * @param cursor - cursor to movie data in database
-     * @return - movie item arrayList
-     */
+/**
+ * ArrayList<MovieItem> prepareMovieList(Cursor) - prepares movie data for View consumption.
+ * Takes cursor data and puts them in MovieItem objects.
+ * @param cursor - cursor to movie data in database
+ * @return - movie item arrayList
+ */
     private ArrayList<MovieItem> prepareMovieList(Cursor cursor){
         //initialize arrayList
         ArrayList<MovieItem> movies = new ArrayList<>();

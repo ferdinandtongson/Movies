@@ -17,9 +17,7 @@ import me.makeachoice.movies.model.item.MovieItem;
  *
  * Methods from AsyncTask
  *      Boolean doInBackground(String...)
- *      void onProgressUpdate(Void...)
  *      Boolean onPostExecute(Boolean)
- *      void onCancelled()
  *
  */
 public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
@@ -76,24 +74,12 @@ public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
 /**************************************************************************************************/
 /**
  * Implemented AsyncTask methods
- *      void onPreExecute() - method inherited from AsyncTask; runs on UI Thread. Does nothing.
  *      Boolean doInBackground(String...) - method inherited from AsyncTask; runs on a background
  *          Thread. Save poster Item data to database
- *      void onProgressUpdate(Integer...) - method inherited from AsyncTask; runs on UI Thread.
- *          Does nothing.
  *      void onPostExecute(Boolean) - method inherited from AsyncTask; runs on UI Thread. Informs
  *          Bridge that the work has completed.
- *      void onCancelled() - method inherited from AsyncTask; runs on UI Thread. Does nothing.
  */
 /**************************************************************************************************/
-/**
- * void onPreExecute() - does nothing.
- */
-    @Override
-    protected void onPreExecute(){
-        //does nothing
-   }
-
 /**
  * Boolean doInBackground(String... params) - saves poster item data to database
  * @param param - dynamic array of Strings, param[0] = name of table, param[1] = query to database
@@ -108,27 +94,12 @@ public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
     }
 
 /**
- * void onProgressUpdate() - does nothing
- */
-    protected void onProgressUpdate(){
-        //does nothing
-    }
-
-/**
  * void onPostExecute(Boolean) - runs on UI thread, called when doInBackground is completed. Lets
  * Bridge know that the poster item data has been saved.
  */
     protected void onPostExecute(Boolean result){
         //inform Bridge class that the database is ready
         mBridge.movieDataSaved(result);
-    }
-
-/**
- * void onCancelled() - called if the Task is canceled. Does nothing.
- */
-    @Override
-    protected void onCancelled(){
-        //does nothing
     }
 
 /**************************************************************************************************/
