@@ -28,8 +28,6 @@ public class MovieStaff {
  *      ArrayList<MovieItem> mNowPlayingMovies - Now Playing Movie item data from TMDB
  *      ArrayList<MovieItem> mUpcomingMovies - Upcoming Movie item data from TMDB
  *      ArrayList<MovieItem> mFavoriteMovies - Favorite Movie item data selected by user
- *
- *      ArrayList<Integer> mFavoriteIds - Favorite Movie id numbers
  */
 /**************************************************************************************************/
 
@@ -48,9 +46,6 @@ public class MovieStaff {
     private ArrayList<MovieItem> mUpcomingMovies;
     //mFavoriteMovies - Favorite Movie item data selected by user
     private ArrayList<MovieItem> mFavoriteMovies;
-
-    //mFavoriteIds - Favorite Movie id numbers
-    private ArrayList<Integer> mFavoriteIds;
 
 /**************************************************************************************************/
 
@@ -93,8 +88,6 @@ public class MovieStaff {
         mUpcomingMovies = new ArrayList<>();
         //buffer for Favorite MovieItems
         mFavoriteMovies = new ArrayList<>();
-        //buffer for Favorite Movie ids
-        mFavoriteIds = new ArrayList<>();
     }
 
 /**************************************************************************************************/
@@ -207,7 +200,7 @@ public class MovieStaff {
 /**************************************************************************************************/
 /**
  * Class methods
- *      void preparePosters(ArrayList<MovieModel>) - convert MovieModels to posterItems
+ *      ArrayList<MovieItem> prepareMovies(ArrayList<MovieModel>) - convert Movie models to items
  *      void onFinish() - nulls all of the data in the arrayList buffers
  */
 /**************************************************************************************************/
@@ -296,14 +289,8 @@ public class MovieStaff {
  * @param movie - movie to be added to list
  */
     public void addFavorite(MovieItem movie){
+        //not in list, add movie to
         mFavoriteMovies.add(movie);
-        mFavoriteIds.add(movie.getTMDBId());
-    }
-
-    public void addFavoriteId(int id){
-        if(!mFavoriteIds.contains(id)){
-            mFavoriteIds.add(id);
-        }
     }
 
 /**
@@ -311,8 +298,26 @@ public class MovieStaff {
  * @param movie - movie to be removed from list
  */
     public void removeFavorite(MovieItem movie){
-        mFavoriteMovies.remove(movie);
-        mFavoriteIds.remove(movie.getTMDBId());
+        //default index to -1
+        int index = -1;
+
+        //get number of favorite movies in list
+        int count = mFavoriteMovies.size();
+
+        //loop through movies in list
+        for(int i = 0; i < count; i++){
+            //find index of favorite movie to remove
+            if(mFavoriteMovies.get(i).getTMDBId() == movie.getTMDBId()){
+                //movie id number match, save index
+                index = i;
+            }
+        }
+
+        //check movie index value
+        if(index != -1){
+            //not default value, remove movie found at the index
+            mFavoriteMovies.remove(index);
+        }
     }
 
 /**
@@ -321,7 +326,13 @@ public class MovieStaff {
  * @return - true if already in list, false otherwise
  */
     public boolean alreadyFavorite(int id){
-        return mFavoriteIds.contains(id);
+        int count = mFavoriteMovies.size();
+        for(int i = 0; i < count; i++){
+            if(mFavoriteMovies.get(i).getTMDBId() == id){
+                return true;
+            }
+        }
+        return false;
     }
 
 /**************************************************************************************************/
