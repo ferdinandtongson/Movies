@@ -77,15 +77,22 @@ public class DetailHelper extends MyHelper{
 
 /**************************************************************************************************/
 /**
- * String resource ids used as KEY values
+ * String resource string ids used as KEY values and drawable ids used for favorite status
  */
 /**************************************************************************************************/
 
-    //KEY_MOVIE_TYPE_ID is key value used for storing the movie type
+    //KEY_MOVIE_TYPE_ID - key value used for storing the movie type
     public static final int KEY_MOVIE_TYPE_ID = R.string.key_movie_type;
 
-    //KEY_MOVIE_INDEX_ID is key value used for storing the movie index
+    //KEY_MOVIE_INDEX_ID - key value used for storing the movie index
     public static final int KEY_MOVIE_INDEX_ID = R.string.key_movie_index;
+
+    //DRW_STAR_WHITE_ID - drawable used when a movie is marked as favorite by the user
+    public static final int DRW_STAR_WHITE_ID = R.drawable.star_white;
+
+    //DRW_STAR_BORDER_ID - drawable used when a movie is not a favorite
+    public static final int DRW_STAR_BORDER_ID = R.drawable.star_border_white;
+
 
 /**************************************************************************************************/
 
@@ -110,7 +117,7 @@ public class DetailHelper extends MyHelper{
 /**
  * CastDialog layout and child view ids
  */
-    /**************************************************************************************************/
+/**************************************************************************************************/
 
     //DIA_CAST_LAYOUT_ID - layout id of CastDialog
     public static final int DIA_CAST_LAYOUT_ID = R.layout.cast_dialog;
@@ -125,5 +132,6 @@ public class DetailHelper extends MyHelper{
     public static final int DIA_CAST_TXT_CHARACTER = R.id.dia_cast_txt_character;
 
 /**************************************************************************************************/
+
 
 }
