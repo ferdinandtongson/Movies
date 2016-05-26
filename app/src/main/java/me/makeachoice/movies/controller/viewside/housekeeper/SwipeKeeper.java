@@ -3,18 +3,18 @@ package me.makeachoice.movies.controller.viewside.housekeeper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import me.makeachoice.movies.R;
 import me.makeachoice.movies.model.item.MovieItem;
+import me.makeachoice.movies.util.NetworkManager;
 import me.makeachoice.movies.view.activity.DetailActivity;
 import me.makeachoice.movies.view.activity.MyActivity;
 import me.makeachoice.movies.view.activity.SwipeActivity;
-import me.makeachoice.movies.model.item.PosterItem;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.viewside.assistant.MaidAssistant;
 import me.makeachoice.movies.controller.viewside.helper.DetailHelper;
@@ -58,11 +58,9 @@ import me.makeachoice.movies.controller.viewside.adapter.SwipeAdapter;
  *      FloatingActionButton getFloatButton(MyActivity, int, View.OnClickListener)
  *
  * Implements SwipeActivity.Bridge
- *      void create(Bundle savedInstanceState)
- *      void postResume()
+ *      void create(Bundle)
+ *      void saveInstanceState(Bundle)
  *      void backPressed()
- *      void createOptionsMenu(Menu menu)
- *      void optionsItemSelected(MenuItem item)
  *
  * Implements SwipeAdapter.Bridge
  *      Context getActivityContext() - implemented by MyHouseKeeper
@@ -71,7 +69,6 @@ import me.makeachoice.movies.controller.viewside.adapter.SwipeAdapter;
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
  *      void onPosterClicked(int, int) - movie poster selected
- *      void onPosterLongClicked(int, int) - movie poster long-clicked
  *
  * Implements ViewPager.OnPageChangeListener
  *      void onPageScrollStateChanged(int)
@@ -84,14 +81,10 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 /**************************************************************************************************/
 /**
  * Class Variables:
- *      SwipeHelper.ViewHolder mViewHolder - holds all the child view of the Activity
  *      int mPageIndex - page index of current movie list being shown
  *      View.OnClickListener mFabListener - onClick listener for FloatingActionButton
  */
 /**************************************************************************************************/
-
-    //mViewHolder - holds all the child views of the fragment
-    private SwipeHelper.ViewHolder mViewHolder;
 
     //mPageIndex - page index of current movie list being shown
     private int mPageIndex;
@@ -103,7 +96,6 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
             onFABClick();
         }
     };
-
 
 /**************************************************************************************************/
 
@@ -117,14 +109,8 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         //set Boss
         mBoss = boss;
 
-        //register HouseKeeper to Boss
-        //mBoss.registerHouseKeeper(this, SwipeHelper.NAME_ID);
-
         //initialize fragment registry
         mFragmentRegistry = new HashMap<>();
-
-        //initialize ViewHolder
-        mViewHolder = new SwipeHelper.ViewHolder();
 
         //initialize MaidAssistant
         mMaidAssistant = new MaidAssistant();
@@ -137,28 +123,11 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 
 /**************************************************************************************************/
 /**
- * Getters:
- *      - None -
- *
- * Setters:
- *      - None -
- */
-/**************************************************************************************************/
-
-    //- NONE -
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
  * SwipeActivity.Bridge implementations:
  *      void create(Bundle) - create activity layout
  *          void createViewPager(MyActivity,int) - create ViewPager and SwipeAdapter objects
- *      void createOptionsMenu(Menu menu) - does nothing
- *      void postResume() - does nothing
  *      void saveInstanceState(Bundle) - save instance state to bundle
  *      void backPressed() - back button has been pressed
- *      void optionsItemSelected(MenuItem item) - does nothing
  */
 /**************************************************************************************************/
 /**
@@ -223,22 +192,6 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
     }
 
 /**
- * void createOptionsMenu(Menu) - does nothing
- * @param activity - current activity being shown
- * @param menu - will hold menu items
- */
-    public void createOptionsMenu(MyActivity activity, Menu menu){
-        //does nothing
-    }
-
-/**
- * void postResume() - does nothing
- */
-    public void postResume(){
-        //does nothing
-    }
-
-/**
  * void saveInstanceState(Bundle) - called when onSaveInstanceState is called in the Activity.
  * @param inState - bundle to save instance states
  */
@@ -258,26 +211,6 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         activity.finishActivity();
     }
 
-/**
- * void onOptionsItemSelected(MenuItem) - does nothing
- * @param activity - current activity being shown
- * @param item - menu item selected in the toolbar
- */
-    public void optionsItemSelected(MyActivity activity, MenuItem item){
-        //does nothing
-    }
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * SwipeAdapter.Bridge implementations:
- *      Context getActivityContext() - implemented by MyHouseKeeper
- */
-/**************************************************************************************************/
-
-    //Context getActivityContext() - implemented by MyHouseKeeper
-
 /**************************************************************************************************/
 
 /**************************************************************************************************/
@@ -286,7 +219,6 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer,Fragment) - implemented by MyHouseKeeper
  *      void onPosterClicked(int, int) - onPosterClicked event, show detailed info of movie
- *      void onPosterLongClicked(int,int) - onPosterLongClicked event
  */
 /**************************************************************************************************/
 /**
@@ -310,27 +242,6 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 
         //start DetailActivity
         mBoss.getActivityContext().startActivity(intent);
-    }
-
-    public void onPosterLongClicked(int movieType, int index){
-        //get movie type
-        switch (movieType) {
-            //save Most Popular poster
-            case PosterHelper.NAME_ID_MOST_POPULAR:
-            //get Top Rated posters
-            case PosterHelper.NAME_ID_TOP_RATED:
-            //get Now Playing posters
-            case PosterHelper.NAME_ID_NOW_PLAYING:
-            //get Upcoming posters
-            case PosterHelper.NAME_ID_UPCOMING:
-                mBoss.addToFavorite(movieType, index);
-                break;
-            //default request Favorite
-            case PosterHelper.NAME_ID_FAVORITE:
-                mBoss.removeFavorite(index);
-                break;
-        }
-
     }
 
 /**************************************************************************************************/
@@ -428,8 +339,16 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  * item data.
  */
     public void onFABClick(){
-        //make API call to get fresh poster item data for current poster fragment
-        mBoss.refreshPosters(convertIndexToMovieType(mPageIndex));
+        if(NetworkManager.hasConnection(mBoss.getActivityContext())){
+            //make API call to get fresh poster item data for current poster fragment
+            mBoss.refreshPosters(convertIndexToMovieType(mPageIndex));
+        }
+        else{
+            if(mPageIndex != 4){
+                Toast.makeText(mBoss.getActivityContext(),
+                        mBoss.getString(R.string.str_no_network), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 /**
