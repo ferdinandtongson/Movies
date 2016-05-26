@@ -47,6 +47,9 @@ public class SwipeHelper extends MyHelper{
     //SWIPE_FAB_ID is the floating action button
     public static final  int SWIPE_FAB_ID = R.id.swipe_fab;
 
+    //TABLET_LAYOUT_ID is the layout used for tablets
+    public static final int TABLET_LAYOUT_ID = R.id.lin_tablet;
+
 /**************************************************************************************************/
 
 
