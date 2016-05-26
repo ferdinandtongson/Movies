@@ -7,7 +7,11 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 
 import me.makeachoice.movies.model.db.contract.MovieContract;
+import me.makeachoice.movies.model.item.CastItem;
+import me.makeachoice.movies.model.item.GenreItem;
 import me.makeachoice.movies.model.item.MovieItem;
+import me.makeachoice.movies.model.item.ReviewItem;
+import me.makeachoice.movies.model.item.VideoItem;
 
 /**
  * MovieGetWorker - gets movie item data from the database, extends AsyncTask<>
@@ -147,6 +151,16 @@ public class MovieGetWorker extends AsyncTask<String, Void, ArrayList<MovieItem>
 
             item.setPosterPath(cursor.getString(MovieContract.INDEX_POSTER_PATH));
             item.setPosterBytes(cursor.getBlob(MovieContract.INDEX_POSTER_BYTES));
+
+            //set default values for Movie Info detail
+            item.setIMDBId("");
+            item.setHomepage("");
+
+            item.setGenres(new ArrayList<GenreItem>());
+            item.setCast(new ArrayList<CastItem>());
+            item.setReviews(new ArrayList<ReviewItem>());
+            item.setVideos(new ArrayList<VideoItem>());
+
 
             //add movieItem to arrayList
             movies.add(item);

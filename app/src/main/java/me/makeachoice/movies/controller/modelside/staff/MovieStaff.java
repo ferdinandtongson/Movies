@@ -6,7 +6,11 @@ import me.makeachoice.movies.R;
 import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.modelside.uri.TMDBUri;
 import me.makeachoice.movies.controller.viewside.helper.PosterHelper;
+import me.makeachoice.movies.model.item.CastItem;
+import me.makeachoice.movies.model.item.GenreItem;
 import me.makeachoice.movies.model.item.MovieItem;
+import me.makeachoice.movies.model.item.ReviewItem;
+import me.makeachoice.movies.model.item.VideoItem;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
 
 /**
@@ -240,6 +244,15 @@ public class MovieStaff {
 
             item.setPosterPath(posterPath);
             item.setPoster(null);
+
+            //set default values for Movie Info detail
+            item.setIMDBId("");
+            item.setHomepage("");
+
+            item.setGenres(new ArrayList<GenreItem>());
+            item.setCast(new ArrayList<CastItem>());
+            item.setReviews(new ArrayList<ReviewItem>());
+            item.setVideos(new ArrayList<VideoItem>());
 
             //add item into array list
             itemList.add(item);
