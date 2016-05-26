@@ -55,8 +55,6 @@ public class DetailAdapter extends FragmentPagerAdapter {
     public interface Bridge{
         //get Context of current Activity
         Context getActivityContext();
-        //fragment being displayed has changed
-        void onFragmentChange(int position);
     }
 
 /**************************************************************************************************/
@@ -82,8 +80,6 @@ public class DetailAdapter extends FragmentPagerAdapter {
         mFragments.add(fragmentMap.get(InfoHelper.NAME_ID));
         mFragments.add(fragmentMap.get(ReviewHelper.NAME_ID));
         mFragments.add(fragmentMap.get(VideoHelper.NAME_ID));
-        //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_UPCOMING));
-        //mFragments.add(fragmentMap.get(PosterHelper.NAME_ID_FAVORITE));
 
         //get context
         Context ctx = mBridge.getActivityContext();
@@ -93,9 +89,6 @@ public class DetailAdapter extends FragmentPagerAdapter {
         mTitles.add(ctx.getString(InfoHelper.NAME_ID));
         mTitles.add(ctx.getString(ReviewHelper.NAME_ID));
         mTitles.add(ctx.getString(VideoHelper.NAME_ID));
-        //mTitles.add(ctx.getString(PosterHelper.NAME_ID_UPCOMING));
-        //mTitles.add(ctx.getString(PosterHelper.NAME_ID_FAVORITE));
-
     }
 
 /**************************************************************************************************/
@@ -119,9 +112,6 @@ public class DetailAdapter extends FragmentPagerAdapter {
  */
     @Override
     public Fragment getItem(int i) {
-        //notify Bridge that fragment has been changed
-        mBridge.onFragmentChange(i);
-
         //return fragment
         return mFragments.get(i);
     }
