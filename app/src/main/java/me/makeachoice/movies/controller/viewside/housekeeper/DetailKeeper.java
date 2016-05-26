@@ -6,15 +6,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import java.util.HashMap;
 
 import me.makeachoice.movies.R;
-import me.makeachoice.movies.util.NetworkManager;
+import me.makeachoice.movies.model.item.VideoItem;
 import me.makeachoice.movies.view.activity.DetailActivity;
 import me.makeachoice.movies.view.activity.MyActivity;
 import me.makeachoice.movies.controller.Boss;
@@ -61,17 +58,17 @@ import me.makeachoice.movies.view.dialog.ReviewDialog;
  *      Toolbar getToolbar(MyActivity, int)
  *      FloatingActionButton getFloatButton(MyActivity, int, View.OnClickListener)
  *
- * Implements MainActivity.Bridge
- *      void create(Bundle savedInstanceState)
- *      void postResume()
+ * Implements DetailActivity.Bridge:
+ *      void create(Bundle)
+ *      saveInstanceState(Bundle)
  *      void backPressed()
- *      void createOptionsMenu(Menu menu)
- *      void optionsItemSelected(MenuItem item)
  *
- * Implements Maid.Bridge
+ * Implements Maid.Bridge:
  *      Context getActivityContext() - implemented by MyHouseKeeper
- *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
- *      xxx onSomeCustomMaidMethod() [SomeMaid only]
+ *      void registerFragment(Integer, Fragment) - implemented by MyHouseKeeper
+ *
+ * Implements DetailAdapter.Bridge:
+ *      Context getActivityContext() - implemented by MyHouseKeeper
  *
  */
 public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
@@ -81,21 +78,24 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 /**************************************************************************************************/
 /**
  * Class Variables:
- *      DetailHelper.ViewHolder mViewHolder - holds all the child view of the Activity
  *      MovieItem mMovie - movie item data to be displayed
  *      int mStarStatus - used to determine if the movie is a user favorite
+ *      int mPageIndex - index of page being shown
  *      View.OnClickListener mFabListener - FloatingActionButton onClick listener
  */
 /**************************************************************************************************/
-
-    //mViewHolder - holds all the child views of the fragment
-    private DetailHelper.ViewHolder mViewHolder;
 
     //mMovie - movie item data to be displayed
     private MovieItem mMovie;
 
     //mStarStatus - used to determine if the movie is a user favorite
     private int mStarStatus;
+
+    //mPageIndex - index of page being shown
+    private int mPageIndex;
+
+    //mStrShare - string message "Share link!"
+    private String mStrShare;
 
     //mFabListener - onClick listener for FloatingActionButton
     private View.OnClickListener mFabListener = new View.OnClickListener() {
@@ -118,11 +118,11 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         //set Boss
         mBoss = boss;
 
+        //get "Share link!" string
+        mStrShare = boss.getString(DetailHelper.STR_SHARE_ID);
+
         //initialize fragment registry
         mFragmentRegistry = new HashMap<>();
-
-        //initialize ViewHolder
-        mViewHolder = new DetailHelper.ViewHolder();
 
         //initialize MaidAssistant
         mMaidAssistant = new MaidAssistant();
@@ -130,20 +130,6 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         //initialize all Maids used by the SwipeKeeper
         mMaidAssistant.hireDetailMaids(mBoss, this);
     }
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
- * Getters:
- *      - None -
- *
- * Setters:
- *      - None -
- */
-/**************************************************************************************************/
-
-    //getters and setters, if any
 
 /**************************************************************************************************/
 
@@ -195,11 +181,10 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 /**************************************************************************************************/
 /**
  * Implements Bridge Interface from MainActivity:
- *      void create(Bundle savedInstanceState) - create activity layout
- *      void createOptionsMenu(Menu menu) - create menu for toolbar
+ *      void create(Bundle) - create activity layout
  *      void postResume() - both activity and fragments have resumed
+ *      void saveInstanceState(Bundle) - save instance state to bundle
  *      void backPressed() - back button has been pressed
- *      void optionsItemSelected(MenuItem item) - menu item has been selected
  *
  */
 /**************************************************************************************************/
@@ -248,56 +233,25 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         //fragmentManager is context sensitive, need to recreate every time onCreate() is called
         mFragmentManager = activity.getSupportFragmentManager();
 
-        //TODO - set toolbar layout, create Helper
-        //Create toolbar with creation of Activity
-        //mToolbar = getToolbar(activity, _templateHelper.MAIN_TOOLBAR_ID);
-
-        //TODO - set floatbar layout, create Helper
+        //create FloatActionButton
         mFab = getFloatButton(activity, DetailHelper.DETAIL_FAB_ID, mFabListener);
-
-        //check for connectivity
-        if(!NetworkManager.hasConnection(mBoss.getActivityContext())){
-            //do something if no network found
-        }
 
         //create FragmentPagerAdapter for viewPager
         DetailAdapter adapter = new DetailAdapter(this, mFragmentManager, mFragmentRegistry);
 
         //get viewPager
         ViewPager viewPager = (ViewPager)activity.findViewById(DetailHelper.DETAIL_PAGER_ID);
+        //set DetailKeeper as onPageChangeListener
         viewPager.addOnPageChangeListener(this);
 
         //set adapter in viewPager
         viewPager.setAdapter(adapter);
 
-        onPageSelected(0);
-    }
+        //set Page Index default value
+        mPageIndex = 0;
 
-/**
- * void createOptionsMenu(Menu) - called if a toolbar is present in the activity.
- * @param menu - will hold menu items
- */
-    public void createOptionsMenu(MyActivity activity, Menu menu){
-        //TODO - create toolbar menues, create Helper
-        // Inflate the menu; this adds items to the toolbar if it is present.
-        //activity.getMenuInflater().inflate(MainHelper.MAIN_MENU, menu);
-    }
-
-/**
- * void postResume() - called when onPostResume() is called in the Activity signalling that
- * both the Activity and Fragments have resumed and can now be manipulated.
- *
- * If orientation change has occurred, old fragment will automatically be added. No need to commit
- * the fragment again. This stops the double calling of onCreateView() method in Fragment classes.
- * Remember to setRetainInstance(true) in Fragment to retain data!!
- */
-    public void postResume(){
-
-        //check orientation change status
-        if(!mBoss.getOrientationChanged()) {
-            //NOT an orientation change event, update fragment view
-            //displayFragment();
-        }
+        //update Page Selected
+        onPageSelected(mPageIndex);
     }
 
 /**
@@ -315,105 +269,22 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  * application.
  */
     public void backPressed(MyActivity activity){
-
-        Log.d("Movies", "DetailKeeper.backPressed");
-        //check current fragment being displayed
-        /*if(mCurrentFragId == PosterHelper.NAME_ID){
-            //if PosterFragment, shutdown app
-            activity.finishActivity();
-        }
-        else{
-            //if other than PosterFragment (InfoFragment), change to PosterFragment
-            mCurrentFragId = PosterHelper.NAME_ID;
-
-            //display PosterFragment
-            displayFragment();
-        }*/
-    }
-
-    /**
-     * void onOptionsItemSelected(MenuItem) - listens for an onOptionsItemSelected event from the
-     * menu list contained in the toolbar view
-     *
-     * Menu will list movies by most popular, highest rated, now playing, upcoming
-     *
-     * @param item - menu item selected in the toolbar
-     */
-    public void optionsItemSelected(MyActivity activity, MenuItem item){
-        //get id of item selected from ActionBar
-        int id = item.getItemId();
-
-        //type of movie requested
-        int movieRequest;
-
-        switch(id){
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                //NavUtils.navigateUpFromSameTask(activity);
-                //return true;
-        }
-
-        //identify menu selection
-        /*if (id == MainHelper.MENU_ITEM01) {
-            //requested most popular movies
-            //movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
-        }
-        else if (id == MainHelper.MENU_ITEM02) {
-            //requested most popular movies
-            //movieRequest = MovieButler.MOVIE_REQUEST_MOST_POPULAR;
-        }
-        else if (id == MainHelper.MENU_ITEM03) {
-            //requested now playing movies
-            //movieRequest = MovieButler.MOVIE_REQUEST_NOW_PLAYING;
-        }
-        else{
-            //requested upcoming movies
-            movieRequest = MovieButler.MOVIE_REQUEST_UPCOMING;
-        }*/
-
+        //notify Boss that onBackPress event happened in DetailActivity
+        mBoss.backToPosters();
     }
 
 /**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
- * DetailAdapter.Bridge implementations:
- *      void onFragmentChange(int position) - fragment being viewed changed, swipe event happened
+ * Class Methods:
+ *      void updateDetails(MovieItem) - called by Boss when a AsyncTask Movie Info request has
+ *          finished
+ *      void onFABClick() - called when the floating action button is clicked on.
+ *      void setMovieFavorite() - mark or un-mark the movie as favorite
+ *      void shareVideoTrailer() - share first video trailer to a friend
  */
 /**************************************************************************************************/
-/**
- * void onFragmentChange(int) - DetailAdapter Bridge implementation, called when a swipe event
- * happens causing the Fragment being viewed to be changed. Gets poster data from Boss, if
- * poster data is not available, an AsyncTask will start and updatePoster() will be called
- * when the task is done.
- * @param position - position of fragment being displayed
- */
-    public void onFragmentChange(int position){
-        //get movie data from Boss, if null will start AsyncTask to get data, calls updatePoster
-        switch (position) {
-            case 0:
-                Log.d("Movies", "DetailKeeper.onFragmentChange: " + position);
-                //mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
-                break;
-            case 1:
-                //mBoss.getPosters(PosterHelper.NAME_ID_TOP_RATED);
-                break;
-            case 2:
-                //mBoss.getPosters(PosterHelper.NAME_ID_NOW_PLAYING);
-                break;
-            case 3:
-                //mBoss.getPosters(PosterHelper.NAME_ID_UPCOMING);
-                break;
-            case 4:
-                //mBoss.getPosters(PosterHelper.NAME_ID_EMPTY);
-                break;
-            default:
-                //mBoss.getPosters(PosterHelper.NAME_ID_MOST_POPULAR);
-                break;
-        }
-
-    }
-
 /**
  * void updateDetails(MovieItem) - called when a detailed Movie request AsyncTask has
  * finished.
@@ -432,28 +303,74 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
     }
 
-/**************************************************************************************************/
-
-    /**
-     * void onFABClick() - the floatingActionButton has been clicked, user want to refresh poster
-     * item data.
-     */
+/**
+ * void onFABClick() - the floatingActionButton has been clicked, can mark or un-mark the movie as
+ * favorite or share a video trailer to a friend.
+ */
     public void onFABClick(){
-        Log.d("Boss", "DetailKeeper.onFABClick");
+        if(mPageIndex == 0){
+            setMovieFavorite();
+        }
+        else if(mPageIndex == 2){
+            shareVideoTrailer();
+        }
+    }
+
+/**
+ * void setMovieFavorite() - mark or un-mark the movie as favorite. Checks the star status of
+ * the movie and marks or un-marks the movie as a favorite.
+ */
+    private void setMovieFavorite(){
+        //check star status of movie
         if(mStarStatus == DetailHelper.DRW_STAR_WHITE_ID){
+            //previously marked as favorite, un-mark movie; movie is no longer a favorite
             mStarStatus = DetailHelper.DRW_STAR_BORDER_ID;
+            //notify boss to remove movie from favorite list
+            mBoss.removeFavorite();
         }
         else{
+            //previously un-marked, mark movie; movie is now a favorite
             mStarStatus = DetailHelper.DRW_STAR_WHITE_ID;
+            //notify boss to save movie into favorite list
+            mBoss.saveFavorite();
         }
 
+        //update floating action bar icon
         mFab.setImageResource(mStarStatus);
-        mFab.refreshDrawableState();
 
-        mBoss.saveFavorite();
-        //make API call to get fresh poster item data for current poster fragment
-        //mBoss.refreshPosters(convertIndexToMovieType(mPageIndex));
+        //refresh floating action bar to reflect icon change
+        mFab.refreshDrawableState();
     }
+
+/**
+ * void shareVideoTrailer() - share first video trailer to a friend
+ */
+    private void shareVideoTrailer(){
+        //get number of video trailer the movie has
+        int count = mMovie.getVideos().size();
+
+        //check if there is at least 1 video trailer
+        if(count > 0){
+            //has videos, get first video trailer for the movie
+            VideoItem video = mMovie.getVideos().get(0);
+
+            //create a share intent
+            Intent share = new Intent(android.content.Intent.ACTION_SEND);
+            //set intent type
+            share.setType("text/plain");
+
+            //set subject, name of video trailer
+            share.putExtra(Intent.EXTRA_SUBJECT, video.name);
+            //set text, url video path of trailer
+            share.putExtra(Intent.EXTRA_TEXT, video.videoPath);
+
+            //start intent
+            mBoss.getActivityContext().startActivity(Intent.createChooser(share, mStrShare));
+        }
+
+    }
+
+/**************************************************************************************************/
 
 /**************************************************************************************************/
 /**
@@ -463,41 +380,54 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  *      void onPageScrolled(int,float,int) - does nothing
  */
 /**************************************************************************************************/
-    /**
-     * void onPageSelected(int) - update fragment being viewed by ViewPager adapter. Checks with Boss
-     * if poster data is in local buffer, if not will start an AsyncTask to get it from the database or
-     * make an API call. After AsyncTask is complete, will call updatePosters() method
-     * @param index - index of fragment being viewed by user
-     */
+/**
+ * void onPageSelected(int) - updates the FloatingActionButton icon and visibility depending on the
+ * fragment page being displayed
+ * @param index - index of fragment being viewed by user
+ */
     public void onPageSelected(int index){
-        Log.d("Bos", "DetailKeeper.onPageSelected: " + index);
-        //save swipe page index
-        //mPageIndex = index;
+        //save page index being shown
+        mPageIndex = index;
 
-        //get poster list from Boss, if empty will start AsyncTask to get poster data, calls
-        //updatePosters() after AsyncTask completes
+        //variable to hold fab visibility, default visible
+        int visibleStatus = View.VISIBLE;
+
+        //check page index being shown
         switch (index){
-            //get Most Popular posters
+            //Movie InfoFragment is being shown
             case 0:
-                //mFab.setBackgroundResource(R.drawable.star_white);
+                //display star icon, filled or bordered depending on favorite status of movie
                 mFab.setImageResource(mStarStatus);
-                mFab.refreshDrawableState();
-                mFab.setVisibility(View.VISIBLE);
+                //set status to visible
+                visibleStatus = View.VISIBLE;
                 break;
             //get Top Rated posters
             case 1:
-                //mFab.setBackgroundResource(R.drawable.star_white);
-                mFab.setVisibility(View.INVISIBLE);
-                mFab.refreshDrawableState();
+                //set status to invisible
+                visibleStatus = View.INVISIBLE;
                 break;
             //get Now Playing posters
             case 2:
                 //mFab.setBackgroundResource(R.drawable.share_white);
                 mFab.setImageResource(R.drawable.share_white);
-                mFab.refreshDrawableState();
-                mFab.setVisibility(View.VISIBLE);
+
+                if(mMovie.getVideos().size() > 0){
+                    //set status to visible
+                    visibleStatus = View.VISIBLE;
+                }
+                else{
+                    //set status to invisible
+                    visibleStatus = View.INVISIBLE;
+                }
                 break;
         }
+
+        //set visibility status for fab
+        mFab.setVisibility(visibleStatus);
+
+        //refresh floating action bar to reflect icon change
+        mFab.refreshDrawableState();
+
     }
 
     /**
