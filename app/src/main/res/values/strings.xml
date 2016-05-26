@@ -14,6 +14,7 @@
     <string name="str_empty">empty</string>
     <string name="str_no_data">No Data to Display</string>
     <string name="str_no_network">No Network Connection!</string>
+    <string name="str_share_link">Share link!</string>
 
     <string name="key_movie_type">Movie Type</string>
     <string name="key_movie_index">Movie Index</string>

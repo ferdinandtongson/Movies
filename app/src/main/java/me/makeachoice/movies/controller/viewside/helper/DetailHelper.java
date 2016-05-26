@@ -55,28 +55,6 @@ public class DetailHelper extends MyHelper{
 
 /**************************************************************************************************/
 /**
- * Menu ids used in toolbar of the Activity.
- *
- * Note:
- * Will only need to define these values if the Activity will contain a toolbar.
- */
-/**************************************************************************************************/
-
-    //TODO - create menu file for toolbar
-    //Menu for Toolbar found in menu_main menu file
-    //public static final  int MAIN_MENU = R.menu.menu_main;
-
-    //TODO - define menu items
-    //Item id from Menu
-    //public static final  int MENU_ITEM01 = R.id.action_bar_item01;
-    //public static final  int MENU_ITEM02 = R.id.action_bar_item02;
-    //public static final  int MENU_ITEM03 = R.id.action_bar_item03;
-    //public static final  int MENU_ITEM04 = R.id.action_bar_item04;
-
-/**************************************************************************************************/
-
-/**************************************************************************************************/
-/**
  * String resource string ids used as KEY values and drawable ids used for favorite status
  */
 /**************************************************************************************************/
@@ -86,6 +64,9 @@ public class DetailHelper extends MyHelper{
 
     //KEY_MOVIE_INDEX_ID - key value used for storing the movie index
     public static final int KEY_MOVIE_INDEX_ID = R.string.key_movie_index;
+
+    //STR_SHARE_ID - string id of "Share link!" message
+    public static final int STR_SHARE_ID = R.string.str_share_link;
 
     //DRW_STAR_WHITE_ID - drawable used when a movie is marked as favorite by the user
     public static final int DRW_STAR_WHITE_ID = R.drawable.star_white;
