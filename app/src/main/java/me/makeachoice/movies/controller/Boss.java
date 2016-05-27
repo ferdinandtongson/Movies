@@ -315,10 +315,24 @@ public void onFinish(){
  * @param movie - movie item selected
  */
     public void tabletMovieSelected(MovieItem movie){
+        //check if movie item is null
         if(movie != null){
+            //save movie item to buffer
             mMovie = movie;
+
+            //check local buffer if movie is a user favorite, set user favorite status
+            mMovie.setFavorite(mMovieStaff.alreadyFavorite(mMovie.getTMDBId()));
+
+            //check if movie item has detailed movie data
+            if(mMovie.getCast() == null || mMovie.getCast().size() == 0){
+                //data is incomplete, start AsyncTask to request movie data
+                mInfoButler.requestMovieInfo(mMovie.getTMDBId());
+            }
         }
-        showMovieInfo(mMovie);
+        else{
+            //show movie item
+            showMovieInfo(mMovie);
+        }
     }
 
 /**
@@ -328,7 +342,7 @@ public void onFinish(){
  */
     public void movieRequestCompleted(MovieModel model){
         //convert movie model to movie item data
-        mMovie = mMovieStaff.prepareMovieItem(model, mMovie);
+        mMovieStaff.prepareMovieItem(model, mMovie);
 
         //show movie item data
         showMovieInfo(mMovie);
