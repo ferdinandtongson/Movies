@@ -68,7 +68,7 @@ import me.makeachoice.movies.controller.viewside.adapter.SwipeAdapter;
  * Implements PosterMaid.Bridge
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
- *      void onPosterClicked(int, int) - movie poster selected
+ *      void onMovieClicked(int, int) - movie poster clicked on
  *
  * Implements ViewPager.OnPageChangeListener
  *      void onPageScrollStateChanged(int)
@@ -82,12 +82,16 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 /**
  * Class Variables:
  *      int mPageIndex - page index of current movie list being shown
+ *      MyActivity.Bridge mDetailBridge - communication Bridge to DetailKeeper
  *      View.OnClickListener mFabListener - onClick listener for FloatingActionButton
  */
 /**************************************************************************************************/
 
     //mPageIndex - page index of current movie list being shown
     private int mPageIndex;
+
+    //mDetailBridge - communication Bridge to DetailKeeper
+    private DetailKeeper mDetailBridge;
 
     //mFabListener - onClick listener for FloatingActionButton
     private View.OnClickListener mFabListener = new View.OnClickListener() {
@@ -152,6 +156,22 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 
         //set activity layout
         activity.setContentView(SwipeHelper.SWIPE_LAYOUT_ID);
+
+        //get tablet view layout
+        View tabletView = activity.findViewById(SwipeHelper.TABLET_LAYOUT_ID);
+
+        //check if tablet view is valid
+        if(tabletView != null){
+            //tablet view is valid, device is a tablet, set isTablet = true
+            mBoss.setIsTablet(true);
+
+            //create communication Bridge with DetailKeeper
+            mDetailBridge = (DetailKeeper)mBoss.hireHouseKeeper(DetailHelper.NAME_ID);
+        }
+        else{
+            //tablet view is null, device is a phone, set isTablet = false
+            mBoss.setIsTablet(false);
+        }
 
         //fragmentManager is context sensitive, need to recreate every time onCreate() is called
         mFragmentManager = activity.getSupportFragmentManager();
@@ -218,30 +238,36 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  * PosterMaid.Bridge implementations:
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer,Fragment) - implemented by MyHouseKeeper
- *      void onPosterClicked(int, int) - onPosterClicked event, show detailed info of movie
+ *      void onMovieClicked(int, int) - movie has been clicked on.
  */
 /**************************************************************************************************/
 /**
- * void onSelectedPoster(int) - event called when a poster is selected; starts DetailActivity
+ * void onMovieClicked(int) - movie has been clicked on. Inform Boss of the event then, if the
+ * device is a tablet, will get the Movie Item selected and let Boss know that a movie has been
+ * selected for a tablet. If the device is a phone, will start DetailActivity
  * @param movieType - id number of the Maid used as movieType where the poster selection occurred
  * @param index - position of poster
  */
-    public void onPosterClicked(int movieType, int index){
-        //get key for saving movie type to Extra
-        String keyType = mBoss.getActivityContext().getString(DetailHelper.KEY_MOVIE_TYPE_ID);
-        //get key for saving movie index to Extra
-        String keyIndex = mBoss.getActivityContext().getString(DetailHelper.KEY_MOVIE_INDEX_ID);
+    public void onMovieClicked(int movieType, int index){
+        //inform Boss of Movie selection
+        mBoss.onMovieClicked(movieType, index);
 
-        //create intent to start DetailActivity
-        Intent intent = new Intent(mBoss.getActivityContext(), DetailActivity.class);
+        //check if device is tablet or phone
+        if(mBoss.getIsTablet()){
+            //get movie item of movie selected
+            MovieItem movie = mBoss.getSelectedMovie();
 
-        //save movieType for DetailActivity to use
-        intent.putExtra(keyType, String.valueOf(movieType));
-        //save movieIndex for DetailActivity to use
-        intent.putExtra(keyIndex, String.valueOf(index));
+            //inform Boss that an onSelectTabletMovie has occurred
+            mBoss.onSelectTabletMovie(movie);
+        }
+        else{
 
-        //start DetailActivity
-        mBoss.getActivityContext().startActivity(intent);
+            //create intent to start DetailActivity
+            Intent intent = new Intent(mBoss.getActivityContext(), DetailActivity.class);
+
+            //start DetailActivity
+            mBoss.getActivityContext().startActivity(intent);
+        }
     }
 
 /**************************************************************************************************/
@@ -272,18 +298,28 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         switch (index){
             //get Most Popular posters
             case 0: movies = mBoss.getMovies(PosterHelper.NAME_ID_MOST_POPULAR);
+                //set fab as visible
+                mFab.setVisibility(View.VISIBLE);
                 break;
             //get Top Rated posters
             case 1: movies = mBoss.getMovies(PosterHelper.NAME_ID_TOP_RATED);
+                //set fab as visible
+                mFab.setVisibility(View.VISIBLE);
                 break;
             //get Now Playing posters
             case 2: movies = mBoss.getMovies(PosterHelper.NAME_ID_NOW_PLAYING);
+                //set fab as visible
+                mFab.setVisibility(View.VISIBLE);
                 break;
             //get Upcoming posters
             case 3: movies = mBoss.getMovies(PosterHelper.NAME_ID_UPCOMING);
+                //set fab as visible
+                mFab.setVisibility(View.VISIBLE);
                 break;
             //get Favorite posters
             case 4: movies = mBoss.getMovies(PosterHelper.NAME_ID_FAVORITE);
+                //set fab as visible
+                mFab.setVisibility(View.INVISIBLE);
         }
 
         //check poster list size
@@ -317,12 +353,14 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 /**
  * Class Methods:
  *      void updateMovies(ArrayList<MovieItem>,int) - update poster fragment with movie item data
+ *      void updateTabletDetail(ArrayList<MovieItem>) - update Tablet detail fragment
  *      void onFABClick - floatingActionButton is clicked, refresh poster item data
  *      int convertIndexToMovieType - converts to current swipe page index into a movie type
  */
 /**************************************************************************************************/
 /**
- * void updatePoster(ArrayList<PosterItem>, int) - update poster fragment with movie item data.
+ * void updatePoster(ArrayList<PosterItem>, int) - update poster fragment with new movie item data.
+ * If the device is a tablet, it will also update the Detail fragment.
  * @param movies - list of MovieItem data requested
  * @param request - type of movie posters requested
  */
@@ -330,21 +368,51 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         //get Maid responsible for displaying the type of movie posters requested
         PosterMaid maid = ((PosterMaid)mBoss.hireMaid(request));
 
-        //update the Fragment being maintained by the Maid
+        //update the movie posters of the fragment being maintained by the Maid
         maid.updateMovies(movies);
+
+        //check if the device is a tablet
+        if(mBoss.getIsTablet()){
+            //device is a tablet, update movie detail fragment
+            updateTabletDetail(movies);
+        }
     }
 
 /**
- * void onFABClick() - the floatingActionButton has been clicked, user want to refresh poster
- * item data.
+ * void updateTabletDetail(ArrayList<MovieItem>) - update Tablet detail fragment. Check the new
+ * list of movies sent. If list is not empty, select the 1st movie in the list to be displayed
+ * in the detail fragment. If the list is empty, select an empty movie item to be displayed
+ * @param movies - list of new movies to be displayed in swipe fragment
+ */
+    private void updateTabletDetail(ArrayList<MovieItem> movies){
+        //check movie list size
+        if(movies.size() > 0){
+            //if there is a list of new movies, select the 1st movie to display, inform Boss
+            mBoss.onSelectTabletMovie(movies.get(0));
+        }
+        else{
+            //list is empty, set selected movie as empty
+            mBoss.setEmptySelectedMovie();
+        }
+
+        //update detail fragment
+        mDetailBridge.create((MyActivity)mBoss.getActivityContext(), null);
+    }
+
+/**
+ * void onFABClick() - the floatingActionButton has been clicked, user wants to refresh movie
+ * item data with new internet data.
  */
     public void onFABClick(){
+        //check if network connection is available
         if(NetworkManager.hasConnection(mBoss.getActivityContext())){
             //make API call to get fresh poster item data for current poster fragment
             mBoss.refreshPosters(convertIndexToMovieType(mPageIndex));
         }
         else{
+            //if network is not available, check if it's not favorite fragment
             if(mPageIndex != 4){
+                //display "No Network" message
                 Toast.makeText(mBoss.getActivityContext(),
                         mBoss.getString(R.string.str_no_network), Toast.LENGTH_LONG).show();
             }
