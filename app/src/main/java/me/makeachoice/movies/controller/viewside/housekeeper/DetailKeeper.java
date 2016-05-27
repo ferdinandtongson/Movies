@@ -224,7 +224,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         mFab = getFloatButton(activity, DetailHelper.DETAIL_FAB_ID, mFabListener);
 
         //update movie details with movie selected by user
-        updateDetails(mBoss.getSelectedMovie());
+        updateDetails(mBoss.getMovieSelected());
 
         //fragmentManager is context sensitive, need to recreate every time onCreate() is called
         mFragmentManager = activity.getSupportFragmentManager();

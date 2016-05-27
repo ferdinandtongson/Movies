@@ -28,7 +28,7 @@ import me.makeachoice.movies.model.item.MovieItem;
  *
  * Implements MovieGetWorker.Bridge
  *      SQLiteDatabase getDatabase() - get database
- *      void movieRetrieved(ArrayList<MovieItem>) - movie item data has been retrieved
+ *      void listRetrievalCompleted(ArrayList<MovieItem>) - movie item data has been retrieved
  */
 public class MovieValet implements MovieSaveWorker.Bridge, MovieGetWorker.Bridge{
 
@@ -89,7 +89,7 @@ public class MovieValet implements MovieSaveWorker.Bridge, MovieGetWorker.Bridge
         //get Database from Bridge
         SQLiteDatabase getDatabase();
         //notify Bridge that movie item data has been retrieved
-        void movieRetrievalComplete(ArrayList<MovieItem> movies, int movieType);
+        void listRetrievalCompleted(ArrayList<MovieItem> movies, int movieType);
     }
 
 
@@ -175,7 +175,7 @@ public class MovieValet implements MovieSaveWorker.Bridge, MovieGetWorker.Bridge
  */
     public void moviesRetrieved(ArrayList<MovieItem> movies){
         //notify Bridge that poster data has been retrieved
-        mBridge.movieRetrievalComplete(movies, mRetrievalType);
+        mBridge.listRetrievalCompleted(movies, mRetrievalType);
 
         //change "retrieve working" flag to false
         mGetWorking = false;

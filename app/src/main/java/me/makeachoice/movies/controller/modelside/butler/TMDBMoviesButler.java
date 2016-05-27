@@ -154,8 +154,8 @@ public class TMDBMoviesButler extends MyButler implements TMDBMoviesWorker.Bridg
         //work has finished
         mWorking = false;
 
-        //message the Boss that movie request is complete
-        mBoss.movieRequestComplete(models, mMovieRequest);
+        //message the Boss that movie list request is complete
+        mBoss.listRequestCompleted(models, mMovieRequest);
 
         //check if there are any pending request
         checkRequestBuffer();

@@ -3,6 +3,7 @@ package me.makeachoice.movies.controller.viewside.housekeeper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -254,11 +255,8 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 
         //check if device is tablet or phone
         if(mBoss.getIsTablet()){
-            //get movie item of movie selected
-            MovieItem movie = mBoss.getSelectedMovie();
-
-            //inform Boss that an onSelectTabletMovie has occurred
-            mBoss.onSelectTabletMovie(movie);
+            //inform Boss that the onMovieClick was from a tablet
+            mBoss.tabletMovieSelected(null);
         }
         else{
 
@@ -297,27 +295,27 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         //updatePosters() after AsyncTask completes
         switch (index){
             //get Most Popular posters
-            case 0: movies = mBoss.getMovies(PosterHelper.NAME_ID_MOST_POPULAR);
+            case 0: movies = mBoss.getMovieList(PosterHelper.NAME_ID_MOST_POPULAR);
                 //set fab as visible
                 mFab.setVisibility(View.VISIBLE);
                 break;
             //get Top Rated posters
-            case 1: movies = mBoss.getMovies(PosterHelper.NAME_ID_TOP_RATED);
+            case 1: movies = mBoss.getMovieList(PosterHelper.NAME_ID_TOP_RATED);
                 //set fab as visible
                 mFab.setVisibility(View.VISIBLE);
                 break;
             //get Now Playing posters
-            case 2: movies = mBoss.getMovies(PosterHelper.NAME_ID_NOW_PLAYING);
+            case 2: movies = mBoss.getMovieList(PosterHelper.NAME_ID_NOW_PLAYING);
                 //set fab as visible
                 mFab.setVisibility(View.VISIBLE);
                 break;
             //get Upcoming posters
-            case 3: movies = mBoss.getMovies(PosterHelper.NAME_ID_UPCOMING);
+            case 3: movies = mBoss.getMovieList(PosterHelper.NAME_ID_UPCOMING);
                 //set fab as visible
                 mFab.setVisibility(View.VISIBLE);
                 break;
             //get Favorite posters
-            case 4: movies = mBoss.getMovies(PosterHelper.NAME_ID_FAVORITE);
+            case 4: movies = mBoss.getMovieList(PosterHelper.NAME_ID_FAVORITE);
                 //set fab as visible
                 mFab.setVisibility(View.INVISIBLE);
         }
@@ -325,7 +323,7 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
         //check poster list size
         if(movies.size() > 0){
             //have poster in local buffer, update Poster fragment
-            updateMovies(movies, convertIndexToMovieType(index));
+            updateMovieList(movies, convertIndexToMovieType(index));
         }
     }
 
@@ -359,12 +357,12 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  */
 /**************************************************************************************************/
 /**
- * void updatePoster(ArrayList<PosterItem>, int) - update poster fragment with new movie item data.
+ * void updateMovieList(ArrayList<MovieItem>, int) - update poster fragment with new movie list data
  * If the device is a tablet, it will also update the Detail fragment.
  * @param movies - list of MovieItem data requested
  * @param request - type of movie posters requested
  */
-    public void updateMovies(ArrayList<MovieItem> movies, int request){
+    public void updateMovieList(ArrayList<MovieItem> movies, int request){
         //get Maid responsible for displaying the type of movie posters requested
         PosterMaid maid = ((PosterMaid)mBoss.hireMaid(request));
 
@@ -385,14 +383,15 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  * @param movies - list of new movies to be displayed in swipe fragment
  */
     private void updateTabletDetail(ArrayList<MovieItem> movies){
+        Log.d("Boss", "SwipeKeeper.updateTabletDetail: " + movies.size());
         //check movie list size
         if(movies.size() > 0){
             //if there is a list of new movies, select the 1st movie to display, inform Boss
-            mBoss.onSelectTabletMovie(movies.get(0));
+            mBoss.tabletMovieSelected(movies.get(0));
         }
         else{
             //list is empty, set selected movie as empty
-            mBoss.setEmptySelectedMovie();
+            mBoss.emptyMovieSelected();
         }
 
         //update detail fragment
@@ -406,8 +405,8 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
     public void onFABClick(){
         //check if network connection is available
         if(NetworkManager.hasConnection(mBoss.getActivityContext())){
-            //make API call to get fresh poster item data for current poster fragment
-            mBoss.refreshPosters(convertIndexToMovieType(mPageIndex));
+            //make API call to get fresh movie list data
+            mBoss.refreshMovieList(convertIndexToMovieType(mPageIndex));
         }
         else{
             //if network is not available, check if it's not favorite fragment
