@@ -67,7 +67,7 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
  *      ReviewRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
  *
  * Extends Bridge Interface:
- *      void onSelectedVideo(int)
+ *      void onVideoClicked(int)
  */
 /**************************************************************************************************/
 
@@ -82,8 +82,8 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
-        //notifies HouseKeeper a video has been selected
-        void onSelectedVideo(int position);
+        //notifies HouseKeeper a video has been clicked
+        void onVideoClicked(int position);
     }
 
 /**************************************************************************************************/
@@ -227,21 +227,19 @@ public class VideoMaid extends MyMaid implements ReviewFragment.Bridge, VideoRec
         recVideo.setHasFixedSize(true);
 
         //set onItemTouchListener for items in RecyclerView
-        //TODO - need to fix and relocate onItemClick event logic
         recVideo.addOnItemTouchListener(
                 new RecyclerItemClickListener(mBridge.getActivityContext(),
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
                                 //notify Bridge that a video has been selected
-                                mBridge.onSelectedVideo(position);
+                                mBridge.onVideoClicked(position);
                             }
                         })
         );
 
 
         //create LayoutManager for RecyclerView, in this case a list type LayoutManager
-        //TODO - need to change 240 to a dynamic variable
         GridAutofitLayoutManager manager =
                 new GridAutofitLayoutManager(mBridge.getActivityContext(), 240);
 

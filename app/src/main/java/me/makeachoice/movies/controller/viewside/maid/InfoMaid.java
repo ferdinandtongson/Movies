@@ -141,13 +141,6 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge, NameAdapter
     return mBridge.getActivityContext();
 }
 
-/**
- * void setMovie(MovieItem) - set movie data used by fragment
- * @param item - MovieItem data
- */
-    public void setMovie(MovieItem item){
-        mMovie = item;
-    }
 
 /**************************************************************************************************/
 
@@ -194,6 +187,9 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge, NameAdapter
  * @param layout - layout where child views reside
  */
     public void createActivity(Bundle savedInstanceState, View layout){
+        //save container layout
+        mLayout = layout;
+
         //update textView in the fragment
         updateTextViews(layout, mMovie);
 
@@ -202,7 +198,6 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge, NameAdapter
 
         //update imageView used to display the movie poster
         updatePoster(layout, mMovie);
-
     }
 
 /**
@@ -346,6 +341,13 @@ public class InfoMaid extends MyMaid implements InfoFragment.Bridge, NameAdapter
         //notify cast adapter that data has changed
         mCastAdapter.notifyDataSetChanged();
 
+        //check if fragment container layout is create
+        if(mLayout != null){
+            //layout valid, update movie text views
+            updateTextViews(mLayout, mMovie);
+            //update movie poster image
+            updatePoster(mLayout, mMovie);
+        }
     }
 
 /**

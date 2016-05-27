@@ -63,12 +63,14 @@ import me.makeachoice.movies.view.dialog.ReviewDialog;
  *      saveInstanceState(Bundle)
  *      void backPressed()
  *
+ * Implements DetailAdapter.Bridge:
+ *      Context getActivityContext() - implemented by MyHouseKeeper
+
  * Implements Maid.Bridge:
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer, Fragment) - implemented by MyHouseKeeper
- *
- * Implements DetailAdapter.Bridge:
- *      Context getActivityContext() - implemented by MyHouseKeeper
+ *      void onReviewClicked(int) - implemented for ReviewMaid.Bridge
+ *      void onVideoClicked(int) - implemented for VideoMaid.Bridge
  *
  */
 public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge,
@@ -82,6 +84,10 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  *      int mStarStatus - used to determine if the movie is a user favorite
  *      int mPageIndex - index of page being shown
  *      View.OnClickListener mFabListener - FloatingActionButton onClick listener
+ *
+ *      int INDEX_INFO - index number of info fragment page
+ *      int INDEX_REVIEWS - index number of review fragment page
+ *      int INDEX_VIDEOS - index number of video fragment page
  */
 /**************************************************************************************************/
 
@@ -104,6 +110,13 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
             onFABClick();
         }
     };
+
+    //INDEX_INFO - index number of info fragment page
+    private int INDEX_INFO = 0;
+    //INDEX_REVIEWS - index number of review fragment page
+    private int INDEX_REVIEWS = 1;
+    //INDEX_VIDEOS - index number of video fragment page
+    private int INDEX_VIDEOS = 2;
 
 /**************************************************************************************************/
 
@@ -138,15 +151,15 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  * Maid.Bridge implementations:
  *      Context getActivityContext() - implemented by MyHouseKeeper
  *      void registerFragment(Integer key, Fragment fragment) - implemented by MyHouseKeeper
- *      void onSelectedReview(int) [ReviewMaid only] - review selected, open dialog to see review
- *      void onSelectedVideo(int) [VideoMaid only] - start activity to display video selected
+ *      void onReviewClicked(int) [ReviewMaid only] - review clicked, open dialog to see review
+ *      void onVideoClicked(int) [VideoMaid only] - video clicked, start activity to watch video
  */
 /**************************************************************************************************/
 /**
- * void onSelectedReview(int) - review selected, open dialog to see review
+ * void onReviewClicked(int) - review selected, open dialog to see review
  * @param position - index position of review selected
  */
-    public void onSelectedReview(int position){
+    public void onReviewClicked(int position){
         //get current activity
         Activity activity = (Activity)mBoss.getActivityContext();
 
@@ -162,10 +175,10 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
     }
 
 /**
- * void onSelectedVideo(int) - start activity to display video selected
+ * void onVideoClicked(int) - start activity to display video selected
  * @param position - index position of selected video
  */
-    public void onSelectedVideo(int position){
+    public void onVideoClicked(int position){
         //get url path of video selected
         String videoPath = mMovie.getVideos().get(position).videoPath;
 
@@ -201,43 +214,23 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
             //TODO - need to save instances. Movie request type maybe?
         }
 
-        String keyType = activity.getString(DetailHelper.KEY_MOVIE_TYPE_ID);
-        String keyIndex = activity.getString(DetailHelper.KEY_MOVIE_INDEX_ID);
-
-        Intent intent = activity.getIntent();
-        int movieType = Integer.valueOf(intent.getStringExtra(keyType));
-        int index = Integer.valueOf(intent.getStringExtra(keyIndex));
-
-        mMovie = mBoss.getMovie(movieType, index);
-
-        InfoMaid infoMaid = (InfoMaid)mBoss.hireMaid(InfoHelper.NAME_ID);
-        infoMaid.setMovie(mMovie);
-
-        ReviewMaid reviewMaid = (ReviewMaid)mBoss.hireMaid(ReviewHelper.NAME_ID);
-        reviewMaid.setReviews(mMovie.getReviews());
-
-        VideoMaid videoMaid = (VideoMaid)mBoss.hireMaid(VideoHelper.NAME_ID);
-        videoMaid.setVideos(mMovie.getVideos());
-
-        if(mMovie.getFavorite()){
-            mStarStatus = DetailHelper.DRW_STAR_WHITE_ID;
+        //check if tablet device is being used
+        if(!mBoss.getIsTablet()){
+            //not a tablet, set activity layout
+            activity.setContentView(DetailHelper.DETAIL_LAYOUT_ID);
         }
-        else{
-            mStarStatus = DetailHelper.DRW_STAR_BORDER_ID;
-        }
-
-
-        //set activity layout
-        activity.setContentView(DetailHelper.DETAIL_LAYOUT_ID);
-
-        //fragmentManager is context sensitive, need to recreate every time onCreate() is called
-        mFragmentManager = activity.getSupportFragmentManager();
 
         //create FloatActionButton
         mFab = getFloatButton(activity, DetailHelper.DETAIL_FAB_ID, mFabListener);
 
+        //update movie details with movie selected by user
+        updateDetails(mBoss.getSelectedMovie());
+
+        //fragmentManager is context sensitive, need to recreate every time onCreate() is called
+        mFragmentManager = activity.getSupportFragmentManager();
+
         //create FragmentPagerAdapter for viewPager
-        DetailAdapter adapter = new DetailAdapter(this, mFragmentManager, mFragmentRegistry);
+        DetailAdapter pageAdapter = new DetailAdapter(this, mFragmentManager, mFragmentRegistry);
 
         //get viewPager
         ViewPager viewPager = (ViewPager)activity.findViewById(DetailHelper.DETAIL_PAGER_ID);
@@ -245,7 +238,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
         viewPager.addOnPageChangeListener(this);
 
         //set adapter in viewPager
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(pageAdapter);
 
         //set Page Index default value
         mPageIndex = 0;
@@ -281,26 +274,46 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  *      void updateDetails(MovieItem) - called by Boss when a AsyncTask Movie Info request has
  *          finished
  *      void onFABClick() - called when the floating action button is clicked on.
- *      void setMovieFavorite() - mark or un-mark the movie as favorite
+ *      void setFavoriteStatus() - mark or un-mark the movie as favorite
  *      void shareVideoTrailer() - share first video trailer to a friend
  */
 /**************************************************************************************************/
 /**
  * void updateDetails(MovieItem) - called when a detailed Movie request AsyncTask has
  * finished.
- * @param item - movie item data of current movie being viewed
+ * @param movie - movie item data of current movie being viewed
  */
-    public void updateDetails(MovieItem item){
-        //get Maid responsible for displaying the type of movies requested
+    public void updateDetails(MovieItem movie){
+        //save movie item currently being shown
+        mMovie = movie;
+
+        //get InfoMaid responsible for displaying info about the movie
         InfoMaid infoMaid = (InfoMaid)mBoss.hireMaid(InfoHelper.NAME_ID);
-        infoMaid.updateViews(item);
+        //update info fragment
+        infoMaid.updateViews(movie);
 
+        //get ReviewMaid responsible for displaying reviews about the movie
         ReviewMaid reviewMaid = (ReviewMaid)mBoss.hireMaid(ReviewHelper.NAME_ID);
-        reviewMaid.updateReviews(item.getReviews());
+        //update review fragment
+        reviewMaid.updateReviews(movie.getReviews());
 
+        //get VideoMaid responsible for displaying trailer videos of the movie
         VideoMaid videoMaid = (VideoMaid)mBoss.hireMaid(VideoHelper.NAME_ID);
-        videoMaid.updateVideos(item.getVideos());
+        //update video fragment
+        videoMaid.updateVideos(movie.getVideos());
 
+        //check if movie is a user favorite
+        if(mMovie.getFavorite()){
+            //is favorite, give star status full start
+            mStarStatus = DetailHelper.DRW_STAR_WHITE_ID;
+        }
+        else{
+            //is Not favorite, give star status a bordered star
+            mStarStatus = DetailHelper.DRW_STAR_BORDER_ID;
+        }
+
+        //update Page Selected
+        onPageSelected(mPageIndex);
     }
 
 /**
@@ -308,19 +321,26 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
  * favorite or share a video trailer to a friend.
  */
     public void onFABClick(){
-        if(mPageIndex == 0){
-            setMovieFavorite();
+        //check if page is the info fragment page
+        if(mPageIndex == INDEX_INFO){
+            //is info fragment page, make sure movie item is not empty
+            if(!mMovie.getTitle().isEmpty()){
+                //valid movie item, set movie favorite status
+                setFavoriteStatus();
+            }
         }
-        else if(mPageIndex == 2){
+        //check if page is the video fragment page
+        else if(mPageIndex == INDEX_VIDEOS){
+            //is video fragment page, share first trailer to a friend
             shareVideoTrailer();
         }
     }
 
 /**
- * void setMovieFavorite() - mark or un-mark the movie as favorite. Checks the star status of
+ * void setFavoriteStatus() - mark or un-mark the movie as favorite. Checks the star status of
  * the movie and marks or un-marks the movie as a favorite.
  */
-    private void setMovieFavorite(){
+    private void setFavoriteStatus(){
         //check star status of movie
         if(mStarStatus == DetailHelper.DRW_STAR_WHITE_ID){
             //previously marked as favorite, un-mark movie; movie is no longer a favorite
@@ -411,6 +431,7 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
                 //mFab.setBackgroundResource(R.drawable.share_white);
                 mFab.setImageResource(R.drawable.share_white);
 
+                //check if there are any videos
                 if(mMovie.getVideos().size() > 0){
                     //set status to visible
                     visibleStatus = View.VISIBLE;
@@ -430,20 +451,20 @@ public class DetailKeeper extends MyHouseKeeper implements DetailActivity.Bridge
 
     }
 
-    /**
-     * void onPageScrollStateChanged(int) - does nothing
-     * @param state - state of page scroll
-     */
+/**
+ * void onPageScrollStateChanged(int) - does nothing
+ * @param state - state of page scroll
+ */
     public void onPageScrollStateChanged(int state){
         //does nothing
     }
 
-    /**
-     * void onPageScrolled(int,float,int) - does nothing
-     * @param position - initial position
-     * @param positionOffset - change of position
-     * @param positionOffsetPixels - change of pixel position
-     */
+/**
+ * void onPageScrolled(int,float,int) - does nothing
+ * @param position - initial position
+ * @param positionOffset - change of position
+ * @param positionOffsetPixels - change of pixel position
+ */
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
         //does nothing
     }

@@ -67,7 +67,7 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
  *      ReviewRecycler mRecycler - manages item views for the RecyclerView used in the Fragment
  *
  * Extends Bridge Interface:
- *      void onSelectedReview(int)
+ *      void onReviewClicked(int)
  */
 /**************************************************************************************************/
 
@@ -82,8 +82,8 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
 
     //Implemented communication line to any MyHouseKeeper class
     public interface Bridge extends MyMaid.Bridge{
-        //notify HouseKeeper that a review has been selected
-        void onSelectedReview(int position);
+        //notify Bridge that a review has been clicked
+        void onReviewClicked(int position);
     }
 
 /**************************************************************************************************/
@@ -229,14 +229,13 @@ public class ReviewMaid extends MyMaid implements ReviewFragment.Bridge, ReviewR
         recycler.setHasFixedSize(true);
 
         //set onItemTouchListener for items in RecyclerView
-        //TODO - need to fix and relocate onItemClick event logic
         recycler.addOnItemTouchListener(
                 new RecyclerItemClickListener(mBridge.getActivityContext(),
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-                                //notify Bridge that a review has been selected
-                                mBridge.onSelectedReview(position);
+                                //notify Bridge that a review has been clicked
+                                mBridge.onReviewClicked(position);
                             }
                         })
         );
