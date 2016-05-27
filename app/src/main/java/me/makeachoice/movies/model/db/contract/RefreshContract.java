@@ -28,7 +28,6 @@ public final class RefreshContract extends MyContract{
     }
 
     public ContentValues getContentValues(int movieType, Long refreshDate){
-        Log.d("Boss", "          getContextValues");
         ContentValues values = new ContentValues();
         values.put(RefreshContract.RefreshEntry.COLUMN_NAME_MOVIES_TYPE, movieType);
         values.put(RefreshContract.RefreshEntry.COLUMN_NAME_DATE_REFRESH, refreshDate);

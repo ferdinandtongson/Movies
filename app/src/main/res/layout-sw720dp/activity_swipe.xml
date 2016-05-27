@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/background_land"
+    >
+
+    <LinearLayout android:id="@+id/lin_tablet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="7"
+        >
+
+        <RelativeLayout android:id="@+id/lin_swipe"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:layout_marginRight="15dp"
+            android:paddingRight="15dp"
+            android:paddingLeft="15dp"
+            android:background="@color/powderBlueish_20">
+
+            <android.support.v4.view.ViewPager android:id="@+id/swipe_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <android.support.v4.view.PagerTitleStrip android:id="@+id/swipe_title_strip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp"
+                    android:paddingLeft="7dp"
+                    android:paddingRight="7dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:background="@color/powderBlueish_20" />
+            </android.support.v4.view.ViewPager>
+
+            <android.support.design.widget.FloatingActionButton android:id="@+id/swipe_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/fab_margin"
+                app:backgroundTint="@color/powderBlueish_60"
+                android:src="@drawable/refresh_white" />
+        </RelativeLayout>
+
+        <RelativeLayout android:id="@+id/lin_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:paddingRight="15dp"
+            android:paddingLeft="15dp"
+            android:background="@color/powderBlueish_20"
+            >
+            <android.support.v4.view.ViewPager android:id="@+id/detail_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <android.support.v4.view.PagerTitleStrip android:id="@+id/detail_title_strip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp"
+                    android:paddingLeft="7dp"
+                    android:paddingRight="7dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:background="@color/powderBlueish_20" />
+            </android.support.v4.view.ViewPager>
+
+            <android.support.design.widget.FloatingActionButton android:id="@+id/detail_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/fab_margin"
+                app:backgroundTint="@color/powderBlueish_60"
+                android:src="@drawable/star_white" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
