@@ -1,5 +1,7 @@
 package me.makeachoice.movies.controller.modelside.butler;
 
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 import me.makeachoice.movies.R;
@@ -7,6 +9,8 @@ import me.makeachoice.movies.controller.Boss;
 import me.makeachoice.movies.controller.modelside.uri.TMDBUri;
 import me.makeachoice.movies.controller.modelside.worker.TMDBInfoWorker;
 import me.makeachoice.movies.model.response.tmdb.MovieModel;
+import me.makeachoice.movies.util.NetworkManager;
+
 /**
  * TMDBInfoButler handles API calls to TheMovieDB to get movie info data.
  *
@@ -96,8 +100,14 @@ public class TMDBInfoButler extends MyButler implements TMDBInfoWorker.Bridge{
             mRequestBuffer.add(id);
         }
         else{
-            //start working on the movie info request
-            startInfoRequest(id);
+            if(NetworkManager.hasConnection(mBoss.getActivityContext())){
+                //start working on the movie info request
+                startInfoRequest(id);
+            }
+            else{
+                Toast.makeText(mBoss.getActivityContext(), mBoss.getString(R.string.str_no_network),
+                        Toast.LENGTH_LONG).show();
+            }
         }
     }
 

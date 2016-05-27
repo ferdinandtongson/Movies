@@ -1,5 +1,7 @@
 package me.makeachoice.movies.controller.modelside.butler;
 
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 import me.makeachoice.movies.controller.Boss;
@@ -94,11 +96,17 @@ public class TMDBMoviesButler extends MyButler implements TMDBMoviesWorker.Bridg
                 //save request to buffer
                 mRequestBuffer.add(movieType);
             } else {
-                //save type of movies being requested
-                mMovieRequest = movieType;
+                if(NetworkManager.hasConnection(mBoss.getActivityContext())){
+                    //save type of movies being requested
+                    mMovieRequest = movieType;
 
-                //start working on the movie request
-                startMovieRequest(movieType);
+                    //start working on the movie request
+                    startMovieRequest(movieType);
+                }
+                else{
+                    Toast.makeText(mBoss.getActivityContext(), mBoss.getString(R.string.str_no_network),
+                            Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
