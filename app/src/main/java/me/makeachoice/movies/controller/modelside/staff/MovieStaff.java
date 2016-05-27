@@ -100,6 +100,7 @@ public class MovieStaff {
 /**
  * Getters:
  *      MovieItem getMovie(int, int) - get a movie item from the buffer
+ *      MovieItem getEmptyMovie() - get empty movie item object
  *      ArrayList<MovieModel> getMovieModels(int) - get the list of movie models requested
  */
 /**************************************************************************************************/
@@ -130,6 +131,42 @@ public class MovieStaff {
         }
         //invalid request, return null
         return null;
+    }
+
+/**
+ * MovieItem getEmptyMovie() - get empty movie item object
+ * @return - empty movie item object
+ */
+    public MovieItem getEmptyMovie(){
+        //create movie item from movie model
+        MovieItem item = new MovieItem();
+        item.setTMDBId(0);
+        item.setTitle("");
+        item.setOverview("");
+        item.setReleaseDate("");
+        item.setIMDBId("");
+
+        item.setOriginalTitle("");
+        item.setOriginalLanguage("");
+
+        item.setPopularity(0);
+        item.setVoteCount(0);
+        item.setVoteAverage(0);
+
+        item.setPosterPath("empty");
+        item.setPoster(null);
+
+        //set default values for Movie Info detail
+        item.setIMDBId("");
+        item.setHomepage("");
+        item.setFavorite(false);
+
+        item.setGenres(new ArrayList<GenreItem>());
+        item.setCast(new ArrayList<CastItem>());
+        item.setReviews(new ArrayList<ReviewItem>());
+        item.setVideos(new ArrayList<VideoItem>());
+
+        return item;
     }
 
 /**
@@ -248,6 +285,7 @@ public class MovieStaff {
             //set default values for Movie Info detail
             item.setIMDBId("");
             item.setHomepage("");
+            item.setFavorite(false);
 
             item.setGenres(new ArrayList<GenreItem>());
             item.setCast(new ArrayList<CastItem>());
@@ -262,7 +300,7 @@ public class MovieStaff {
         return itemList;
     }
 
-    /**
+/**
  * void onFinish() - nulls all of the data in the arrayList buffers
  */
     public void onFinish(){
