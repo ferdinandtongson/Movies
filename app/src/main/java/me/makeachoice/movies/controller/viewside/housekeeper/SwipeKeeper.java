@@ -1,9 +1,9 @@
 package me.makeachoice.movies.controller.viewside.housekeeper;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -163,6 +163,9 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
 
         //check if tablet view is valid
         if(tabletView != null){
+            //set tablet orientation to landscape mode only
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
             //tablet view is valid, device is a tablet, set isTablet = true
             mBoss.setIsTablet(true);
 
@@ -383,7 +386,6 @@ public class SwipeKeeper extends MyHouseKeeper implements SwipeActivity.Bridge, 
  * @param movies - list of new movies to be displayed in swipe fragment
  */
     private void updateTabletDetail(ArrayList<MovieItem> movies){
-        Log.d("Boss", "SwipeKeeper.updateTabletDetail: " + movies.size());
         //check movie list size
         if(movies.size() > 0){
             //if there is a list of new movies, select the 1st movie to display, inform Boss
