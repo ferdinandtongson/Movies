@@ -158,8 +158,14 @@ public class MovieSaveWorker extends AsyncTask<String, Void, Boolean> {
             whereClause = MovieContract.COLUMN_NAME_ORDER + " = " + i;
 
             //update movie table row
-            mBridge.getDatabase().update(tableName, mContract.getContentValues(item, i),
-                    whereClause, null);
+            int rowChanged = mBridge.getDatabase().update(tableName,
+                    mContract.getContentValues(item, i), whereClause, null);
+
+            //check if row has changed, if zero means missing row
+            if(rowChanged == 0){
+                //row has not changed, insert new movie item data into poster table
+                mBridge.getDatabase().insert(tableName, null, mContract.getContentValues(item, i));
+            }
         }
     }
 
