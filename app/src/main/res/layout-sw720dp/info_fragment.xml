@@ -32,7 +32,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:src="@drawable/sample_0"/>
+            android:src="@drawable/placeholder"/>
 
         <RelativeLayout
             android:layout_width="0dp"
